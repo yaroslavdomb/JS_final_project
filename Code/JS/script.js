@@ -9,17 +9,22 @@ const largeScreenSize = 1280;
 function updateResponsiveStyles() {
     const width = window.innerWidth;
     const rows = document.querySelectorAll("tbody tr");
-    let backgroundColor;  
+    let backgroundColor;
+    let myWidth;
 
     if (width >= mobileScreenSize && width < tabletScreenSize) {
         backgroundColor = "yellow";
+        myWidth = "100%";
     } else if (width >= tabletScreenSize && width < largeScreenSize) {
         backgroundColor = "aqua";
+        myWidth = "90%";
     } else if (width >= largeScreenSize) {
-        backgroundColor = "green";
+        backgroundColor = "lightblue";
+        myWidth = "80%";
     }
 
     rows.forEach((currentRow) => currentRow.setAttribute("style", `background-color:${backgroundColor}`));
+    document.documentElement.style.setProperty("--my-width", myWidth);
 }
 
 window.addEventListener("resize", updateResponsiveStyles);
