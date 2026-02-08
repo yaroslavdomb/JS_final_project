@@ -1,0 +1,4 @@
+1) main target - "to do list"
+2) task source = https://www.hackampus.com/student/assignment/5192
+3) https://jsonplaceholder.typicode.com/todos?_limit=5
+4) https://github.com/3831991/W140925ER
