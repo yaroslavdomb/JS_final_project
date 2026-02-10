@@ -1,9 +1,10 @@
 table {
-    /* border: 0.2rem solid black; */
+    border: 0.1rem solid purple;
+    padding-bottom: 2rem;
     border-collapse: separate;
-    /* overflow: hidden;
-    border-radius: 2rem; */
-    margin-top: 5rem;
+    /* overflow: hidden;*/
+    margin-top: 0.7rem;
+    margin-bottom: 0.7rem;
     margin-left: auto;
     margin-right: auto;
     width: var(--my-width);
@@ -25,7 +26,6 @@ tbody th {
     text-align: center;
 }
 
-
 .full-table-header {
     font-size: xx-large;
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
@@ -39,3 +39,20 @@ thead .column-header {
     font-weight: 400;
     color: blue;
 }
+
+div.managing {
+    margin-top: 0.5rem;
+    width: var(--my-width);
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+button {
+    /* border-color: purple; */
+    /* all: unset; */
+}
+
+

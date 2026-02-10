@@ -6,10 +6,37 @@
         <title>Final JS project</title>
         <!-- <link rel="stylesheet" href="../CSS/responsivity.css" /> -->
         <link rel="stylesheet" href="../CSS/style.css" />
+        <link rel="stylesheet" href="../CSS/modal.css" />
         <script src="../JS/script.js" defer></script>
     </head>
-
     <body>
+        <div class="modal-overlay" id="modalOverlay">
+            <div class="modal">
+                <label>
+                    Done:
+                    <input type="checkbox" id="task-is-done" />
+                </label>
+                <label>
+                    Task ID:
+                    <input type="text" id="task-id" />
+                </label>
+                <label>
+                    Task details:
+                    <input type="text" id="task-details" />
+                </label>
+                <label>
+                    Deadline:
+                    <input type="datetime-local" id="task-deadline" />
+                </label>
+                <button id="submitBtn">Submit</button>
+            </div>
+        </div>
+
+        <div class="managing">
+            <button class="add">Add new task</button>
+            <button class="remove">Remove selected task(s)</button>
+            <button class="edit">Edit selected task(s)</button>
+        </div>
         <table>
             <thead>
                 <tr class="full-table-header">
@@ -20,30 +47,42 @@
                     <th>Done</th>
                     <th>Task detailes</th>
                     <th>Dead line</th>
-                    <th>Remove me</th>
+                    <th>Remove/Add</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="column-header">
-                    <th>1</th>
-                    <th></th>
-                    <th>Create first task and put it into the DB</th>
-                    <th>9/Feb/2026 10:12:32 (Isr TZ)</th>
-                    <th></th>
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <input type="checkbox" />
+                    </td>
+                    <td>Create first task and put it into the DB</td>
+                    <td>9/Feb/2026 10:12:32 (Isr TZ)</td>
+                    <td></td>
                 </tr>
-            </tbody>
-            <tbody>
-                <tr class="column-header">
-                    <th>2</th>
-                    <th></th>
-                    <th>Create first task and put it into the DB</th>
-                    <th>9/Feb/2026 10:12:32 (Isr TZ)</th>
-                    <th></th>
+                <tr>
+                    <td>2</td>
+                    <td></td>
+                    <td>Create first task and put it into the DB</td>
+                    <td>9/Feb/2026 10:12:32 (Isr TZ)</td>
+                    <td></td>
                 </tr>
             </tbody>
             <tfoot>
                 <!-- statistic block -->
+                <tr class="column-header">
+                    <th>#</th>
+                    <th>Done</th>
+                    <th>Task detailes</th>
+                    <th>Dead line</th>
+                    <th>Remove me</th>
+                </tr>
             </tfoot>
         </table>
+        <div class="managing">
+            <button class="add">Add new task</button>
+            <button class="remove">Remove selected task(s)</button>
+            <button class="edit">Edit selected task(s)</button>
+        </div>
     </body>
 </html>
