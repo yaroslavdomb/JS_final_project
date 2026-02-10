@@ -22,7 +22,7 @@ const domSelection = {
     modalWindow: document.querySelector("#modalOverlay")
 };
 
-function updateResponsiveStyles() {
+function updateResponsiveStyles(isForOneElem = false, elem = null) {
     const width = window.innerWidth;
     let backgroundColor;
     let myWidth;
@@ -38,7 +38,13 @@ function updateResponsiveStyles() {
         myWidth = "80%";
     }
 
-    domSelection.rows.forEach((currentRow) => currentRow.setAttribute("style", `background-color:${backgroundColor}`));
+    if (!isForOneElem) {
+        document
+            .querySelectorAll("tbody tr")
+            .forEach((currentRow) => currentRow.setAttribute("style", `background-color:${backgroundColor}`));
+    } else {
+        elem.setAttribute("style", `background-color:${backgroundColor}`);
+    }
     document.documentElement.style.setProperty("--my-width", myWidth);
 }
 
@@ -65,23 +71,28 @@ function setRowDone(currentRow) {
     done.classList.add("checked");
 }
 
-function buildTable() {
-    tasksArr.forEach((currentTask) => mapObj2HTML(currentTask));
+function populateFullTableBody() {
+    tasksArr.forEach((currentTask) => addObjToTableBody(currentTask));
+}
+
+function addObjToTableBody(currentTask) {
+    const trElem = mapObj2HTML(currentTask);
+    updateResponsiveStyles(true, trElem);
+    domSelection.body.appendChild(trElem);
 }
 
 function mapObj2HTML(currentTask) {
     const trElem = document.createElement("tr");
     trElem.innerHTML = `
         <td>${currentTask.id}</td>
-        <td><input type="checkbox" ${currentTask.status ? "checked" : ""} > </td>
+        <td><input type="checkbox" ${currentTask.isDone ? "checked" : ""} ></td>
         <td>${currentTask.details}</td>
         <td>${currentTask.deadline}</td>
         <td></td>`;
-
-    domSelection.body.appendChild(trElem);
+    return trElem;
 }
 
-function handleManagingClick(e) {
+function handleManagingAndModalClick(e) {
     if (e.target.matches("div.managing .remove")) {
         removeTask(e);
     } else if (e.target.matches("div.managing .add")) {
@@ -107,7 +118,10 @@ function addNewTask(event) {
     newTask.deadline = modalForm.querySelector("#task-deadline").value;
 
     tasksArr.push(newTask);
+    addObjToTableBody(newTask);
 }
+
+function updateTable() {}
 
 function closeModal() {
     domSelection.modalWindow.classList.add("hidden");
@@ -117,10 +131,10 @@ function openModal(event) {
     domSelection.modalWindow.classList.remove("hidden");
 }
 
-window.addEventListener("resize", updateResponsiveStyles);
+window.addEventListener("resize", () => updateResponsiveStyles());
 updateResponsiveStyles();
 
-document.addEventListener("click", (e) => handleManagingClick(e));
+document.addEventListener("click", (e) => handleManagingAndModalClick(e));
 
 // function addNewTask(event) {
 //     const newTask = new singleTask();
