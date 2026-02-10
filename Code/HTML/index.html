@@ -12,23 +12,29 @@
     <body>
         <div class="modal-overlay" id="modalOverlay">
             <div class="modal">
-                <label>
-                    Done:
-                    <input type="checkbox" id="task-is-done" />
-                </label>
-                <label>
-                    Task ID:
-                    <input type="text" id="task-id" />
-                </label>
-                <label>
-                    Task details:
-                    <input type="text" id="task-details" />
-                </label>
-                <label>
-                    Deadline:
-                    <input type="datetime-local" id="task-deadline" />
-                </label>
-                <button id="submitBtn">Submit</button>
+                <button id="closeBtn" class="close-button">&times;</button>
+                <form>
+                    <fieldset>
+                        <legend>New Task Data</legend>
+                        <div class="form-group">
+                            <label for="task-is-done">Done:</label>
+                            <input type="checkbox" id="task-is-done" />
+                        </div>
+                        <div class="form-group">
+                            <label for="task-id">Task ID:</label>
+                            <input type="text" id="task-id" />
+                        </div>
+                        <div class="form-group">
+                            <label for="task-details">Task details:</label>
+                            <input type="text" id="task-details" />
+                        </div>
+                        <div class="form-group">
+                            <label for="task-deadline">Deadline:</label>
+                            <input type="datetime-local" id="task-deadline" />
+                        </div>
+                        <button type="submit" id="submitBtn">Submit</button>
+                    </fieldset>
+                </form>
             </div>
         </div>
 

@@ -18,7 +18,8 @@ const domSelection = {
     addBtn: document.querySelectorAll("div.managing .add"),
     removeBtn: document.querySelectorAll("div.managing .remove"),
     editBtn: document.querySelectorAll("div.managing .edit"),
-    body: document.querySelector("tbody")
+    body: document.querySelector("tbody"),
+    modalWindow: document.querySelector("#modalOverlay")
 };
 
 function updateResponsiveStyles() {
@@ -88,7 +89,10 @@ function handleManagingClick(e) {
     } else if (e.target.matches("div.managing .edit")) {
         editTask(e);
     } else if (e.target.matches("#submitBtn")) {
+        e.preventDefault();
         addNewTask(e);
+        closeModal(e);
+    } else if (e.target.matches("#closeBtn")) {
         closeModal(e);
     }
 }
@@ -105,14 +109,12 @@ function addNewTask(event) {
     tasksArr.push(newTask);
 }
 
-function closeModal(event) {
-    const modalWindow = event.target.closest(".modal-overlay");
-    modalWindow.classList.add("hidden");
+function closeModal() {
+    domSelection.modalWindow.classList.add("hidden");
 }
 
 function openModal(event) {
-    const modalWindow = event.target.closest(".modal-overlay");
-    modalWindow.classList.remove("hidden");
+    domSelection.modalWindow.classList.remove("hidden");
 }
 
 window.addEventListener("resize", updateResponsiveStyles);
