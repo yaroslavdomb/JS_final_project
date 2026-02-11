@@ -123,10 +123,10 @@ function addNewTask(event) {
     const modalForm = event.target.closest(".modal");
 
     const newTask = { ...singleTask };
-    newTask.id = modalForm.querySelector("#task-id").value;
+    newTask.id = tasksArr.length === 0 ? 1 : Math.max(...tasksArr.map((task) => task.id)) + 1;
     newTask.isDone = modalForm.querySelector("#task-is-done").checked;
     newTask.group = modalForm.querySelector("#task-group").value.trim() || EMPTY_GROUP;
-    newTask.priority = modalForm.querySelector("#task-priority").value.trim() || PRIORITY_LOWEST;
+    newTask.priority = PRIORITY_LOWEST - modalForm.querySelector("#task-priority").value.trim() || PRIORITY_LOWEST;
     newTask.details = modalForm.querySelector("#task-details").value;
     newTask.deadline = modalForm.querySelector("#task-deadline").value;
     populateCreatedAt(newTask, LOCAL_EN);
@@ -184,9 +184,6 @@ function clearPreviousData() {
     const groupInput = document.querySelector("#task-group");
     groupInput.value = "";
 
-    const idInput = document.querySelector("#task-id");
-    idInput.value = "";
-
     const detailsInput = document.querySelector("#task-details");
     detailsInput.value = "";
 
@@ -231,3 +228,4 @@ document.addEventListener("DOMContentLoaded", () => {
     const priorityOutput = document.getElementById("priority-value");
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
 });
+
