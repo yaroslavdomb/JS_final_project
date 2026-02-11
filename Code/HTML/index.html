@@ -4,7 +4,6 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Final JS project</title>
-        <!-- <link rel="stylesheet" href="../CSS/responsivity.css" /> -->
         <link rel="stylesheet" href="../CSS/style.css" />
         <link rel="stylesheet" href="../CSS/modal.css" />
         <script src="../JS/script.js" defer></script>
@@ -23,6 +22,12 @@
                         <div class="form-group">
                             <label for="task-id">Task ID:</label>
                             <input type="text" id="task-id" />
+                        </div>
+                        <div class="form-group">
+                            <label for="task-group">Group:</label>
+                            <select id="task-group">
+                                <option value="new">New group</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="task-details">Task details:</label>
@@ -46,13 +51,15 @@
         <table>
             <thead>
                 <tr class="full-table-header">
-                    <th colspan="5">Things to do</th>
+                    <th colspan="7">Things to do</th>
                 </tr>
                 <tr class="column-header">
                     <th>#</th>
                     <th>Done</th>
+                    <th>Task group</th>
                     <th>Task detailes</th>
                     <th>Dead line</th>
+                    <th>Created at</th>
                     <th>Remove/Add</th>
                 </tr>
             </thead>
@@ -62,15 +69,19 @@
                     <td>
                         <input type="checkbox" />
                     </td>
+                    <td>Home</td>
                     <td>Create first task and put it into the DB</td>
                     <td>9/Feb/2026 10:12:32 (Isr TZ)</td>
+                    <td>9/Feb/2026 02:12:32 (Isr TZ)</td>
                     <td></td>
                 </tr>
                 <tr>
                     <td>2</td>
-                    <td></td>
+                    <td><input type="checkbox" /></td>
+                    <td>---</td>
                     <td>Create first task and put it into the DB</td>
                     <td>9/Feb/2026 10:12:32 (Isr TZ)</td>
+                    <td>8/Feb/2026 10:12:32 (Isr TZ)</td>
                     <td></td>
                 </tr>
             </tbody>
@@ -79,8 +90,10 @@
                 <tr class="column-header">
                     <th>#</th>
                     <th>Done</th>
+                    <th>Groups</th>
                     <th>Task detailes</th>
                     <th>Dead line</th>
+                    <th>Created at</th>
                     <th>Remove me</th>
                 </tr>
             </tfoot>

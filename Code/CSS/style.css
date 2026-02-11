@@ -2,7 +2,6 @@ table {
     border: 0.1rem solid purple;
     padding-bottom: 2rem;
     border-collapse: separate;
-    /* overflow: hidden;*/
     margin-top: 0.7rem;
     margin-bottom: 0.7rem;
     margin-left: auto;
@@ -27,7 +26,7 @@ tbody th {
 }
 
 .full-table-header {
-    font-size: xx-large;
+    font-size: 2.71rem;
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
     font-weight: 600;
     color: blue;
