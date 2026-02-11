@@ -7,10 +7,12 @@ const TABLET_SCREEN_SIZE = 750;
 const LARGE_SCREEN_SIZE = 1280;
 const LOCAL_EN = "en-US";
 const EMPTY_GROUP = "---";
+const PRIORITY_LOWEST = 10;
 
 const singleTask = {
     id: "",
     isDone: false,
+    priority: "",
     group: "",
     details: "",
     deadline: "",
@@ -93,6 +95,7 @@ function mapObj2HTML(currentTask) {
         <td>${currentTask.id}</td>
         <td><input type="checkbox" ${currentTask.isDone ? "checked" : ""} ></td>
         <td>${currentTask.group}</td>
+        <td>${currentTask.priority}</td>
         <td>${currentTask.details}</td>
         <td>${currentTask.deadline}</td>
         <td>${currentTask.createdAt}</td>
@@ -123,6 +126,7 @@ function addNewTask(event) {
     newTask.id = modalForm.querySelector("#task-id").value;
     newTask.isDone = modalForm.querySelector("#task-is-done").checked;
     newTask.group = modalForm.querySelector("#task-group").value.trim() || EMPTY_GROUP;
+    newTask.priority = modalForm.querySelector("#task-priority").value.trim() || PRIORITY_LOWEST;
     newTask.details = modalForm.querySelector("#task-details").value;
     newTask.deadline = modalForm.querySelector("#task-deadline").value;
     populateCreatedAt(newTask, LOCAL_EN);
@@ -191,6 +195,12 @@ function clearPreviousData() {
 
     const deadlineInput = document.querySelector("#task-deadline");
     deadlineInput.value = "";
+
+    //slider
+    const priorityOut = document.getElementById("priority-value");
+    priorityOut.textContent = "5";
+    const defaultTaskPriority = document.getElementById("task-priority");
+    defaultTaskPriority.value = "5";
 }
 
 function updateDomWithExistedGroups() {
@@ -204,7 +214,20 @@ function updateDomWithExistedGroups() {
     domSelection.groupsList.innerHTML = htmlStr;
 }
 
+function updatePriorityValue(priorityIn, priorityOut) {
+    priorityOut.textContent = 10 - priorityIn.value;
+}
+
 window.addEventListener("resize", () => updateResponsiveStyles());
 updateResponsiveStyles();
 
 document.addEventListener("click", (e) => handleManagingAndModalClick(e));
+
+/*
+Update selected priority value in the middle 
+*/
+document.addEventListener("DOMContentLoaded", () => {
+    const priorityInput = document.getElementById("task-priority");
+    const priorityOutput = document.getElementById("priority-value");
+    priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
+});
