@@ -6,6 +6,7 @@ const MOB_SCREEN_SIZE = 340;
 const TABLET_SCREEN_SIZE = 750;
 const LARGE_SCREEN_SIZE = 1280;
 const LOCAL_EN = "en-US";
+const EMPTY_GROUP = "---";
 
 const singleTask = {
     id: "",
@@ -23,6 +24,7 @@ const domSelection = {
     removeBtn: document.querySelectorAll("div.managing .remove"),
     editBtn: document.querySelectorAll("div.managing .edit"),
     body: document.querySelector("tbody"),
+    groupsList: document.querySelector("#groups"),
     modalWindow: document.querySelector("#modalOverlay")
 };
 
@@ -102,15 +104,15 @@ function handleManagingAndModalClick(e) {
     if (e.target.matches("div.managing .remove")) {
         removeTask(e);
     } else if (e.target.matches("div.managing .add")) {
-        openModal(e);
+        openModal();
     } else if (e.target.matches("div.managing .edit")) {
         editTask(e);
     } else if (e.target.matches("#submitBtn")) {
         e.preventDefault();
         addNewTask(e);
-        closeModal(e);
+        closeModal();
     } else if (e.target.matches("#closeBtn")) {
-        closeModal(e);
+        closeModal();
     }
 }
 
@@ -120,7 +122,7 @@ function addNewTask(event) {
     const newTask = { ...singleTask };
     newTask.id = modalForm.querySelector("#task-id").value;
     newTask.isDone = modalForm.querySelector("#task-is-done").checked;
-    newTask.group = modalForm.querySelector("#task-group").value;
+    newTask.group = modalForm.querySelector("#task-group").value.trim() || EMPTY_GROUP;
     newTask.details = modalForm.querySelector("#task-details").value;
     newTask.deadline = modalForm.querySelector("#task-deadline").value;
     populateCreatedAt(newTask, LOCAL_EN);
@@ -147,22 +149,62 @@ function populateCreatedAt(newTask, local = LOCAL_EN) {
     newTask.createdAt = `${dd}/${mo}/${yyyy} ${HH}:${mm}:${ss} (${sign}${offsetHours}:${offsetMins} UTC)`;
 }
 
-function updateTable() {}
+/*
+Create and return map of type
+  group_name : num_of_tasks_in_the_group
+*/
+function getExistedGroupsAndTasksNum() {
+    const groupsMap = {};
+    tasksArr.forEach((currentTask) => {
+        groupsMap[currentTask.group] = (groupsMap[currentTask.group] || 0) + 1;
+    });
+
+    return groupsMap;
+}
+
+function getExistedGroups() {
+    return new Set(tasksArr.map((task) => task.group));
+}
 
 function closeModal() {
     domSelection.modalWindow.classList.add("hidden");
 }
 
-function openModal(event) {
+function openModal() {
     domSelection.modalWindow.classList.remove("hidden");
+    clearPreviousData();
+    updateDomWithExistedGroups();
+}
+
+function clearPreviousData() {
+    const groupInput = document.querySelector("#task-group");
+    groupInput.value = "";
+
+    const idInput = document.querySelector("#task-id");
+    idInput.value = "";
+
+    const detailsInput = document.querySelector("#task-details");
+    detailsInput.value = "";
+
+    const doneInput = document.querySelector("#task-is-done");
+    doneInput.checked = false;
+
+    const deadlineInput = document.querySelector("#task-deadline");
+    deadlineInput.value = "";
+}
+
+function updateDomWithExistedGroups() {
+    const existedGroups = getExistedGroups();
+    let htmlStr = "";
+
+    existedGroups.forEach((group) => {
+        htmlStr += `<option value="${group}"></option>`;
+    });
+
+    domSelection.groupsList.innerHTML = htmlStr;
 }
 
 window.addEventListener("resize", () => updateResponsiveStyles());
 updateResponsiveStyles();
 
 document.addEventListener("click", (e) => handleManagingAndModalClick(e));
-
-// function addNewTask(event) {
-//     const newTask = new singleTask();
-//     newTask.id = event.
-// }

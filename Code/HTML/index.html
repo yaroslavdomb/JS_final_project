@@ -25,9 +25,10 @@
                         </div>
                         <div class="form-group">
                             <label for="task-group">Group:</label>
-                            <select id="task-group">
-                                <option value="new">New group</option>
-                            </select>
+                            <input list="groups" id="task-group" />
+                            <datalist id="groups">
+                                <option value="New group"></option>
+                            </datalist>
                         </div>
                         <div class="form-group">
                             <label for="task-details">Task details:</label>
