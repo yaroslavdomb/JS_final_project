@@ -2,3 +2,46 @@
 2) task source = https://www.hackampus.com/student/assignment/5192
 3) https://jsonplaceholder.typicode.com/todos?_limit=5
 4) https://github.com/3831991/W140925ER
+
+What supposed to be implemented:
+0) Main windows design = done 
+
+1) Basic functionality for single task: 
+    1.1) add = done
+    1.2) delete
+    1.3) edit 
+
+2) Tasks group actions:
+    2.1) Adding batch of tasks (all the accessable fields)
+    2.2) Editing batch of tasks 
+        2.2.1) deadlines
+        2.2.2) groups
+    2.3) Deletion all the tasks related to the group
+    2.4) Show selected only
+        2.4.1) by group
+        2.4.2) by priority
+        2.4.3) by status
+
+3) Sorting (once clicking on appropriate table header) ASC and DESC
+    3.1) by id
+    3.2) by status
+    3.3) by group name
+    3.4) by deadlines
+    3.5) by creation date
+    3.6) by priority
+
+4) Responsivity
+
+5) Accessability
+
+6) Actions with confirmation
+    6.1) Deletion
+    6.2) Editing
+
+7) Statistics for tasks
+
+8) Modal with Full statistic for single task
+    8.1) History of all editions
+        8.1.1) Created at
+        8.1.2) list of Changed at
+    
