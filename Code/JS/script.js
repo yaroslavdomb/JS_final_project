@@ -111,9 +111,12 @@ function handleManagingAndModalClick(e) {
     } else if (e.target.matches("div.managing .edit")) {
         editTask(e);
     } else if (e.target.matches("#submitBtn")) {
-        e.preventDefault();
-        addNewTask(e);
-        closeModal();
+        const form = e.target.closest("form");
+        if (form.checkValidity()) {
+            e.preventDefault();
+            addNewTask(e);
+            closeModal();
+        }
     } else if (e.target.matches("#closeBtn")) {
         closeModal();
     }
@@ -228,4 +231,3 @@ document.addEventListener("DOMContentLoaded", () => {
     const priorityOutput = document.getElementById("priority-value");
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
 });
-
