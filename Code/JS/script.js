@@ -34,7 +34,8 @@ const domSelection = {
     groupsList: document.getElementById("groups"),
     modalWindow: document.getElementById("modalOverlay"),
     headerWidth: document.getElementById("full-table-header-width"),
-    createdAt: document.querySelectorAll(".hide-on-small-screen")
+    createdAt: document.querySelectorAll(".hide-on-small-screen"),
+    deactivated: document.querySelectorAll(".hide-if-no-tasks")
 };
 
 function updateResponsiveStyles(isForOneElem = false, elem = null) {
@@ -180,6 +181,9 @@ function addNewTask(event) {
     populateCreatedAt(newTask, LOCAL_EN);
 
     tasksArr.push(newTask);
+    if (tasksArr.length === 1){
+        enableActivity();
+    } 
     addObjToTableBody(newTask, true);
 }
 
@@ -262,6 +266,18 @@ function updatePriorityValue(priorityIn, priorityOut) {
     priorityOut.textContent = PRIORITY_LOWEST - priorityIn.value;
 }
 
+function disableActivity() {
+    domSelection.deactivated.forEach((el) => {
+        el.setAttribute("disabled", "");
+    });
+}
+
+function enableActivity() {
+     domSelection.deactivated.forEach((el) => {
+         el.removeAttribute("disabled");
+     });
+}
+
 window.addEventListener("resize", () => updateDataOnScreen());
 
 updateResponsiveStyles();
@@ -275,4 +291,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const priorityInput = document.getElementById("task-priority");
     const priorityOutput = document.getElementById("priority-value");
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
+    disableActivity();
+    updateDataOnScreen();
+    closeModal();    
 });
