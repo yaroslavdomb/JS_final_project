@@ -27,11 +27,12 @@ const singleTask = {
     details: "",
     deadline: "",
     createdAt: "",
+    lastChangedAt: "",
     changes: []
 };
 const existedTasksArr = [];
 
-const domSelection = {
+const dom = {
     rows: document.querySelectorAll("tbody tr"),
     managingBlock: document.querySelectorAll("div.managing"),
     body: document.querySelector("tbody"),
@@ -40,7 +41,15 @@ const domSelection = {
     submitBtn: document.getElementById("submitBtn"),
     headerWidth: document.getElementById("full-table-header-width"),
     createdAt: document.querySelectorAll(".hide-on-small-screen"),
-    deactivated: document.querySelectorAll(".hide-if-no-tasks")
+    deactivated: document.querySelectorAll(".hide-if-no-tasks"),
+
+    modal: {
+        isDone: document.getElementById("task-is-done"),
+        group: document.getElementById("task-group"),
+        priority: document.getElementById("task-priority"),
+        details: document.getElementById("task-details"),
+        deadline: document.getElementById("task-deadline")
+    }
 };
 
 function handleTableClick(e) {
@@ -62,9 +71,9 @@ function editRow(event) {
 
 function prepareModal(isEditMode, oldTask) {
     if (isEditMode) {
-        domSelection.submitBtn.dataset.action = "edit";
+        dom.submitBtn.dataset.action = "edit";
     } else {
-        domSelection.submitBtn.dataset.action = "add";
+        dom.submitBtn.dataset.action = "add";
     }
 
     if (!oldTask) {
@@ -76,7 +85,12 @@ function prepareModal(isEditMode, oldTask) {
     }
 }
 
-function handleEditTask() {}
+function handleEditTask() {
+    const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
+    extractIncomingData(false, oldTask);
+    formatAndPopulateTime(oldTask, false, LOCAL_EN);
+    updateDataOnScreen(false);
+}
 
 function setModalFields(oldTask = null) {
     const groupInput = document.querySelector("#task-group");
@@ -86,7 +100,7 @@ function setModalFields(oldTask = null) {
     const priorityOut = document.getElementById("priority-value");
     const defaultTaskPriority = document.getElementById("task-priority");
     const legend = document.getElementById("modal-legend");
-    const btnName = document.getElementById(""); 
+    const btnName = document.getElementById("");
 
     if (oldTask !== null) {
         groupInput.value = oldTask.group;
@@ -94,9 +108,9 @@ function setModalFields(oldTask = null) {
         doneInput.checked = oldTask.isDone;
         deadlineInput.value = oldTask.deadline;
         priorityOut.textContent = oldTask.priority;
-        defaultTaskPriority.value = oldTask.priority;        
+        defaultTaskPriority.value = PRIORITY_LOWEST - oldTask.priority;
         legend.innerText = "Edit existing task";
-        domSelection.submitBtn.innerText = "Edit task"
+        dom.submitBtn.innerText = "Edit task";
     } else {
         groupInput.value = "";
         detailsInput.value = "";
@@ -105,7 +119,7 @@ function setModalFields(oldTask = null) {
         priorityOut.textContent = "5";
         defaultTaskPriority.value = "5";
         legend.innerText = "Add new task";
-        domSelection.submitBtn.innerText = "Add task";
+        dom.submitBtn.innerText = "Add task";
     }
 }
 
@@ -242,7 +256,7 @@ Otherwise, it adds just a single element, so no redesign is needed.
 */
 function updateDataOnScreen(isNewElemExist = false) {
     if (!isNewElemExist) {
-        domSelection.body.innerHTML = "";
+        dom.body.innerHTML = "";
     }
     existedTasksArr.forEach((currentTask) => addObjToTableBody(currentTask));
     updateResponsiveStyles();
@@ -253,7 +267,7 @@ function addObjToTableBody(task, shouldCallResponsiveStyle = false) {
     if (shouldCallResponsiveStyle) {
         updateResponsiveStyles(true, trElem);
     }
-    domSelection.body.appendChild(trElem);
+    dom.body.appendChild(trElem);
 }
 
 function mapObj2HTML(currentTask) {
@@ -269,12 +283,12 @@ function mapObj2HTML(currentTask) {
 
     //Hide on narrow screen
     if (isDescScreen) {
-        domSelection.createdAt?.forEach((x) => x.classList.remove("hide-on-small-screen"));
-        domSelection.headerWidth.setAttribute("colspan", "8");
+        dom.createdAt?.forEach((x) => x.classList.remove("hide-on-small-screen"));
+        dom.headerWidth.setAttribute("colspan", "8");
         trElem.innerHTML += `<td>${currentTask.createdAt}</td>`;
     } else {
-        domSelection.createdAt?.forEach((x) => x.classList.add("hide-on-small-screen"));
-        domSelection.headerWidth.setAttribute("colspan", "7");
+        dom.createdAt?.forEach((x) => x.classList.add("hide-on-small-screen"));
+        dom.headerWidth.setAttribute("colspan", "7");
     }
 
     //Add available actions
@@ -289,15 +303,9 @@ function mapObj2HTML(currentTask) {
 }
 
 function handleAddNewTask(event) {
-    const modalForm = event.target.closest(".modal");
     const newTask = { ...singleTask };
-    newTask.id = existedTasksArr.length === 0 ? 1 : Math.max(...existedTasksArr.map((task) => task.id)) + 1;
-    newTask.isDone = modalForm.querySelector("#task-is-done").checked;
-    newTask.group = modalForm.querySelector("#task-group").value.trim() || EMPTY_GROUP;
-    newTask.priority = PRIORITY_LOWEST - modalForm.querySelector("#task-priority").value.trim() || PRIORITY_LOWEST;
-    newTask.details = modalForm.querySelector("#task-details").value;
-    newTask.deadline = modalForm.querySelector("#task-deadline").value;
-    populateCreatedAt(newTask, LOCAL_EN);
+    extractIncomingData(true, newTask);
+    formatAndPopulateTime(newTask, true, LOCAL_EN);
 
     existedTasksArr.push(newTask);
     if (existedTasksArr.length === 1) {
@@ -306,7 +314,18 @@ function handleAddNewTask(event) {
     addObjToTableBody(newTask, true);
 }
 
-function populateCreatedAt(newTask, local = LOCAL_EN) {
+function extractIncomingData(shouldCreateNewId, task) {
+    if (shouldCreateNewId) {
+        task.id = existedTasksArr.length === 0 ? 1 : Math.max(...existedTasksArr.map((t) => t.id)) + 1;
+    }
+    task.isDone = dom.modal.isDone.checked;
+    task.group = dom.modal.group.value.trim() || EMPTY_GROUP;
+    task.priority = PRIORITY_LOWEST - dom.modal.priority.value.trim() || PRIORITY_LOWEST;
+    task.details = dom.modal.details.value;
+    task.deadline = dom.modal.deadline.value;
+}
+
+function formatAndPopulateTime(task, isNew = true, local = LOCAL_EN) {
     const now = new Date();
     const dd = String(now.getDate()).padStart(2, "0");
     const mo = new Intl.DateTimeFormat(local, { month: "short" }).format(now);
@@ -319,8 +338,11 @@ function populateCreatedAt(newTask, local = LOCAL_EN) {
     const sign = offsetMinutes >= 0 ? "+" : "-";
     const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, "0");
     const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, "0");
-
-    newTask.createdAt = `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
+    if (isNew) {
+        task.createdAt = `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
+    } else {
+        task.lastChangedAt = `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
+    }
 }
 
 /*
@@ -341,11 +363,11 @@ function getExistedGroups() {
 }
 
 function closeModal() {
-    domSelection.modalWindow.classList.add("hidden");
+    dom.modalWindow.classList.add("hidden");
 }
 
 function openModal() {
-    domSelection.modalWindow.classList.remove("hidden");
+    dom.modalWindow.classList.remove("hidden");
 }
 
 function updateDomWithExistedGroups() {
@@ -356,7 +378,7 @@ function updateDomWithExistedGroups() {
         htmlStr += `<option value="${group}"></option>`;
     });
 
-    domSelection.groupsList.innerHTML = htmlStr;
+    dom.groupsList.innerHTML = htmlStr;
 }
 
 function updatePriorityValue(priorityIn, priorityOut) {
@@ -364,13 +386,13 @@ function updatePriorityValue(priorityIn, priorityOut) {
 }
 
 function disableActivity() {
-    domSelection.deactivated.forEach((el) => {
+    dom.deactivated.forEach((el) => {
         el.setAttribute("disabled", "");
     });
 }
 
 function enableActivity() {
-    domSelection.deactivated.forEach((el) => {
+    dom.deactivated.forEach((el) => {
         el.removeAttribute("disabled");
     });
 }
@@ -394,8 +416,8 @@ document.addEventListener("DOMContentLoaded", () => {
 /*
 Add click listeners
 */
-domSelection.body.addEventListener("click", handleTableClick);
-domSelection.managingBlock.forEach((block) => {
+dom.body.addEventListener("click", handleTableClick);
+dom.managingBlock.forEach((block) => {
     block.addEventListener("click", handleManagingClick);
 });
-domSelection.modalWindow.addEventListener("click", handleModalClick);
+dom.modalWindow.addEventListener("click", handleModalClick);
