@@ -57,7 +57,7 @@ const dom = {
 
 function handleTableClick(e) {
     if (e.target.matches("button.editRow")) {
-        editRow(e);
+        handleEditTaskBefore(e);
     } else if (e.target.matches("button.removeRow")) {
         removeRow(e);
     } else if (e.target.matches("button.showRow")) {
@@ -65,11 +65,19 @@ function handleTableClick(e) {
     }
 }
 
-function editRow(event) {
+function handleEditTaskBefore(event) {
     getHTMLEl(event);
+    updateTasksStatistics(htmlRow.id, "edit");
     const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
     prepareModal(true, oldTask);
     openModal();
+}
+
+function handleEditTaskAfter() {
+    const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
+    extractIncomingData(false, oldTask);
+    formatAndPopulateTime(oldTask, false, LOCAL_EN);
+    updateDataOnScreen(false);
 }
 
 function prepareModal(isEditMode, oldTask) {
@@ -86,13 +94,6 @@ function prepareModal(isEditMode, oldTask) {
         updateDomWithExistedGroups();
         setModalFields(oldTask);
     }
-}
-
-function handleEditTask() {
-    const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
-    extractIncomingData(false, oldTask);
-    formatAndPopulateTime(oldTask, false, LOCAL_EN);
-    updateDataOnScreen(false);
 }
 
 function setModalFields(oldTask = null) {
@@ -166,7 +167,7 @@ function handleModalClick(e) {
         if (action === "add") {
             handleAddNewTask(e);
         } else {
-            handleEditTask(e);
+            handleEditTaskAfter(e);
         }
 
         closeModal();
@@ -314,7 +315,7 @@ function extractIncomingData(shouldCreateNewId, task) {
     }
     task.isDone = dom.modal.isDone.checked;
     task.group = dom.modal.group.value.trim() || EMPTY_GROUP;
-    task.priority = PRIORITY_LOWEST - dom.modal.priority.value.trim() || PRIORITY_LOWEST;
+    task.priority = PRIORITY_LOWEST - dom.modal.priority.value.trim();
     task.details = dom.modal.details.value;
     task.deadline = dom.modal.deadline.value;
 }
