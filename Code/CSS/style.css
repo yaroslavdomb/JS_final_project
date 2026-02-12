@@ -57,3 +57,18 @@ button {
     /* border-color: purple; */
     /* all: unset; */
 }
+
+.activity {
+    font-size: 1.3rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+td button.activity {
+    padding: 0;
+    margin: 0.1rem;
+    box-sizing: border-box;
+}

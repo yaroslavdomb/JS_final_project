@@ -27,9 +27,7 @@ const tasksArr = [];
 
 const domSelection = {
     rows: document.querySelectorAll("tbody tr"),
-    addBtn: document.querySelectorAll("div.managing .add"),
-    removeBtn: document.querySelectorAll("div.managing .remove"),
-    editBtn: document.querySelectorAll("div.managing .edit"),
+    managingBlock: document.querySelectorAll("div.managing"),
     body: document.querySelector("tbody"),
     groupsList: document.getElementById("groups"),
     modalWindow: document.getElementById("modalOverlay"),
@@ -37,6 +35,39 @@ const domSelection = {
     createdAt: document.querySelectorAll(".hide-on-small-screen"),
     deactivated: document.querySelectorAll(".hide-if-no-tasks")
 };
+
+function handleTableClick(e) {
+    if (e.target.matches("button.editRow")) {
+        editRow(e);
+    } else if (e.target.matches("button.removeRow")) {
+        removeRow(e);
+    } else if (e.target.matches("button.showRow")) {
+        showRowHistory(e);
+    }
+}
+
+function handleManagingClick(e) {
+    if (e.target.matches(".add")) {
+        openModal();
+    } else if (e.target.matches(".remove")) {
+        removeTask(e);
+    } else if (e.target.matches(".edit")) {
+        editTask(e);
+    }
+}
+
+function handleModalClick(e) {
+    if (e.target.matches("#submitBtn")) {
+        const form = e.target.closest("form");
+        if (form.checkValidity()) {
+            e.preventDefault();
+            addNewTask(e);
+            closeModal();
+        }
+    } else if (e.target.matches("#closeBtn")) {
+        closeModal();
+    }
+}
 
 function updateResponsiveStyles(isForOneElem = false, elem = null) {
     let backgroundColor;
@@ -137,6 +168,8 @@ function mapObj2HTML(currentTask) {
         <td>${currentTask.priority}</td>
         <td>${currentTask.details}</td>
         <td>${currentTask.deadline}</td>`;
+    
+    //Hide on narrow screen    
     if (isDescScreen) {
         domSelection.createdAt?.forEach((x) => x.classList.remove("hide-on-small-screen"));
         domSelection.headerWidth.setAttribute("colspan", "8");
@@ -145,28 +178,16 @@ function mapObj2HTML(currentTask) {
         domSelection.createdAt?.forEach((x) => x.classList.add("hide-on-small-screen"));
         domSelection.headerWidth.setAttribute("colspan", "7");
     }
-    trElem.innerHTML += `<td></td>`;
+
+    //Add available actions
+    trElem.innerHTML += `
+    <td>
+        <button class="activity editRow">+</button>
+        <button class="activity removeRow">-</button>
+        <button class="activity showRow">...</button>
+    </td>`;
 
     return trElem;
-}
-
-function handleManagingAndModalClick(e) {
-    if (e.target.matches("div.managing .remove")) {
-        removeTask(e);
-    } else if (e.target.matches("div.managing .add")) {
-        openModal();
-    } else if (e.target.matches("div.managing .edit")) {
-        editTask(e);
-    } else if (e.target.matches("#submitBtn")) {
-        const form = e.target.closest("form");
-        if (form.checkValidity()) {
-            e.preventDefault();
-            addNewTask(e);
-            closeModal();
-        }
-    } else if (e.target.matches("#closeBtn")) {
-        closeModal();
-    }
 }
 
 function addNewTask(event) {
@@ -181,9 +202,9 @@ function addNewTask(event) {
     populateCreatedAt(newTask, LOCAL_EN);
 
     tasksArr.push(newTask);
-    if (tasksArr.length === 1){
+    if (tasksArr.length === 1) {
         enableActivity();
-    } 
+    }
     addObjToTableBody(newTask, true);
 }
 
@@ -273,19 +294,17 @@ function disableActivity() {
 }
 
 function enableActivity() {
-     domSelection.deactivated.forEach((el) => {
-         el.removeAttribute("disabled");
-     });
+    domSelection.deactivated.forEach((el) => {
+        el.removeAttribute("disabled");
+    });
 }
-
-window.addEventListener("resize", () => updateDataOnScreen());
 
 updateResponsiveStyles();
 
-document.addEventListener("click", (e) => handleManagingAndModalClick(e));
+window.addEventListener("resize", () => updateDataOnScreen());
 
 /*
-Update selected priority value in the middle 
+Update selected priority value in the middle window
 */
 document.addEventListener("DOMContentLoaded", () => {
     const priorityInput = document.getElementById("task-priority");
@@ -293,5 +312,14 @@ document.addEventListener("DOMContentLoaded", () => {
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
     disableActivity();
     updateDataOnScreen();
-    closeModal();    
+    closeModal();
 });
+
+/*
+Add click listeners
+*/
+domSelection.body.addEventListener("click", handleTableClick);
+domSelection.managingBlock.forEach((block) => {
+    block.addEventListener("click", handleManagingClick);
+});
+domSelection.modalWindow.addEventListener("click", handleModalClick);
