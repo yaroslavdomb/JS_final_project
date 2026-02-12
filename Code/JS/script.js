@@ -23,7 +23,7 @@ const singleTask = {
     createdAt: "",
     changes: []
 };
-const tasksArr = [];
+const existedTasksArr = [];
 
 const domSelection = {
     rows: document.querySelectorAll("tbody tr"),
@@ -38,11 +38,33 @@ const domSelection = {
 
 function handleTableClick(e) {
     if (e.target.matches("button.editRow")) {
-        editRow(e);
+        //editRow(e);
     } else if (e.target.matches("button.removeRow")) {
         removeRow(e);
     } else if (e.target.matches("button.showRow")) {
-        showRowHistory(e);
+        //showRowHistory(e);
+    }
+}
+
+function removeRow(event) {
+    const rowEl = event.target.closest("tr");
+    const idEl = rowEl.querySelector(".task-id");
+    const id = idEl.innerText;
+    updateTasksStatistics(id, "remove");
+    removeTaskFromExistedTaskArr(id);
+    rowEl.parentNode.removeChild(rowEl);
+}
+
+function updateTasksStatistics(id, action) {
+    //TODO
+}
+
+function removeTaskFromExistedTaskArr(idToBeRemoved) {
+    const remainingTasks = existedTasksArr.filter((task) => Number(task.id) !== Number(idToBeRemoved));
+    existedTasksArr.length = 0;
+    existedTasksArr.push(...remainingTasks);
+    if (existedTasksArr.length === 0) {
+        disableActivity();
     }
 }
 
@@ -50,9 +72,9 @@ function handleManagingClick(e) {
     if (e.target.matches(".add")) {
         openModal();
     } else if (e.target.matches(".remove")) {
-        removeTask(e);
+        //removeTask(e);
     } else if (e.target.matches(".edit")) {
-        editTask(e);
+        //editTask(e);
     }
 }
 
@@ -146,7 +168,7 @@ function updateDataOnScreen(isNewElemExist = false) {
     if (!isNewElemExist) {
         domSelection.body.innerHTML = "";
     }
-    tasksArr.forEach((currentTask) => addObjToTableBody(currentTask));
+    existedTasksArr.forEach((currentTask) => addObjToTableBody(currentTask));
     updateResponsiveStyles();
 }
 
@@ -162,14 +184,14 @@ function mapObj2HTML(currentTask) {
     const trElem = document.createElement("tr");
 
     trElem.innerHTML = `
-        <td>${currentTask.id}</td>
+        <td class="task-id">${currentTask.id}</td>
         <td><input type="checkbox" ${currentTask.isDone ? "checked" : ""} ></td>
         <td>${currentTask.group}</td>
         <td>${currentTask.priority}</td>
         <td>${currentTask.details}</td>
         <td>${currentTask.deadline}</td>`;
-    
-    //Hide on narrow screen    
+
+    //Hide on narrow screen
     if (isDescScreen) {
         domSelection.createdAt?.forEach((x) => x.classList.remove("hide-on-small-screen"));
         domSelection.headerWidth.setAttribute("colspan", "8");
@@ -193,7 +215,7 @@ function mapObj2HTML(currentTask) {
 function addNewTask(event) {
     const modalForm = event.target.closest(".modal");
     const newTask = { ...singleTask };
-    newTask.id = tasksArr.length === 0 ? 1 : Math.max(...tasksArr.map((task) => task.id)) + 1;
+    newTask.id = existedTasksArr.length === 0 ? 1 : Math.max(...existedTasksArr.map((task) => task.id)) + 1;
     newTask.isDone = modalForm.querySelector("#task-is-done").checked;
     newTask.group = modalForm.querySelector("#task-group").value.trim() || EMPTY_GROUP;
     newTask.priority = PRIORITY_LOWEST - modalForm.querySelector("#task-priority").value.trim() || PRIORITY_LOWEST;
@@ -201,8 +223,8 @@ function addNewTask(event) {
     newTask.deadline = modalForm.querySelector("#task-deadline").value;
     populateCreatedAt(newTask, LOCAL_EN);
 
-    tasksArr.push(newTask);
-    if (tasksArr.length === 1) {
+    existedTasksArr.push(newTask);
+    if (existedTasksArr.length === 1) {
         enableActivity();
     }
     addObjToTableBody(newTask, true);
@@ -231,7 +253,7 @@ Create and return map of type
 */
 function getExistedGroupsAndTasksNum() {
     const groupsMap = {};
-    tasksArr.forEach((currentTask) => {
+    existedTasksArr.forEach((currentTask) => {
         groupsMap[currentTask.group] = (groupsMap[currentTask.group] || 0) + 1;
     });
 
@@ -239,7 +261,7 @@ function getExistedGroupsAndTasksNum() {
 }
 
 function getExistedGroups() {
-    return new Set(tasksArr.map((task) => task.group));
+    return new Set(existedTasksArr.map((task) => task.group));
 }
 
 function closeModal() {
