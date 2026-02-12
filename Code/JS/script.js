@@ -30,6 +30,7 @@ const singleTask = {
     lastChangedAt: "",
     changes: []
 };
+
 const existedTasksArr = [];
 
 const dom = {
@@ -48,7 +49,9 @@ const dom = {
         group: document.getElementById("task-group"),
         priority: document.getElementById("task-priority"),
         details: document.getElementById("task-details"),
-        deadline: document.getElementById("task-deadline")
+        deadline: document.getElementById("task-deadline"),
+        legend: document.getElementById("modal-legend"),
+        priorityOut: document.getElementById("priority-value")
     }
 };
 
@@ -93,32 +96,23 @@ function handleEditTask() {
 }
 
 function setModalFields(oldTask = null) {
-    const groupInput = document.querySelector("#task-group");
-    const detailsInput = document.querySelector("#task-details");
-    const doneInput = document.querySelector("#task-is-done");
-    const deadlineInput = document.querySelector("#task-deadline");
-    const priorityOut = document.getElementById("priority-value");
-    const defaultTaskPriority = document.getElementById("task-priority");
-    const legend = document.getElementById("modal-legend");
-    const btnName = document.getElementById("");
-
     if (oldTask !== null) {
-        groupInput.value = oldTask.group;
-        detailsInput.value = oldTask.details;
-        doneInput.checked = oldTask.isDone;
-        deadlineInput.value = oldTask.deadline;
-        priorityOut.textContent = oldTask.priority;
-        defaultTaskPriority.value = PRIORITY_LOWEST - oldTask.priority;
-        legend.innerText = "Edit existing task";
+        dom.modal.group.value = oldTask.group;
+        dom.modal.details.value = oldTask.details;
+        dom.modal.isDone.checked = oldTask.isDone;
+        dom.modal.deadline.value = oldTask.deadline;
+        dom.modal.priorityOut.textContent = oldTask.priority;
+        dom.modal.priority.value = PRIORITY_LOWEST - oldTask.priority;
+        dom.modal.legend.innerText = "Edit existing task";
         dom.submitBtn.innerText = "Edit task";
     } else {
-        groupInput.value = "";
-        detailsInput.value = "";
-        doneInput.checked = "";
-        deadlineInput.value = "";
-        priorityOut.textContent = "5";
-        defaultTaskPriority.value = "5";
-        legend.innerText = "Add new task";
+        dom.modal.group.value = "";
+        dom.modal.details.value = "";
+        dom.modal.isDone.checked = "";
+        dom.modal.deadline.value = "";
+        dom.modal.priorityOut.textContent = "5";
+        dom.modal.priority.value = "5";
+        dom.modal.legend.innerText = "Add new task";
         dom.submitBtn.innerText = "Add task";
     }
 }

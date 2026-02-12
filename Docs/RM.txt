@@ -6,10 +6,10 @@
 What supposed to be implemented:
 0) Main windows design = done 
 
-1) Basic functionality for single task: 
+1) Basic functionality for single task: = done
     1.1) add = done
-    1.2) delete
-    1.3) edit 
+    1.2) delete = done
+    1.3) edit = done
 
 2) Tasks group actions:
     2.1) Adding batch of tasks (all the accessable fields)
