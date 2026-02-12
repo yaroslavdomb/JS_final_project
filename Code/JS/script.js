@@ -9,6 +9,10 @@ const LOCAL_EN = "en-US";
 const EMPTY_GROUP = "---";
 const PRIORITY_LOWEST = 10;
 
+let isMobScreen = true;
+let isTabScreen = false;
+let isDescScreen = false;
+
 const singleTask = {
     id: "",
     isDone: false,
@@ -16,7 +20,8 @@ const singleTask = {
     group: "",
     details: "",
     deadline: "",
-    createdAt: ""
+    createdAt: "",
+    changes: []
 };
 const tasksArr = [];
 
@@ -26,22 +31,24 @@ const domSelection = {
     removeBtn: document.querySelectorAll("div.managing .remove"),
     editBtn: document.querySelectorAll("div.managing .edit"),
     body: document.querySelector("tbody"),
-    groupsList: document.querySelector("#groups"),
-    modalWindow: document.querySelector("#modalOverlay")
+    groupsList: document.getElementById("groups"),
+    modalWindow: document.getElementById("modalOverlay"),
+    headerWidth: document.getElementById("full-table-header-width"),
+    createdAt: document.querySelectorAll(".hide-on-small-screen")
 };
 
 function updateResponsiveStyles(isForOneElem = false, elem = null) {
-    const width = window.innerWidth;
     let backgroundColor;
     let myWidth;
 
-    if (width >= MOB_SCREEN_SIZE && width < TABLET_SCREEN_SIZE) {
+    detectScreenSize();
+    if (isMobScreen) {
         backgroundColor = "yellow";
         myWidth = "100%";
-    } else if (width >= TABLET_SCREEN_SIZE && width < LARGE_SCREEN_SIZE) {
+    } else if (isTabScreen) {
         backgroundColor = "aqua";
         myWidth = "90%";
-    } else if (width >= LARGE_SCREEN_SIZE) {
+    } else if (isDescScreen) {
         backgroundColor = "lightblue";
         myWidth = "80%";
     }
@@ -54,6 +61,23 @@ function updateResponsiveStyles(isForOneElem = false, elem = null) {
         elem.setAttribute("style", `background-color:${backgroundColor}`);
     }
     document.documentElement.style.setProperty("--my-width", myWidth);
+}
+
+function detectScreenSize() {
+    const width = window.innerWidth;
+    if (width >= MOB_SCREEN_SIZE && width < TABLET_SCREEN_SIZE) {
+        isMobScreen = true;
+        isTabScreen = false;
+        isDescScreen = false;
+    } else if (width >= TABLET_SCREEN_SIZE && width < LARGE_SCREEN_SIZE) {
+        isMobScreen = false;
+        isTabScreen = true;
+        isDescScreen = false;
+    } else if (width >= LARGE_SCREEN_SIZE) {
+        isMobScreen = false;
+        isTabScreen = false;
+        isDescScreen = true;
+    }
 }
 
 // function searchDone() {
@@ -79,27 +103,49 @@ function updateResponsiveStyles(isForOneElem = false, elem = null) {
 //     done.classList.add("checked");
 // }
 
-function populateFullTableBody() {
+/*
+isNewElemExist: If there is no new element, 
+the function is called due to screen resize, and 
+all elements should be added to the table with new styles.
+
+Otherwise, it adds just a single element, so no redesign is needed.
+*/
+function updateDataOnScreen(isNewElemExist = false) {
+    if (!isNewElemExist) {
+        domSelection.body.innerHTML = "";
+    }
     tasksArr.forEach((currentTask) => addObjToTableBody(currentTask));
+    updateResponsiveStyles();
 }
 
-function addObjToTableBody(currentTask) {
-    const trElem = mapObj2HTML(currentTask);
-    updateResponsiveStyles(true, trElem);
+function addObjToTableBody(task, shouldCallResponsiveStyle = false) {
+    const trElem = mapObj2HTML(task);
+    if (shouldCallResponsiveStyle) {
+        updateResponsiveStyles(true, trElem);
+    }
     domSelection.body.appendChild(trElem);
 }
 
 function mapObj2HTML(currentTask) {
     const trElem = document.createElement("tr");
+
     trElem.innerHTML = `
         <td>${currentTask.id}</td>
         <td><input type="checkbox" ${currentTask.isDone ? "checked" : ""} ></td>
         <td>${currentTask.group}</td>
         <td>${currentTask.priority}</td>
         <td>${currentTask.details}</td>
-        <td>${currentTask.deadline}</td>
-        <td>${currentTask.createdAt}</td>
-        <td></td>`;
+        <td>${currentTask.deadline}</td>`;
+    if (isDescScreen) {
+        domSelection.createdAt?.forEach((x) => x.classList.remove("hide-on-small-screen"));
+        domSelection.headerWidth.setAttribute("colspan", "8");
+        trElem.innerHTML += `<td>${currentTask.createdAt}</td>`;
+    } else {
+        domSelection.createdAt?.forEach((x) => x.classList.add("hide-on-small-screen"));
+        domSelection.headerWidth.setAttribute("colspan", "7");
+    }
+    trElem.innerHTML += `<td></td>`;
+
     return trElem;
 }
 
@@ -124,7 +170,6 @@ function handleManagingAndModalClick(e) {
 
 function addNewTask(event) {
     const modalForm = event.target.closest(".modal");
-
     const newTask = { ...singleTask };
     newTask.id = tasksArr.length === 0 ? 1 : Math.max(...tasksArr.map((task) => task.id)) + 1;
     newTask.isDone = modalForm.querySelector("#task-is-done").checked;
@@ -135,7 +180,7 @@ function addNewTask(event) {
     populateCreatedAt(newTask, LOCAL_EN);
 
     tasksArr.push(newTask);
-    addObjToTableBody(newTask);
+    addObjToTableBody(newTask, true);
 }
 
 function populateCreatedAt(newTask, local = LOCAL_EN) {
@@ -146,14 +191,13 @@ function populateCreatedAt(newTask, local = LOCAL_EN) {
 
     const HH = String(now.getHours()).padStart(2, "0");
     const mm = String(now.getMinutes()).padStart(2, "0");
-    const ss = String(now.getSeconds()).padStart(2, "0");
 
     const offsetMinutes = -now.getTimezoneOffset();
     const sign = offsetMinutes >= 0 ? "+" : "-";
     const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, "0");
     const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, "0");
 
-    newTask.createdAt = `${dd}/${mo}/${yyyy} ${HH}:${mm}:${ss} (${sign}${offsetHours}:${offsetMins} UTC)`;
+    newTask.createdAt = `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
 }
 
 /*
@@ -179,11 +223,11 @@ function closeModal() {
 
 function openModal() {
     domSelection.modalWindow.classList.remove("hidden");
-    clearPreviousData();
+    clearPreviousModalData();
     updateDomWithExistedGroups();
 }
 
-function clearPreviousData() {
+function clearPreviousModalData() {
     const groupInput = document.querySelector("#task-group");
     groupInput.value = "";
 
@@ -215,10 +259,11 @@ function updateDomWithExistedGroups() {
 }
 
 function updatePriorityValue(priorityIn, priorityOut) {
-    priorityOut.textContent = 10 - priorityIn.value;
+    priorityOut.textContent = PRIORITY_LOWEST - priorityIn.value;
 }
 
-window.addEventListener("resize", () => updateResponsiveStyles());
+window.addEventListener("resize", () => updateDataOnScreen());
+
 updateResponsiveStyles();
 
 document.addEventListener("click", (e) => handleManagingAndModalClick(e));
