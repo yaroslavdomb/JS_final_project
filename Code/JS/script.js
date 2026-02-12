@@ -13,6 +13,12 @@ let isMobScreen = true;
 let isTabScreen = false;
 let isDescScreen = false;
 
+const htmlRow = {
+    rowEl: {},
+    idEl: {},
+    id: ""
+};
+
 const singleTask = {
     id: "",
     isDone: false,
@@ -31,6 +37,7 @@ const domSelection = {
     body: document.querySelector("tbody"),
     groupsList: document.getElementById("groups"),
     modalWindow: document.getElementById("modalOverlay"),
+    submitBtn: document.getElementById("submitBtn"),
     headerWidth: document.getElementById("full-table-header-width"),
     createdAt: document.querySelectorAll(".hide-on-small-screen"),
     deactivated: document.querySelectorAll(".hide-if-no-tasks")
@@ -38,7 +45,7 @@ const domSelection = {
 
 function handleTableClick(e) {
     if (e.target.matches("button.editRow")) {
-        //editRow(e);
+        editRow(e);
     } else if (e.target.matches("button.removeRow")) {
         removeRow(e);
     } else if (e.target.matches("button.showRow")) {
@@ -46,13 +53,73 @@ function handleTableClick(e) {
     }
 }
 
+function editRow(event) {
+    getHTMLEl(event);
+    const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
+    prepareModal(true, oldTask);
+    openModal();
+}
+
+function prepareModal(isEditMode, oldTask) {
+    if (isEditMode) {
+        domSelection.submitBtn.dataset.action = "edit";
+    } else {
+        domSelection.submitBtn.dataset.action = "add";
+    }
+
+    if (!oldTask) {
+        setModalFields();
+        updateDomWithExistedGroups();
+    } else {
+        updateDomWithExistedGroups();
+        setModalFields(oldTask);
+    }
+}
+
+function handleEditTask() {}
+
+function setModalFields(oldTask = null) {
+    const groupInput = document.querySelector("#task-group");
+    const detailsInput = document.querySelector("#task-details");
+    const doneInput = document.querySelector("#task-is-done");
+    const deadlineInput = document.querySelector("#task-deadline");
+    const priorityOut = document.getElementById("priority-value");
+    const defaultTaskPriority = document.getElementById("task-priority");
+    const legend = document.getElementById("modal-legend");
+    const btnName = document.getElementById(""); 
+
+    if (oldTask !== null) {
+        groupInput.value = oldTask.group;
+        detailsInput.value = oldTask.details;
+        doneInput.checked = oldTask.isDone;
+        deadlineInput.value = oldTask.deadline;
+        priorityOut.textContent = oldTask.priority;
+        defaultTaskPriority.value = oldTask.priority;        
+        legend.innerText = "Edit existing task";
+        domSelection.submitBtn.innerText = "Edit task"
+    } else {
+        groupInput.value = "";
+        detailsInput.value = "";
+        doneInput.checked = "";
+        deadlineInput.value = "";
+        priorityOut.textContent = "5";
+        defaultTaskPriority.value = "5";
+        legend.innerText = "Add new task";
+        domSelection.submitBtn.innerText = "Add task";
+    }
+}
+
 function removeRow(event) {
-    const rowEl = event.target.closest("tr");
-    const idEl = rowEl.querySelector(".task-id");
-    const id = idEl.innerText;
-    updateTasksStatistics(id, "remove");
-    removeTaskFromExistedTaskArr(id);
-    rowEl.parentNode.removeChild(rowEl);
+    getHTMLEl(event);
+    updateTasksStatistics(htmlRow.id, "remove");
+    removeTaskFromExistedTaskArr(htmlRow.id);
+    htmlRow.rowEl.parentNode.removeChild(htmlRow.rowEl);
+}
+
+function getHTMLEl(event) {
+    htmlRow.rowEl = event.target.closest("tr");
+    htmlRow.idEl = htmlRow.rowEl.querySelector(".task-id");
+    htmlRow.id = htmlRow.idEl.innerText;
 }
 
 function updateTasksStatistics(id, action) {
@@ -70,6 +137,7 @@ function removeTaskFromExistedTaskArr(idToBeRemoved) {
 
 function handleManagingClick(e) {
     if (e.target.matches(".add")) {
+        prepareModal(false);
         openModal();
     } else if (e.target.matches(".remove")) {
         //removeTask(e);
@@ -81,11 +149,19 @@ function handleManagingClick(e) {
 function handleModalClick(e) {
     if (e.target.matches("#submitBtn")) {
         const form = e.target.closest("form");
-        if (form.checkValidity()) {
-            e.preventDefault();
-            addNewTask(e);
-            closeModal();
+        if (!form.checkValidity()) {
+            return;
         }
+
+        e.preventDefault();
+        const action = e.target.dataset.action;
+        if (action === "add") {
+            handleAddNewTask(e);
+        } else {
+            handleEditTask(e);
+        }
+
+        closeModal();
     } else if (e.target.matches("#closeBtn")) {
         closeModal();
     }
@@ -212,7 +288,7 @@ function mapObj2HTML(currentTask) {
     return trElem;
 }
 
-function addNewTask(event) {
+function handleAddNewTask(event) {
     const modalForm = event.target.closest(".modal");
     const newTask = { ...singleTask };
     newTask.id = existedTasksArr.length === 0 ? 1 : Math.max(...existedTasksArr.map((task) => task.id)) + 1;
@@ -270,35 +346,13 @@ function closeModal() {
 
 function openModal() {
     domSelection.modalWindow.classList.remove("hidden");
-    clearPreviousModalData();
-    updateDomWithExistedGroups();
-}
-
-function clearPreviousModalData() {
-    const groupInput = document.querySelector("#task-group");
-    groupInput.value = "";
-
-    const detailsInput = document.querySelector("#task-details");
-    detailsInput.value = "";
-
-    const doneInput = document.querySelector("#task-is-done");
-    doneInput.checked = false;
-
-    const deadlineInput = document.querySelector("#task-deadline");
-    deadlineInput.value = "";
-
-    //slider
-    const priorityOut = document.getElementById("priority-value");
-    priorityOut.textContent = "5";
-    const defaultTaskPriority = document.getElementById("task-priority");
-    defaultTaskPriority.value = "5";
 }
 
 function updateDomWithExistedGroups() {
-    const existedGroups = getExistedGroups();
+    const existingGroups = getExistedGroups();
     let htmlStr = "";
 
-    existedGroups.forEach((group) => {
+    existingGroups.forEach((group) => {
         htmlStr += `<option value="${group}"></option>`;
     });
 

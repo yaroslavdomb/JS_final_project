@@ -14,7 +14,7 @@
                 <button id="closeBtn" class="close-button">&times;</button>
                 <form>
                     <fieldset>
-                        <legend>New Task Data</legend>
+                        <legend id="modal-legend">New Task Data</legend>
                         <div class="form-group">
                             <label for="task-is-done">Done:</label>
                             <input type="checkbox" id="task-is-done" />
@@ -76,7 +76,7 @@
                             <label for="task-deadline">Deadline:</label>
                             <input type="datetime-local" id="task-deadline" required />
                         </div>
-                        <button type="submit" id="submitBtn">Submit</button>
+                        <button type="submit" id="submitBtn" class="hide-only-one">Add task</button>
                     </fieldset>
                 </form>
             </div>
