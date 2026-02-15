@@ -2,7 +2,7 @@
 // Almost = ну почти
 // Just a tiny bit more, and yes = еще совсем немножечко и да
 
-const TEST_MODE_ON = true;
+const TEST_MODE_ON = false;
 
 const test_data = {
     outer_data_size: 5,
@@ -16,10 +16,12 @@ const LOCAL_EN = "en-US";
 const EMPTY_GROUP = "---";
 const PRIORITY_LOWEST = 10;
 
-let isMobScreen = true;
-let isTabScreen = false;
-let isDescScreen = false;
 let tableFieldsCount;
+
+const responsiveDesign = {
+    backgroundColor: "",
+    myWidth: ""
+};
 
 const htmlRow = {
     rowEl: {},
@@ -28,6 +30,7 @@ const htmlRow = {
 };
 
 const singleTask = {
+    select: false,
     id: "",
     isDone: false,
     priority: "",
@@ -36,7 +39,29 @@ const singleTask = {
     deadline: "",
     createdAt: "",
     updatedAt: "",
-    changes: []
+    changes: [],
+    actions: []
+};
+
+const tableColumnsConfig = [
+    { name: "select", colHeader: "select", isVisible: true },
+    { name: "id", colHeader: "ID", isVisible: (visabilityFlags) => !visabilityFlags.isHistoryTable },
+    { name: "isDone", colHeader: "Done", isVisible: true },
+    { name: "priority", colHeader: "Priority", isVisible: true },
+    { name: "group", colHeader: "Group", isVisible: true },
+    { name: "details", colHeader: "Task details", isVisible: true },
+    { name: "deadline", colHeader: "Deadline", isVisible: true },
+    { name: "createdAt", colHeader: "Created At", isVisible: (visabilityFlags) => visabilityFlags.isDescScreen },
+    { name: "updatedAt", colHeader: "Updated At", isVisible: (visabilityFlags) => visabilityFlags.isDescScreen },
+    { name: "changes", colHeader: "Changes", isVisible: false },
+    { name: "actions", colHeader: "Actions", isVisible: (visabilityFlags) => !visabilityFlags.isHistoryTable }
+];
+
+const visabilityFlags = {
+    isMobScreen: true,
+    isTabScreen: false,
+    isDescScreen: false,
+    isHistoryTable: false
 };
 
 const existedTasksArr = [];
@@ -44,7 +69,7 @@ const existedTasksArr = [];
 const dom = {
     rows: document.querySelectorAll("tbody tr"),
     managingBlock: document.querySelectorAll("div.managing"),
-    body: document.getElementById("table-body"),
+    taskTable: document.getElementById("task-table"),
     groupsList: document.getElementById("groups"),
     headerWidth: document.getElementById("full-table-header-width"),
     hideOnNarrow: document.querySelectorAll(".hide-on-narrow-screen"),
@@ -53,7 +78,7 @@ const dom = {
     modal: {
         modalWindow: document.getElementById("modalOverlay"),
         historyModalWindow: document.getElementById("historyModalOverlay"),
-        historyBody: document.getElementById("history-body"),
+        historyTable: document.getElementById("history-table"),
         submitBtn: document.getElementById("submitBtn"),
         isDone: document.getElementById("task-is-done"),
         group: document.getElementById("task-group"),
@@ -78,8 +103,10 @@ function handleTableClick(e) {
 
 function handleShowTaskHistory(event) {
     getHTMLEl(event);
+    visabilityFlags.isHistoryTable = true;
+
     const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
-    updateDataOnScreen(true, oldTask.changes, dom.modal.historyBody);
+    updateDataOnScreen(oldTask.changes, dom.modal.historyTable);
     openHistoryModal();
 }
 
@@ -95,6 +122,7 @@ function handleEditTask(event) {
 function updateTaskHistory() {
     const currentTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
     const historyCopyOfTask = structuredClone(currentTask);
+    historyCopyOfTask.deadline = formatTime(null, LOCAL_EN);
     currentTask.changes.push(historyCopyOfTask);
 }
 
@@ -105,8 +133,8 @@ function handleSaveTask(isEditMode) {
         extractIncomingData(false, oldTask);
         const taskChanged = isTaskChanged(oldTask);
         if (taskChanged) {
-            oldTask.updatedAt = formatTime(LOCAL_EN);
-            updateDataOnScreen(true, existedTasksArr, dom.body);
+            oldTask.updatedAt = formatTime(null, LOCAL_EN);
+            updateRowOnScreen(oldTask, dom.taskTable);
         } else {
             //remove last task image from its history
             oldTask.changes.pop();
@@ -114,14 +142,19 @@ function handleSaveTask(isEditMode) {
     } else {
         const newTask = structuredClone(singleTask);
         extractIncomingData(true, newTask);
-        newTask.createdAt = formatTime(LOCAL_EN);
-
+        newTask.createdAt = formatTime(null, LOCAL_EN);
         existedTasksArr.push(newTask);
         if (existedTasksArr.length === 1) {
             enableActivity();
         }
-        addObjToTableBody(newTask, dom.body, true);
+        addRowToScreen(newTask, dom.taskTable);
     }
+}
+
+function updateRowOnScreen(task, table) {
+    const existingRow = table.querySelector(`tr[data-id="${task.id}"]`);
+    const columnsToShow = getColumnsToShow();
+    buildRowFromTask(task, columnsToShow, existingRow);
 }
 
 function isTaskChanged(currentTask) {
@@ -165,7 +198,7 @@ function setModalFields(oldTask = null) {
         dom.modal.group.value = oldTask.group;
         dom.modal.details.value = oldTask.details;
         dom.modal.isDone.checked = oldTask.isDone;
-        dom.modal.deadline.value = oldTask.deadline;
+        dom.modal.deadline.value = formatForInputDatetime(oldTask.deadline);
         dom.modal.priorityOut.textContent = oldTask.priority;
         dom.modal.priority.value = PRIORITY_LOWEST - oldTask.priority;
         dom.modal.legend.innerText = "Edit existing task";
@@ -182,10 +215,20 @@ function setModalFields(oldTask = null) {
     }
 }
 
+function formatForInputDatetime(taskDate) {
+    const d = new Date(taskDate);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    const HH = String(d.getHours()).padStart(2, "0");
+    const MM = String(d.getMinutes()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}T${HH}:${MM}`;
+}
+
 function getHTMLEl(event) {
     htmlRow.rowEl = event.target.closest("tr");
-    htmlRow.idEl = htmlRow.rowEl.querySelector(".task-id");
-    htmlRow.id = htmlRow.idEl.innerText;
+    htmlRow.id = htmlRow.rowEl.dataset.id;
 }
 
 function updateTasksStatistics(id, action) {
@@ -196,7 +239,7 @@ function removeTaskFromExistedTaskArr(idToBeRemoved) {
     const remainingTasks = existedTasksArr.filter((task) => Number(task.id) !== Number(idToBeRemoved));
     existedTasksArr.length = 0;
     existedTasksArr.push(...remainingTasks);
-    disableActivity();
+    disableMassActivity();
 }
 
 //Redirect clicks in managing section
@@ -229,46 +272,20 @@ function handleModalClick(e) {
     }
 }
 
-function updateResponsiveStyles(isForOneElem = false, elem = null) {
-    let backgroundColor;
-    let myWidth;
-
-    detectScreenSize();
-    if (isMobScreen) {
-        backgroundColor = "yellow";
-        myWidth = "100%";
-    } else if (isTabScreen) {
-        backgroundColor = "aqua";
-        myWidth = "90%";
-    } else if (isDescScreen) {
-        backgroundColor = "lightblue";
-        myWidth = "80%";
-    }
-
-    if (!isForOneElem) {
-        document
-            .querySelectorAll("tbody tr")
-            .forEach((currentRow) => currentRow.setAttribute("style", `background-color:${backgroundColor}`));
-    } else {
-        elem.setAttribute("style", `background-color:${backgroundColor}`);
-    }
-    document.documentElement.style.setProperty("--my-width", myWidth);
-}
-
 function detectScreenSize() {
     const width = window.innerWidth;
     if (width >= MOB_SCREEN_SIZE && width < TABLET_SCREEN_SIZE) {
-        isMobScreen = true;
-        isTabScreen = false;
-        isDescScreen = false;
+        visabilityFlags.isMobScreen = true;
+        visabilityFlags.isTabScreen = false;
+        visabilityFlags.isDescScreen = false;
     } else if (width >= TABLET_SCREEN_SIZE && width < LARGE_SCREEN_SIZE) {
-        isMobScreen = false;
-        isTabScreen = true;
-        isDescScreen = false;
+        visabilityFlags.isMobScreen = false;
+        visabilityFlags.isTabScreen = true;
+        visabilityFlags.isDescScreen = false;
     } else if (width >= LARGE_SCREEN_SIZE) {
-        isMobScreen = false;
-        isTabScreen = false;
-        isDescScreen = true;
+        visabilityFlags.isMobScreen = false;
+        visabilityFlags.isTabScreen = false;
+        visabilityFlags.isDescScreen = true;
     }
 }
 
@@ -279,66 +296,116 @@ all elements should be added to the table with new styles.
 
 Otherwise, it adds just a single element, so no redesign is needed.
 */
-function updateDataOnScreen(buildTableFromScratch, tasksSource, htmlTarget) {
-    if (buildTableFromScratch) {
-        htmlTarget.innerHTML = "";
+function updateDataOnScreen(dataSource, tableForUpdate) {
+    const columnsToShow = getColumnsToShow();
+
+    //header
+    const newTHeader = buildHeader(columnsToShow);
+    const oldThead = tableForUpdate.querySelector("thead");
+    if (oldThead) {
+        oldThead.replaceWith(newTHeader);
     }
-    calculateColumnCount();
-    setResponsiveColumnVisibility();
-    tasksSource.forEach((currentTask) => addObjToTableBody(currentTask, htmlTarget));
-    updateResponsiveStyles();
+
+    //body
+    const newTBody = buildBody(columnsToShow, dataSource);
+    setBodyDesign(newTBody, true);
+    const oldTbody = tableForUpdate.querySelector("tbody");
+    if (oldTbody) {
+        oldTbody.replaceWith(newTBody);
+    }
 }
 
-function setResponsiveColumnVisibility() {
-    if (isDescScreen) {
-        dom.hideOnNarrow?.forEach((x) => x.classList.remove("hide-on-narrow-screen"));
-        dom.headerWidth.setAttribute("colspan", tableFieldsCount);
-    } else {
-        dom.hideOnNarrow?.forEach((x) => x.classList.add("hide-on-narrow-screen"));
-        dom.headerWidth.setAttribute("colspan", tableFieldsCount - 1);
+function getColumnsToShow() {
+    return tableColumnsConfig.filter((col) =>
+        typeof col.isVisible === "function" ? col.isVisible(visabilityFlags) : col.isVisible
+    );
+}
+
+function addRowToScreen(dataSource, tableForUpdate) {
+    const columnsToShow = getColumnsToShow();
+    const oldTbody = tableForUpdate.querySelector("tbody");
+    const newTBody = buildBody(columnsToShow, [dataSource], oldTbody);
+    setBodyDesign(newTBody, false);
+    if (oldTbody) {
+        oldTbody.replaceWith(newTBody);
     }
 }
 
-function addObjToTableBody(task, htmlTarget, shouldCallResponsiveStyle = false) {
-    const isHistoryTable = htmlTarget === dom.modal.historyBody ? true : false;
-    const trElem = mapObj2HTML(task, isHistoryTable);
-    if (shouldCallResponsiveStyle) {
-        updateResponsiveStyles(true, trElem);
-    }
-    htmlTarget.appendChild(trElem);
+function buildHeader(columnsToShow) {
+    const thead = document.createElement("thead");
+    const headerRow = thead.insertRow();
+    columnsToShow.forEach((col) => {
+        const th = document.createElement("th");
+        th.textContent = col.colHeader;
+        headerRow.appendChild(th);
+    });
+
+    return thead;
 }
 
-function mapObj2HTML(task, isHistoryTable) {
-    const trElem = document.createElement("tr");
+//If existingBody != null it means we are going to add a new row to existing table
+function buildBody(columnsToShow, tasksSource, existingBody = null) {
+    const tbody = existingBody ?? document.createElement("tbody");
+    tasksSource.forEach((task) => {
+        const row = buildRowFromTask(task, columnsToShow, null);
+        tbody.appendChild(row);
+    });
+    return tbody;
+}
 
-    trElem.innerHTML = ``;
-    if (!isHistoryTable) {
-        trElem.innerHTML += `<td class="task-id">${task.id}</td>`;
+function buildRowFromTask(task, columnsToShow, existingRow = null) {
+    const row = existingRow ?? document.createElement("tr");
+    row.innerHTML = "";
+    row.dataset.id = task.id;
+
+    columnsToShow.forEach((col) => {
+        const cell = row.insertCell();
+        if (col.name === "actions") {
+            const editBtn = document.createElement("button");
+            editBtn.className = "activity editRow";
+            editBtn.textContent = "+";
+            cell.appendChild(editBtn);
+
+            const removeBtn = document.createElement("button");
+            removeBtn.className = "activity removeRow";
+            removeBtn.textContent = "-";
+            cell.appendChild(removeBtn);
+
+            const showBtn = document.createElement("button");
+            showBtn.className = "activity showRow";
+            showBtn.textContent = "...";
+            cell.appendChild(showBtn);
+        } else if (col.name === "isDone" || col.name === "select") {
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = !!task[col.name];
+            if (visabilityFlags.isHistoryTable) checkbox.disabled = true;
+            cell.appendChild(checkbox);
+        } else {
+            cell.textContent = task[col.name];
+        }
+    });
+
+    return row;
+}
+
+function setBodyDesign(element, isScreenChanged) {
+    if (isScreenChanged) {
+        detectScreenSize();
+        if (visabilityFlags.isMobScreen) {
+            responsiveDesign.backgroundColor = "yellow";
+            responsiveDesign.myWidth = "100%";
+        } else if (visabilityFlags.isTabScreen) {
+            responsiveDesign.backgroundColor = "aqua";
+            responsiveDesign.myWidth = "90%";
+        } else if (visabilityFlags.isDescScreen) {
+            responsiveDesign.backgroundColor = "lightblue";
+            responsiveDesign.myWidth = "80%";
+        }
     }
 
-    trElem.innerHTML += `
-        <td><input type="checkbox" ${task.isDone ? "checked" : ""} ></td>
-        <td>${task.group}</td>
-        <td>${task.priority}</td>
-        <td>${task.details}</td>
-        <td>${task.deadline}</td>`;
-
-    //Display/hide columns depend on screen size
-    if (isDescScreen) {
-        trElem.innerHTML += `<td>${task.createdAt}</td>`;
-        trElem.innerHTML += `<td>${task.updatedAt}</td>`;
-    }
-
-    //Add available actions
-    if (!isHistoryTable) {
-        trElem.innerHTML += `<td>
-                <button class="activity editRow">+</button>
-                <button class="activity removeRow">-</button>
-                <button class="activity showRow">...</button>
-            </td>`;
-    }
-
-    return trElem;
+    element.setAttribute("style", `background-color:${responsiveDesign.backgroundColor}`);
+    document.documentElement.style.setProperty("--my-width", responsiveDesign.myWidth);
 }
 
 function extractIncomingData(shouldCreateNewId, task) {
@@ -349,12 +416,14 @@ function extractIncomingData(shouldCreateNewId, task) {
     task.group = dom.modal.group.value.trim() || EMPTY_GROUP;
     task.priority = PRIORITY_LOWEST - dom.modal.priority.value.trim();
     task.details = dom.modal.details.value;
-    task.deadline = dom.modal.deadline.value;
+    task.deadline = formatTime(dom.modal.deadline.value, LOCAL_EN);
 }
 
 //If it's marked as newTask, the field "createdAt" will be updated; otherwise, "updatedAt" will be updated.
-function formatTime(local = LOCAL_EN) {
-    const now = new Date();
+function formatTime(timeToConvert, local = LOCAL_EN) {
+    const now = timeToConvert === null ? new Date() : new Date(timeToConvert);
+    if (isNaN(now)) return;
+
     const dd = String(now.getDate()).padStart(2, "0");
     const mo = new Intl.DateTimeFormat(local, { month: "short" }).format(now);
     const yyyy = String(now.getFullYear());
@@ -385,6 +454,7 @@ function getExistedGroups() {
 }
 
 function closeHistoryModal() {
+    visabilityFlags.isHistoryTable = false;
     dom.modal.historyModalWindow.classList.add("hidden");
 }
 
@@ -415,7 +485,7 @@ function updatePriorityValue(priorityIn, priorityOut) {
     priorityOut.textContent = PRIORITY_LOWEST - priorityIn.value;
 }
 
-function disableActivity() {
+function disableMassActivity() {
     if (existedTasksArr.length === 0) {
         dom.deactivated.forEach((el) => {
             el.setAttribute("disabled", "");
@@ -440,9 +510,7 @@ function handleHistoryModalClick(e) {
     }
 }
 
-updateResponsiveStyles();
-
-window.addEventListener("resize", () => updateDataOnScreen(true, existedTasksArr, dom.body));
+window.addEventListener("resize", () => updateDataOnScreen(existedTasksArr, dom.taskTable));
 
 //Update selected priority value in the middle window
 document.addEventListener("DOMContentLoaded", () => {
@@ -453,14 +521,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const priorityInput = document.getElementById("task-priority");
     const priorityOutput = document.getElementById("priority-value");
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
-    disableActivity();
-    updateDataOnScreen(true, existedTasksArr, dom.body);
+    disableMassActivity();
+    detectScreenSize();
+    updateDataOnScreen(existedTasksArr, dom.taskTable);
     closeModal();
     closeHistoryModal();
 });
 
 //Add click listeners
-dom.body.addEventListener("click", handleTableClick);
+dom.taskTable.addEventListener("click", handleTableClick);
 dom.managingBlock.forEach((block) => {
     block.addEventListener("click", handleManagingClick);
 });
@@ -480,6 +549,7 @@ function createTestTasks(taskLimit, keepTaskDetails) {
     const testTaskArr = [];
     for (let i = 0; i < taskLimit; i++) {
         const newTestTask = structuredClone(singleTask);
+        newTestTask.select = Math.floor(Math.random() * 10) >= 5;
         newTestTask.id = i + 1;
         newTestTask.isDone = Math.floor(Math.random() * 10) >= 5;
         newTestTask.group = "test group" + Math.floor(Math.random() * 10);
@@ -490,9 +560,9 @@ function createTestTasks(taskLimit, keepTaskDetails) {
             newTestTask.details = "task details for " + i;
         }
 
-        newTestTask.deadline = formatTime(LOCAL_EN);
-        newTestTask.createdAt = formatTime(LOCAL_EN);
-        newTestTask.updatedAt = formatTime(LOCAL_EN);
+        newTestTask.deadline = formatTime(null, LOCAL_EN);
+        newTestTask.createdAt = formatTime(null, LOCAL_EN);
+        newTestTask.updatedAt = formatTime(null, LOCAL_EN);
         testTaskArr.push(newTestTask);
     }
     return testTaskArr;

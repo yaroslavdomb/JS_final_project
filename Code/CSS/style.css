@@ -54,15 +54,6 @@ div.managing {
     gap: 0.5rem;
 }
 
-.hide-on-narrow-screen {
-    display: none;
-}
-
-button {
-    /* border-color: purple; */
-    /* all: unset; */
-}
-
 .activity {
     font-size: 1.3rem;
     width: 1.5rem;

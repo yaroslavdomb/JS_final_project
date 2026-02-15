@@ -91,17 +91,23 @@
                         <table id="history-table">
                             <thead>
                                 <tr class="column-header">
+                                    <th>Select</th>
+                                    <th>ID</th>
                                     <th>Done</th>
                                     <th>Task group</th>
                                     <th>Priority</th>
-                                    <th>Task detailes</th>
+                                    <th>Task details</th>
                                     <th>Dead line</th>
-                                    <th class="hide-on-narrow-screen">Created at</th>
-                                    <th class="hide-on-narrow-screen">Updated at</th>
+                                    <th>Created at</th>
+                                    <th>Updated at</th>
                                 </tr>
                             </thead>
                             <tbody id="history-body">
                                 <tr>
+                                    <td>
+                                        <input type="checkbox" />
+                                    </td>
+                                    <td>10</td>
                                     <td>
                                         <input type="checkbox" />
                                     </td>
@@ -126,25 +132,29 @@
             <button class="edit hide-if-no-tasks">Edit selected task(s)</button>
         </div>
 
-        <table>
+        <table id="task-table">
             <thead>
                 <tr class="full-table-header">
                     <th colspan="9" id="full-table-header-width">Things to do</th>
                 </tr>
                 <tr class="column-header">
+                    <th>select</th>
                     <th>#</th>
                     <th>Done</th>
                     <th>Task group</th>
                     <th>Priority</th>
-                    <th>Task detailes</th>
-                    <th>Dead line</th>
-                    <th class="hide-on-narrow-screen">Created at</th>
-                    <th class="hide-on-narrow-screen">Updated at</th>
+                    <th>Task details</th>
+                    <th>Deadline</th>
+                    <th>Created at</th>
+                    <th>Updated at</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="table-body">
                 <tr>
+                    <td>
+                        <input type="checkbox" />
+                    </td>
                     <td class="task-id">1</td>
                     <td>
                         <input type="checkbox" />
@@ -165,14 +175,15 @@
             <tfoot>
                 <!-- statistic block -->
                 <tr class="column-header">
+                    <th>Select</th>
                     <th>#</th>
                     <th>Done</th>
                     <th>Groups</th>
                     <th>Priority</th>
                     <th>Task detailes</th>
                     <th>Dead line</th>
-                    <th class="hide-on-narrow-screen">Created at</th>
-                    <th class="hide-on-narrow-screen">Updated at</th>
+                    <th>Created at</th>
+                    <th>Updated at</th>
                     <th>Actions</th>
                 </tr>
             </tfoot>
