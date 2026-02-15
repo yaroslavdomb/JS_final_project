@@ -2,6 +2,13 @@
 // Almost = ну почти
 // Just a tiny bit more, and yes = еще совсем немножечко и да
 
+const TEST_MODE_ON = true;
+
+const test_data = {
+    outer_data_size: 5,
+    inner_data_size: 6
+};
+
 const MOB_SCREEN_SIZE = 340;
 const TABLET_SCREEN_SIZE = 750;
 const LARGE_SCREEN_SIZE = 1280;
@@ -37,15 +44,17 @@ const existedTasksArr = [];
 const dom = {
     rows: document.querySelectorAll("tbody tr"),
     managingBlock: document.querySelectorAll("div.managing"),
-    body: document.querySelector("tbody"),
+    body: document.getElementById("table-body"),
     groupsList: document.getElementById("groups"),
-    modalWindow: document.getElementById("modalOverlay"),
-    submitBtn: document.getElementById("submitBtn"),
     headerWidth: document.getElementById("full-table-header-width"),
     hideOnNarrow: document.querySelectorAll(".hide-on-narrow-screen"),
     deactivated: document.querySelectorAll(".hide-if-no-tasks"),
 
     modal: {
+        modalWindow: document.getElementById("modalOverlay"),
+        historyModalWindow: document.getElementById("historyModalOverlay"),
+        historyBody: document.getElementById("history-body"),
+        submitBtn: document.getElementById("submitBtn"),
         isDone: document.getElementById("task-is-done"),
         group: document.getElementById("task-group"),
         priority: document.getElementById("task-priority"),
@@ -63,17 +72,30 @@ function handleTableClick(e) {
     } else if (e.target.matches("button.removeRow")) {
         handleRemoveTask(e);
     } else if (e.target.matches("button.showRow")) {
-        //showRowHistory(e);
+        handleShowTaskHistory(e);
     }
+}
+
+function handleShowTaskHistory(event) {
+    getHTMLEl(event);
+    const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
+    updateDataOnScreen(true, oldTask.changes, dom.modal.historyBody);
+    openHistoryModal();
 }
 
 // Click on edit button in the table row
 function handleEditTask(event) {
     getHTMLEl(event);
     //TODO: updateTasksStatistics(htmlRow.id, "edit");
-    //TODO: updateTaskHistory(htmlRow.id);
+    updateTaskHistory();
     prepareModal(true);
     openModal();
+}
+
+function updateTaskHistory() {
+    const currentTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
+    const historyCopyOfTask = structuredClone(currentTask);
+    currentTask.changes.push(historyCopyOfTask);
 }
 
 //Click in the modal window to save the data after adding or editing a task
@@ -81,19 +103,40 @@ function handleSaveTask(isEditMode) {
     if (isEditMode) {
         const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
         extractIncomingData(false, oldTask);
-        formatAndPopulateTime(oldTask, false, LOCAL_EN);
-        updateDataOnScreen(true);
+        const taskChanged = isTaskChanged(oldTask);
+        if (taskChanged) {
+            oldTask.updatedAt = formatTime(LOCAL_EN);
+            updateDataOnScreen(true, existedTasksArr, dom.body);
+        } else {
+            //remove last task image from its history
+            oldTask.changes.pop();
+        }
     } else {
-        const newTask = { ...singleTask };
+        const newTask = structuredClone(singleTask);
         extractIncomingData(true, newTask);
-        formatAndPopulateTime(newTask, true, LOCAL_EN);
+        newTask.createdAt = formatTime(LOCAL_EN);
 
         existedTasksArr.push(newTask);
         if (existedTasksArr.length === 1) {
             enableActivity();
         }
-        addObjToTableBody(newTask, true);
+        addObjToTableBody(newTask, dom.body, true);
     }
+}
+
+function isTaskChanged(currentTask) {
+    const historyTaskCopy = currentTask.changes[currentTask.changes.length - 1];
+    if (
+        currentTask.isDone !== historyTaskCopy.isDone ||
+        currentTask.priority !== historyTaskCopy.priority ||
+        currentTask.group !== historyTaskCopy.group ||
+        currentTask.details !== historyTaskCopy.details ||
+        currentTask.deadline !== historyTaskCopy.deadline
+    ) {
+        return true;
+    }
+
+    return false;
 }
 
 // Click on remove button in the table row
@@ -106,12 +149,12 @@ function handleRemoveTask(event) {
 
 function prepareModal(isEditMode) {
     if (isEditMode) {
-        dom.submitBtn.dataset.action = "edit";
+        dom.modal.submitBtn.dataset.action = "edit";
         const oldTask = existedTasksArr.find((task) => Number(htmlRow.id) === Number(task.id));
         updateDomWithExistedGroups();
         setModalFields(oldTask);
     } else {
-        dom.submitBtn.dataset.action = "add";
+        dom.modal.submitBtn.dataset.action = "add";
         setModalFields();
         updateDomWithExistedGroups();
     }
@@ -126,7 +169,7 @@ function setModalFields(oldTask = null) {
         dom.modal.priorityOut.textContent = oldTask.priority;
         dom.modal.priority.value = PRIORITY_LOWEST - oldTask.priority;
         dom.modal.legend.innerText = "Edit existing task";
-        dom.submitBtn.innerText = "Edit task";
+        dom.modal.submitBtn.innerText = "Edit task";
     } else {
         dom.modal.group.value = "";
         dom.modal.details.value = "";
@@ -135,7 +178,7 @@ function setModalFields(oldTask = null) {
         dom.modal.priorityOut.textContent = "5";
         dom.modal.priority.value = "5";
         dom.modal.legend.innerText = "Add new task";
-        dom.submitBtn.innerText = "Add task";
+        dom.modal.submitBtn.innerText = "Add task";
     }
 }
 
@@ -153,9 +196,7 @@ function removeTaskFromExistedTaskArr(idToBeRemoved) {
     const remainingTasks = existedTasksArr.filter((task) => Number(task.id) !== Number(idToBeRemoved));
     existedTasksArr.length = 0;
     existedTasksArr.push(...remainingTasks);
-    if (existedTasksArr.length === 0) {
-        disableActivity();
-    }
+    disableActivity();
 }
 
 //Redirect clicks in managing section
@@ -238,13 +279,13 @@ all elements should be added to the table with new styles.
 
 Otherwise, it adds just a single element, so no redesign is needed.
 */
-function updateDataOnScreen(buildTableFromScratch) {
+function updateDataOnScreen(buildTableFromScratch, tasksSource, htmlTarget) {
     if (buildTableFromScratch) {
-        dom.body.innerHTML = "";
+        htmlTarget.innerHTML = "";
     }
     calculateColumnCount();
     setResponsiveColumnVisibility();
-    existedTasksArr.forEach((currentTask) => addObjToTableBody(currentTask));
+    tasksSource.forEach((currentTask) => addObjToTableBody(currentTask, htmlTarget));
     updateResponsiveStyles();
 }
 
@@ -258,38 +299,44 @@ function setResponsiveColumnVisibility() {
     }
 }
 
-function addObjToTableBody(task, shouldCallResponsiveStyle = false) {
-    const trElem = mapObj2HTML(task);
+function addObjToTableBody(task, htmlTarget, shouldCallResponsiveStyle = false) {
+    const isHistoryTable = htmlTarget === dom.modal.historyBody ? true : false;
+    const trElem = mapObj2HTML(task, isHistoryTable);
     if (shouldCallResponsiveStyle) {
         updateResponsiveStyles(true, trElem);
     }
-    dom.body.appendChild(trElem);
+    htmlTarget.appendChild(trElem);
 }
 
-function mapObj2HTML(currentTask) {
+function mapObj2HTML(task, isHistoryTable) {
     const trElem = document.createElement("tr");
 
-    trElem.innerHTML = `
-        <td class="task-id">${currentTask.id}</td>
-        <td><input type="checkbox" ${currentTask.isDone ? "checked" : ""} ></td>
-        <td>${currentTask.group}</td>
-        <td>${currentTask.priority}</td>
-        <td>${currentTask.details}</td>
-        <td>${currentTask.deadline}</td>`;
+    trElem.innerHTML = ``;
+    if (!isHistoryTable) {
+        trElem.innerHTML += `<td class="task-id">${task.id}</td>`;
+    }
+
+    trElem.innerHTML += `
+        <td><input type="checkbox" ${task.isDone ? "checked" : ""} ></td>
+        <td>${task.group}</td>
+        <td>${task.priority}</td>
+        <td>${task.details}</td>
+        <td>${task.deadline}</td>`;
 
     //Display/hide columns depend on screen size
     if (isDescScreen) {
-        trElem.innerHTML += `<td>${currentTask.createdAt}</td>`;
-        trElem.innerHTML += `<td>${currentTask.updatedAt}</td>`;
+        trElem.innerHTML += `<td>${task.createdAt}</td>`;
+        trElem.innerHTML += `<td>${task.updatedAt}</td>`;
     }
 
     //Add available actions
-    trElem.innerHTML += `
-    <td>
-        <button class="activity editRow">+</button>
-        <button class="activity removeRow">-</button>
-        <button class="activity showRow">...</button>
-    </td>`;
+    if (!isHistoryTable) {
+        trElem.innerHTML += `<td>
+                <button class="activity editRow">+</button>
+                <button class="activity removeRow">-</button>
+                <button class="activity showRow">...</button>
+            </td>`;
+    }
 
     return trElem;
 }
@@ -305,7 +352,8 @@ function extractIncomingData(shouldCreateNewId, task) {
     task.deadline = dom.modal.deadline.value;
 }
 
-function formatAndPopulateTime(task, isNewTask = true, local = LOCAL_EN) {
+//If it's marked as newTask, the field "createdAt" will be updated; otherwise, "updatedAt" will be updated.
+function formatTime(local = LOCAL_EN) {
     const now = new Date();
     const dd = String(now.getDate()).padStart(2, "0");
     const mo = new Intl.DateTimeFormat(local, { month: "short" }).format(now);
@@ -318,10 +366,8 @@ function formatAndPopulateTime(task, isNewTask = true, local = LOCAL_EN) {
     const sign = offsetMinutes >= 0 ? "+" : "-";
     const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, "0");
     const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, "0");
-    if (isNewTask) {
-        task.createdAt = `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
-    }
-    task.updatedAt = `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
+
+    return `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
 }
 
 //Create and return map of type {group_name : num_of_tasks_in_the_group}
@@ -338,12 +384,20 @@ function getExistedGroups() {
     return new Set(existedTasksArr.map((task) => task.group));
 }
 
+function closeHistoryModal() {
+    dom.modal.historyModalWindow.classList.add("hidden");
+}
+
 function closeModal() {
-    dom.modalWindow.classList.add("hidden");
+    dom.modal.modalWindow.classList.add("hidden");
+}
+
+function openHistoryModal() {
+    dom.modal.historyModalWindow.classList.remove("hidden");
 }
 
 function openModal() {
-    dom.modalWindow.classList.remove("hidden");
+    dom.modal.modalWindow.classList.remove("hidden");
 }
 
 function updateDomWithExistedGroups() {
@@ -362,9 +416,11 @@ function updatePriorityValue(priorityIn, priorityOut) {
 }
 
 function disableActivity() {
-    dom.deactivated.forEach((el) => {
-        el.setAttribute("disabled", "");
-    });
+    if (existedTasksArr.length === 0) {
+        dom.deactivated.forEach((el) => {
+            el.setAttribute("disabled", "");
+        });
+    }
 }
 
 function enableActivity() {
@@ -377,18 +433,30 @@ function calculateColumnCount() {
     tableFieldsCount = Object.keys(singleTask).length;
 }
 
+function handleHistoryModalClick(e) {
+    if (e.target.matches("#historySubmitBtn") || e.target.matches("#historyCloseBtn")) {
+        e.preventDefault();
+        closeHistoryModal();
+    }
+}
+
 updateResponsiveStyles();
 
-window.addEventListener("resize", () => updateDataOnScreen(true));
+window.addEventListener("resize", () => updateDataOnScreen(true, existedTasksArr, dom.body));
 
 //Update selected priority value in the middle window
 document.addEventListener("DOMContentLoaded", () => {
+    if (TEST_MODE_ON) {
+        populateWithTestData();
+    }
+
     const priorityInput = document.getElementById("task-priority");
     const priorityOutput = document.getElementById("priority-value");
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
     disableActivity();
-    updateDataOnScreen(true);
+    updateDataOnScreen(true, existedTasksArr, dom.body);
     closeModal();
+    closeHistoryModal();
 });
 
 //Add click listeners
@@ -396,7 +464,40 @@ dom.body.addEventListener("click", handleTableClick);
 dom.managingBlock.forEach((block) => {
     block.addEventListener("click", handleManagingClick);
 });
-dom.modalWindow.addEventListener("click", handleModalClick);
+dom.modal.modalWindow.addEventListener("click", handleModalClick);
+dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
+
+//************************************************************************
+//TEST SECTION
+function populateWithTestData() {
+    existedTasksArr.push(...createTestTasks(test_data.outer_data_size, null));
+    for (let i = 0; i < test_data.outer_data_size; i++) {
+        existedTasksArr[i].changes.push(...createTestTasks(test_data.inner_data_size, existedTasksArr[i].details));
+    }
+}
+
+function createTestTasks(taskLimit, keepTaskDetails) {
+    const testTaskArr = [];
+    for (let i = 0; i < taskLimit; i++) {
+        const newTestTask = structuredClone(singleTask);
+        newTestTask.id = i + 1;
+        newTestTask.isDone = Math.floor(Math.random() * 10) >= 5;
+        newTestTask.group = "test group" + Math.floor(Math.random() * 10);
+        newTestTask.priority = Math.floor(Math.random() * 10);
+        if (keepTaskDetails !== null) {
+            newTestTask.details = keepTaskDetails;
+        } else {
+            newTestTask.details = "task details for " + i;
+        }
+
+        newTestTask.deadline = formatTime(LOCAL_EN);
+        newTestTask.createdAt = formatTime(LOCAL_EN);
+        newTestTask.updatedAt = formatTime(LOCAL_EN);
+        testTaskArr.push(newTestTask);
+    }
+    return testTaskArr;
+}
+//************************************************************************
 
 // function searchDone() {
 //     const doneTasks = Array.from(domSelection.rows).filter((currentRow) => isRowDone(currentRow));

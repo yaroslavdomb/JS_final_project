@@ -82,11 +82,50 @@
             </div>
         </div>
 
+        <div class="history-modal-overlay" id="historyModalOverlay">
+            <div class="history-modal">
+                <button id="historyCloseBtn" class="history-close-button">&times;</button>
+                <form>
+                    <fieldset>
+                        <legend id="history-modal-legend">Task' changes</legend>
+                        <table id="history-table">
+                            <thead>
+                                <tr class="column-header">
+                                    <th>Done</th>
+                                    <th>Task group</th>
+                                    <th>Priority</th>
+                                    <th>Task detailes</th>
+                                    <th>Dead line</th>
+                                    <th class="hide-on-narrow-screen">Created at</th>
+                                    <th class="hide-on-narrow-screen">Updated at</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-body">
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" />
+                                    </td>
+                                    <td>Home</td>
+                                    <td>1</td>
+                                    <td>Create first task and put it into the DB</td>
+                                    <td>9/Feb/2019 10:56 (Isr TZ)</td>
+                                    <td>9/Mar/2026 10:56 (Isr TZ)</td>
+                                    <td>22/Jun/2028 22:12 (Isr TZ)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="submit" id="historySubmitBtn">Close history</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
         <div class="managing">
             <button class="add">Add new task</button>
             <button class="remove hide-if-no-tasks">Remove selected task(s)</button>
             <button class="edit hide-if-no-tasks">Edit selected task(s)</button>
         </div>
+
         <table>
             <thead>
                 <tr class="full-table-header">
@@ -104,7 +143,7 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="table-body">
                 <tr>
                     <td class="task-id">1</td>
                     <td>

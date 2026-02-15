@@ -9,6 +9,11 @@ table {
     width: var(--my-width);
 }
 
+table#history-table {
+    width: calc(var(--my-width) + 20%);
+    border: none;
+}
+
 thead tr,
 thead th {
     border: 0.2rem solid black;

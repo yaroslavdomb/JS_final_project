@@ -1,3 +1,4 @@
+.history-modal-overlay,
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -11,8 +12,18 @@
     z-index: 1000;
 }
 
+.history-modal-overlay.hidden,
 .modal-overlay.hidden {
     display: none;
+}
+
+.history-modal {
+    position: relative;
+    width: 83%;
+    background: rgb(128, 193, 227);
+    padding: 2.5rem 0.5rem 1rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
 .modal {
@@ -24,6 +35,7 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
+.history-close-button, 
 .close-button {
     position: absolute;
     top: 0.7rem;
@@ -38,6 +50,7 @@
     border-radius: 0.3rem;
 }
 
+.history-close-button:hover, 
 .close-button:hover {
     background: rgb(30, 102, 135);
 }
@@ -81,9 +94,10 @@ legend {
     margin-right: auto;
 }
 
+#historySubmitBtn,
 #submitBtn {
     width: auto;
-    min-width: 20%;
+    min-width: 10%;
     padding: 0.5rem 1rem;
     align-self: flex-end;
     cursor: pointer;
@@ -91,10 +105,10 @@ legend {
     border-radius: 0.5rem;
 }
 
+#historySubmitBtn:hover,
 #submitBtn:hover {
     background: rgb(37, 192, 114);
 }
-
 
 .slider-row {
     display: flex;
