@@ -1,6 +1,10 @@
-// I wish I could say yes  = хотел бы я сказать что да
+Task// I wish I could say yes  = хотел бы я сказать что да
 // Almost = ну почти
 // Just a tiny bit more, and yes = еще совсем немножечко и да
+
+import { Task } from "./Task.js";
+import { TaskManager } from "./TaskManager.js";
+import { formatTime, LOCAL_EN } from "./helper.js";
 
 const TEST_MODE_ON = true;
 
@@ -12,11 +16,9 @@ const test_data = {
 const MOB_SCREEN_SIZE = 340;
 const TABLET_SCREEN_SIZE = 750;
 const LARGE_SCREEN_SIZE = 1280;
-const LOCAL_EN = "en-US";
+
 const EMPTY_GROUP = "---";
 const PRIORITY_LOWEST = 10;
-
-let tableFieldsCount;
 
 const responsiveDesign = {
     backgroundColor: "",
@@ -27,20 +29,6 @@ const htmlRow = {
     rowEl: {},
     idEl: {},
     id: ""
-};
-
-const singleTask = {
-    select: false,
-    id: "",
-    isDone: false,
-    priority: "",
-    group: "",
-    details: "",
-    deadline: "",
-    createdAt: "",
-    updatedAt: "",
-    changes: [],
-    actions: []
 };
 
 const tableColumnsConfig = [
@@ -63,99 +51,6 @@ const visabilityFlags = {
     isDescScreen: false,
     isHistoryTable: false
 };
-
-class TaskManager {
-    #existedTasks = [];
-
-    constructor(initialTasks = []) {
-        this.#existedTasks = initialTasks.map((task) => structuredClone(task));
-    }
-
-    getMaxId() {
-        return this.#existedTasks.length === 0 ? 0 : Math.max(...this.#existedTasks.map((task) => task.id));
-    }
-
-    isEmpty() {
-        return this.#existedTasks.length === 0;
-    }
-
-    addTask(task) {
-        const newTask = structuredClone(task);
-        newTask.id = this.getMaxId() + 1;
-        newTask.createdAt = formatTime(null, LOCAL_EN);
-        this.#existedTasks.push(newTask);
-
-        return newTask;
-    }
-
-    getTaskById(id) {
-        return this.#existedTasks.find((task) => Number(id) === Number(task.id));
-    }
-
-    getIndexById(id) {
-        return this.#existedTasks.findIndex((task) => Number(task.id) === Number(id));
-    }
-
-    updateTask(id, newTask) {
-        const oldTaskIndex = this.getIndexById(id);
-        if (oldTaskIndex < 0) return;
-
-        const copyForHistory = { ...this.#existedTasks[oldTaskIndex] };
-        copyForHistory.changes = [];
-        copyForHistory.actions = [];
-
-        this.#existedTasks[oldTaskIndex].changes.push(copyForHistory);
-        Object.keys(newTask).forEach((key) => {
-            this.#existedTasks[oldTaskIndex][key] = newTask[key];
-        });
-        this.#existedTasks[oldTaskIndex].updatedAt = formatTime(null, LOCAL_EN);
-
-        return this.#existedTasks[oldTaskIndex];
-    }
-
-    removeTaskById(id) {
-        const oldTaskIndex = this.getIndexById(id);
-        if (oldTaskIndex < 0) return;
-
-        return this.#existedTasks.splice(oldTaskIndex, 1)[0];
-    }
-
-    getExistingGroups() {
-        return new Set(this.#existedTasks.map((task) => task.group));
-    }
-
-    //Create and return map of type {group_name : num_of_tasks_in_the_group}
-    getExistingGroupsAndCount() {
-        const groupAndCount = {};
-        this.#existedTasks.forEach((task) => {
-            groupAndCount[task.group] = (groupAndCount[task.group] || 0) + 1;
-        });
-        return groupAndCount;
-    }
-
-    getAllExceptOne(id) {
-        return this.#existedTasks.filter((task) => Number(task.id) !== Number(id));
-    }
-
-    //dataSource is single element/array of Single tasks
-    updateTaskHistoryById(id, dataSource) {
-        const task = this.getTaskById(id);
-        if (!task) return;
-        if (!Array.isArray(dataSource)) {
-            task.changes.push(dataSource);
-        } else {
-            dataSource.forEach((t) => task.changes.push(t));
-        }
-    }
-
-    getAllTasks() {
-        return structuredClone(this.#existedTasks);
-    }
-
-    clearAllTasks() {
-        this.#existedTasks = [];
-    }
-}
 
 const taskManager = new TaskManager();
 
@@ -233,7 +128,7 @@ function handleSaveTask(isEditMode) {
             oldTask.changes.pop();
         }
     } else {
-        const newTask = structuredClone(singleTask);
+        const newTask = new Task();
         extractIncomingData(true, newTask);
         newTask.createdAt = formatTime(null, LOCAL_EN);
         taskManager.addTask(newTask);
@@ -383,7 +278,6 @@ function updateDataOnScreen(dataSource, tableForUpdate) {
     const columnsToShow = getColumnsToShow();
 
     //header
-
     const newTHeader = buildHeader(columnsToShow);
     const oldThead = tableForUpdate.querySelector("thead");
     if (oldThead) {
@@ -417,7 +311,7 @@ function addRowToScreen(dataSource, tableForUpdate) {
 
 function buildHeader(columnsToShow) {
     const thead = document.createElement("thead");
-    
+
     if (!visabilityFlags.isHistoryTable) {
         const headerRow_mainHeader = thead.insertRow();
         headerRow_mainHeader.setAttribute("class", "full-table-header");
@@ -427,7 +321,7 @@ function buildHeader(columnsToShow) {
         th_main.textContent = "Things to do";
         headerRow_mainHeader.appendChild(th_main);
     }
-    
+
     const headerRow_headers = thead.insertRow();
     columnsToShow.forEach((col) => {
         const th = document.createElement("th");
@@ -515,24 +409,7 @@ function extractIncomingData(shouldCreateNewId, task) {
     task.deadline = formatTime(dom.modal.deadline.value, LOCAL_EN);
 }
 
-//If it's marked as newTask, the field "createdAt" will be updated; otherwise, "updatedAt" will be updated.
-function formatTime(timeToConvert, local = LOCAL_EN) {
-    const now = timeToConvert === null ? new Date() : new Date(timeToConvert);
 
-    const dd = String(now.getDate()).padStart(2, "0");
-    const mo = new Intl.DateTimeFormat(local, { month: "short" }).format(now);
-    const yyyy = String(now.getFullYear());
-
-    const HH = String(now.getHours()).padStart(2, "0");
-    const mm = String(now.getMinutes()).padStart(2, "0");
-
-    const offsetMinutes = -now.getTimezoneOffset();
-    const sign = offsetMinutes >= 0 ? "+" : "-";
-    const offsetHours = String(Math.floor(Math.abs(offsetMinutes) / 60)).padStart(2, "0");
-    const offsetMins = String(Math.abs(offsetMinutes) % 60).padStart(2, "0");
-
-    return `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
-}
 
 function closeHistoryModal() {
     visabilityFlags.isHistoryTable = false;
@@ -578,10 +455,6 @@ function enableActivity() {
     dom.deactivated.forEach((el) => {
         el.removeAttribute("disabled");
     });
-}
-
-function calculateColumnCount() {
-    tableFieldsCount = Object.keys(singleTask).length;
 }
 
 function handleHistoryModalClick(e) {
@@ -630,7 +503,7 @@ function populateWithTestData() {
 function createTestTasks(taskLimit, keepTaskDetails) {
     const testTaskArr = [];
     for (let i = 0; i < taskLimit; i++) {
-        const newTestTask = structuredClone(singleTask);
+        const newTestTask = new Task();
         newTestTask.select = Math.floor(Math.random() * 10) >= 5;
         newTestTask.id = i + 1;
         newTestTask.isDone = Math.floor(Math.random() * 10) >= 5;
