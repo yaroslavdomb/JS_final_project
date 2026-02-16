@@ -1,24 +1,16 @@
-// I wish I could say yes  = хотел бы я сказать что да
-// Almost = ну почти
-// Just a tiny bit more, and yes = еще совсем немножечко и да
-
 import { Task } from "./Task.js";
 import { TaskManager } from "./TaskManager.js";
 import { formatTime, LOCAL_EN } from "./helper.js";
+import { populateWithTestData } from "./testing.js";
 
 const TEST_MODE_ON = true;
-
-const test_data = {
-    outer_data_size: 5,
-    inner_data_size: 6
-};
-
 const MOB_SCREEN_SIZE = 340;
 const TABLET_SCREEN_SIZE = 750;
 const LARGE_SCREEN_SIZE = 1280;
-
 const EMPTY_GROUP = "---";
 const PRIORITY_LOWEST = 10;
+
+const taskManager = new TaskManager();
 
 const responsiveDesign = {
     backgroundColor: "",
@@ -52,8 +44,6 @@ const visabilityFlags = {
     isHistoryTable: false
 };
 
-const taskManager = new TaskManager();
-
 const dom = {
     rows: document.querySelectorAll("tbody tr"),
     managingBlock: document.querySelectorAll("div.managing"),
@@ -77,6 +67,7 @@ const dom = {
         priorityOut: document.getElementById("priority-value")
     }
 };
+
 
 // Redirect clicks in table
 function handleTableClick(e) {
@@ -409,8 +400,6 @@ function extractIncomingData(shouldCreateNewId, task) {
     task.deadline = formatTime(dom.modal.deadline.value, LOCAL_EN);
 }
 
-
-
 function closeHistoryModal() {
     visabilityFlags.isHistoryTable = false;
     dom.modal.historyModalWindow.classList.add("hidden");
@@ -469,7 +458,7 @@ window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTas
 //Update selected priority value in the middle window
 document.addEventListener("DOMContentLoaded", () => {
     if (TEST_MODE_ON) {
-        populateWithTestData();
+        populateWithTestData(taskManager);
     }
 
     const priorityInput = document.getElementById("task-priority");
@@ -489,40 +478,6 @@ dom.managingBlock.forEach((block) => {
 });
 dom.modal.modalWindow.addEventListener("click", handleModalClick);
 dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
-
-//************************************************************************
-//TEST SECTION
-function populateWithTestData() {
-    createTestTasks(test_data.outer_data_size, null).forEach((t) => taskManager.addTask(t));
-    for (let i = 0; i < test_data.outer_data_size; i++) {
-        const details = taskManager.getTaskById(i + 1).details;
-        taskManager.updateTaskHistoryById(i + 1, createTestTasks(test_data.inner_data_size, details));
-    }
-}
-
-function createTestTasks(taskLimit, keepTaskDetails) {
-    const testTaskArr = [];
-    for (let i = 0; i < taskLimit; i++) {
-        const newTestTask = new Task();
-        newTestTask.select = Math.floor(Math.random() * 10) >= 5;
-        newTestTask.id = i + 1;
-        newTestTask.isDone = Math.floor(Math.random() * 10) >= 5;
-        newTestTask.group = "test group" + Math.floor(Math.random() * 10);
-        newTestTask.priority = Math.floor(Math.random() * 10);
-        if (keepTaskDetails !== null) {
-            newTestTask.details = keepTaskDetails;
-        } else {
-            newTestTask.details = "task details for " + i;
-        }
-
-        newTestTask.deadline = formatTime(null, LOCAL_EN);
-        newTestTask.createdAt = formatTime(null, LOCAL_EN);
-        newTestTask.updatedAt = formatTime(null, LOCAL_EN);
-        testTaskArr.push(newTestTask);
-    }
-    return testTaskArr;
-}
-//************************************************************************
 
 // function searchDone() {
 //     const doneTasks = Array.from(domSelection.rows).filter((currentRow) => isRowDone(currentRow));
