@@ -1,4 +1,4 @@
-Task// I wish I could say yes  = хотел бы я сказать что да
+// I wish I could say yes  = хотел бы я сказать что да
 // Almost = ну почти
 // Just a tiny bit more, and yes = еще совсем немножечко и да
 
