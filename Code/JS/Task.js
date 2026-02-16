@@ -24,15 +24,15 @@ export class Task {
      */
     #details;
     /**
-     * @type {Date}
+     * @type {string}
      */
     #deadline;
     /**
-     * @type {Date}
+     * @type {string}
      */
     #createdAt;
     /**
-     * @type {Date}
+     * @type {string}
      */
     #updatedAt;
     /**
@@ -65,9 +65,9 @@ export class Task {
         priority = 0,
         group = "",
         details = "",
-        deadline = new Date(),
-        createdAt = new Date(),
-        updatedAt = new Date(),
+        deadline = "",
+        createdAt = "",
+        updatedAt = "",
         changes = [],
         actions = []
     ) {
@@ -173,9 +173,9 @@ export class Task {
             this.priority,
             this.group,
             this.details,
-            this.deadline ? new Date(this.deadline) : null,
-            this.createdAt ? new Date(this.createdAt) : null,
-            this.updatedAt ? new Date(this.updatedAt) : null,
+            this.deadline,
+            this.createdAt,
+            this.updatedAt,
             this.changes ? this.changes.map((change) => change.clone()) : [],
             this.actions ? [...this.actions] : []
         );
