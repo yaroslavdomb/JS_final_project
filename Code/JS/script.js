@@ -100,12 +100,14 @@ function handleEditTask(event) {
 
 function updateTaskHistory() {
     const currentTask = taskManager.getTaskById(htmlRow.id);
-    const historyCopyOfTask = structuredClone(currentTask);
-    historyCopyOfTask.deadline = formatTime(null, LOCAL_EN);
+    const historyCopyOfTask = currentTask.clone();
     currentTask.changes.push(historyCopyOfTask);
 }
 
 //Click in the modal window to save the data after adding or editing a task
+//Clearing changs in edition mode for old task allow to save space in DB
+//Keeping changs in edition mode for old task allow to implement functionality 
+// of full restoring the historical step of the task.
 function handleSaveTask(isEditMode) {
     if (isEditMode) {
         const oldTask = taskManager.getTaskById(htmlRow.id);
@@ -113,6 +115,7 @@ function handleSaveTask(isEditMode) {
         const taskChanged = isTaskChanged(oldTask);
         if (taskChanged) {
             oldTask.updatedAt = formatTime(null, LOCAL_EN);
+            oldTask.changes = [];
             updateRowOnScreen(oldTask, dom.taskTable);
         } else {
             //remove last task image from its history
