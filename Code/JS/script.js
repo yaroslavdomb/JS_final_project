@@ -115,7 +115,7 @@ function handleSaveTask(isEditMode) {
         const taskChanged = isTaskChanged(oldTask);
         if (taskChanged) {
             oldTask.updatedAt = formatTime(null, LOCAL_EN);
-            oldTask.changes = [];
+            oldTask.changes[oldTask.changes.length - 1].changes = [];
             updateRowOnScreen(oldTask, dom.taskTable);
         } else {
             //remove last task image from its history
