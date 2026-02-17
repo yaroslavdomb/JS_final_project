@@ -55,10 +55,10 @@ export class TaskManager {
     }
 
     removeTaskById(id) {
-        const oldTaskIndex = this.getIndexById(id);
-        if (oldTaskIndex < 0) return;
+        const indexOfRemovedTask = this.getIndexById(id);
+        if (indexOfRemovedTask < 0) return;
 
-        return this.#existedTasks.splice(oldTaskIndex, 1)[0];
+        return this.#existedTasks.splice(indexOfRemovedTask, 1)[0];
     }
 
     getExistingGroups() {

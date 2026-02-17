@@ -68,7 +68,6 @@ const dom = {
     }
 };
 
-
 // Redirect clicks in table
 function handleTableClick(e) {
     if (e.target.matches("button.editRow")) {
@@ -77,13 +76,30 @@ function handleTableClick(e) {
         handleRemoveTask(e);
     } else if (e.target.matches("button.showRow")) {
         handleShowTaskHistory(e);
+    } else if (e.target.matches('input[type="checkbox"]')) {
+        handleCheckbox(e);
+    }
+}
+
+function handleCheckbox(e) {
+    getHTMLEl(e);
+    const checkboxType = e.target.dataset.taskChecked;
+    if (checkboxType === "status") {
+        updateTaskHistory();
+        const oldTask = taskManager.getTaskById(htmlRow.id);
+        oldTask.isDone = !oldTask.isDone;
+        oldTask.updatedAt = formatTime(null, LOCAL_EN);
+        oldTask.changes[oldTask.changes.length - 1].changes = [];
+        updateRowOnScreen(oldTask, dom.taskTable);
+    } else {
+        //TODO: selection check box checked
+        htmlRow.classList.toggle("row-selected", e.target.selected);
     }
 }
 
 function handleShowTaskHistory(event) {
     getHTMLEl(event);
     visabilityFlags.isHistoryTable = true;
-
     const oldTask = taskManager.getTaskById(htmlRow.id);
     updateDataOnScreen(oldTask.changes, dom.modal.historyTable);
     openHistoryModal();
@@ -106,7 +122,7 @@ function updateTaskHistory() {
 
 //Click in the modal window to save the data after adding or editing a task
 //Clearing changs in edition mode for old task allow to save space in DB
-//Keeping changs in edition mode for old task allow to implement functionality 
+//Keeping changs in edition mode for old task allow to implement functionality
 // of full restoring the historical step of the task.
 function handleSaveTask(isEditMode) {
     if (isEditMode) {
@@ -360,6 +376,8 @@ function buildRowFromTask(task, columnsToShow, existingRow = null) {
             cell.appendChild(showBtn);
         } else if (col.name === "isDone" || col.name === "select") {
             const checkbox = document.createElement("input");
+            const dataType = col.name === "isDone" ? "status" : "selection";
+            checkbox.dataset.taskChecked = dataType;
             checkbox.type = "checkbox";
             checkbox.checked = !!task[col.name];
             if (visabilityFlags.isHistoryTable) checkbox.disabled = true;

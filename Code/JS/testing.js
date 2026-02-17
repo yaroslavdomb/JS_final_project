@@ -2,8 +2,8 @@ import { Task } from "./Task.js";
 import { formatTime, LOCAL_EN} from "./helper.js";
 
 const testData = {
-    currentTasksCount: 5,
-    historyTasksCount: 6
+    currentTasksCount: 50,
+    historyTasksCount: 16
 };
 
 export function populateWithTestData(taskManager) {
