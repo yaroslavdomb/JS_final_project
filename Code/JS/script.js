@@ -2,13 +2,7 @@ import { Task } from "./Task.js";
 import { TaskManager } from "./TaskManager.js";
 import * as helper from "./helper.js";
 import { populateWithTestData } from "./testing.js";
-
-const TEST_MODE_ON = true;
-const MOB_SCREEN_SIZE = 340;
-const TABLET_SCREEN_SIZE = 750;
-const LARGE_SCREEN_SIZE = 1280;
-const EMPTY_GROUP = "---";
-const PRIORITY_LOWEST = 10;
+import { TEST_MODE_ON, SCREEN_SIZES, EMPTY_GROUP, PRIORITY_LOWEST, visabilityFlags } from "./config.js";
 
 const taskManager = new TaskManager();
 let sortOrder = true;
@@ -40,13 +34,6 @@ const tableColumnsConfig = [
     { name: "changes", colHeader: "", isVisible: false },
     { name: "actions", colHeader: "Actions", isVisible: (visabilityFlags) => !visabilityFlags.isHistoryTable }
 ];
-
-const visabilityFlags = {
-    isMobScreen: true,
-    isTabScreen: false,
-    isDescScreen: false,
-    isHistoryTable: false
-};
 
 const dom = {
     rows: document.querySelectorAll("tbody tr"),
@@ -280,15 +267,15 @@ function updateTasksStatistics(id, action) {}
 
 function detectScreenSize() {
     const width = window.innerWidth;
-    if (width >= MOB_SCREEN_SIZE && width < TABLET_SCREEN_SIZE) {
+    if (width >= SCREEN_SIZES.MOBILE && width < SCREEN_SIZES.TABLET) {
         visabilityFlags.isMobScreen = true;
         visabilityFlags.isTabScreen = false;
         visabilityFlags.isDescScreen = false;
-    } else if (width >= TABLET_SCREEN_SIZE && width < LARGE_SCREEN_SIZE) {
+    } else if (width >= SCREEN_SIZES.TABLET && width < SCREEN_SIZES.DESKTOP) {
         visabilityFlags.isMobScreen = false;
         visabilityFlags.isTabScreen = true;
         visabilityFlags.isDescScreen = false;
-    } else if (width >= LARGE_SCREEN_SIZE) {
+    } else if (width >= SCREEN_SIZES.DESKTOP) {
         visabilityFlags.isMobScreen = false;
         visabilityFlags.isTabScreen = false;
         visabilityFlags.isDescScreen = true;
