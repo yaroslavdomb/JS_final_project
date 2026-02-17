@@ -134,32 +134,20 @@ function handleManagingClick(e) {
     }
 }
 
-//Click in the modal window to save the data after adding or editing a task
-//Clearing changs in edition mode for old task allow to save space in DB
-//Keeping changs in edition mode for old task allow to implement functionality
-// of full restoring the historical step of the task.
 function handleSaveTask(isEditMode) {
+    const incomingData = getChangeableFieldsFromModal();
     if (isEditMode) {
-        const oldTask = taskManager.getTaskById(htmlRow.id);
-        extractIncomingData(false, oldTask);
-        const taskChanged = isTaskChanged(oldTask);
-        if (taskChanged) {
-            oldTask.updatedAt = helper.formatTime(null, helper.LOCAL_EN);
-            oldTask.changes[oldTask.changes.length - 1].changes = [];
-            updateRowOnScreen(oldTask, dom.taskTable);
-        } else {
-            //remove last task image from its history
-            oldTask.changes.pop();
+        const updatedTask = taskManager.updateTask(htmlRow.id, incomingData);
+        if (updatedTask) {
+            updateRowOnScreen(updatedTask, dom.taskTable);
         }
     } else {
-        const newTask = new Task();
-        extractIncomingData(true, newTask);
-        newTask.createdAt = helper.formatTime(null, helper.LOCAL_EN);
+        const newTask = Task.createTask(incomingData);
         taskManager.addTask(newTask);
+        addRowToScreen(newTask, dom.taskTable);
         if (!taskManager.isEmpty()) {
             enableActivity();
         }
-        addRowToScreen(newTask, dom.taskTable);
     }
 }
 
@@ -190,7 +178,7 @@ function handleHistoryModalClick(e) {
 
 function updateTaskHistory() {
     const currentTask = taskManager.getTaskById(htmlRow.id);
-    const historyCopyOfTask = currentTask.clone();
+    const historyCopyOfTask = currentTask.deepClone();
     currentTask.changes.push(historyCopyOfTask);
 }
 
@@ -198,17 +186,6 @@ function updateRowOnScreen(task, table) {
     const existingRow = table.querySelector(`tr[data-id="${task.id}"]`);
     const columnsToShow = getColumnsToShow();
     buildRowFromTask(task, columnsToShow, existingRow);
-}
-
-function isTaskChanged(currentTask) {
-    const historyTaskCopy = currentTask.changes[currentTask.changes.length - 1];
-    return (
-        currentTask.isDone !== historyTaskCopy.isDone ||
-        currentTask.priority !== historyTaskCopy.priority ||
-        currentTask.group !== historyTaskCopy.group ||
-        currentTask.details !== historyTaskCopy.details ||
-        currentTask.deadline !== historyTaskCopy.deadline
-    );
 }
 
 function prepareModal(isEditMode) {
@@ -418,16 +395,14 @@ function setBodyDesign(element, isScreenChanged) {
     document.documentElement.style.setProperty("--my-width", responsiveDesign.myWidth);
 }
 
-function extractIncomingData(shouldCreateNewId, task) {
-    if (shouldCreateNewId) {
-        task.id = taskManager.getMaxId() + 1;
-    }
-
-    task.isDone = dom.modal.isDone.checked;
-    task.group = dom.modal.group.value.trim() || EMPTY_GROUP;
-    task.priority = PRIORITY_LOWEST - Number(dom.modal.priority.value.trim());
-    task.details = dom.modal.details.value;
-    task.deadline = helper.formatTime(dom.modal.deadline.value, helper.LOCAL_EN);
+function getChangeableFieldsFromModal() {
+    return {
+        isDone: dom.modal.isDone.checked,
+        group: dom.modal.group.value.trim() || EMPTY_GROUP,
+        priority: PRIORITY_LOWEST - Number(dom.modal.priority.value.trim()),
+        details: dom.modal.details.value,
+        deadline: helper.formatTime(dom.modal.deadline.value, helper.LOCAL_EN)
+    };
 }
 
 function closeHistoryModal() {

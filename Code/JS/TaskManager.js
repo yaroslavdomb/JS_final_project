@@ -20,9 +20,7 @@ export class TaskManager {
     }
 
     addTask(task) {
-        const newTask = task.clone();
         newTask.id = this.getMaxId() + 1;
-        newTask.createdAt = formatTime(null, LOCAL_EN);
         this.#existedTasks.push(newTask);
 
         return newTask;
@@ -36,22 +34,25 @@ export class TaskManager {
         return this.#existedTasks.findIndex((task) => Number(task.id) === Number(id));
     }
 
-    updateTask(id, newTask) {
-        const oldTaskIndex = this.getIndexById(id);
-        if (oldTaskIndex < 0) return;
+    //Using shallow copy will allow to skip full history & actions data
+    updateTask(id, changeableFieldsObj) {
+        const taskToUpdate = this.getTaskById(id);
+        if (!taskToUpdate) return;
 
-        //No need to save full chain of history inside each of the objects
-        const copyForHistory = { ...this.#existedTasks[oldTaskIndex] };
-        copyForHistory.changes = [];
-        copyForHistory.actions = [];
+        //validate data changed
+        if (!taskToUpdate.isDataChanged(changeableFieldsObj)) return;
 
-        this.#existedTasks[oldTaskIndex].changes.push(copyForHistory);
-        Object.keys(newTask).forEach((key) => {
-            this.#existedTasks[oldTaskIndex][key] = newTask[key];
+        //save history
+        const copyForHistory = taskToUpdate.shallowClone();
+        taskToUpdate.changes.push(copyForHistory);
+
+        //copy updated fields into task, so actually it's updating
+        Object.keys(changeableFieldsObj).forEach((key) => {
+            taskToUpdate[key] = changeableFieldsObj[key];
         });
-        this.#existedTasks[oldTaskIndex].updatedAt = formatTime(null, LOCAL_EN);
+        taskToUpdate.updatedAt = formatTime(null, LOCAL_EN);
 
-        return this.#existedTasks[oldTaskIndex];
+        return taskToUpdate;
     }
 
     removeTaskById(id) {
@@ -86,7 +87,7 @@ export class TaskManager {
     }
 
     getAllTasks() {
-        return this.#existedTasks.map((task) => task.clone());
+        return this.#existedTasks.map((task) => task.deepClone());
     }
 
     getAllExceptOne(id) {

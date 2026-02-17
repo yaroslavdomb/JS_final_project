@@ -1,3 +1,6 @@
+import { formatTime, LOCAL_EN } from "./helper";
+import { PRIORITY_DEFAULT, EMPTY_GROUP } from "./config";
+
 export class Task {
     /**
      * @type {boolean}
@@ -210,7 +213,7 @@ export class Task {
         return this.fields.length;
     }
 
-    clone() {
+    deepClone() {
         return new Task(
             this.select,
             this.id,
@@ -224,8 +227,27 @@ export class Task {
             this.createdAtTs,
             this.updatedAt,
             this.updatedAtTs,
-            this.changes ? this.changes.map((change) => change.clone()) : [],
+            this.changes ? this.changes.map((change) => change.deepClone()) : [],
             this.actions ? [...this.actions] : []
+        );
+    }
+
+    shallowClone() {
+        return new Task(
+            this.select,
+            this.id,
+            this.isDone,
+            this.priority,
+            this.group,
+            this.details,
+            this.deadline,
+            this.deadlineTs,
+            this.createdAt,
+            this.createdAtTs,
+            this.updatedAt,
+            this.updatedAtTs,
+            [],
+            []
         );
     }
 
@@ -241,5 +263,27 @@ export class Task {
             createdAt: this.createdAt,
             updatedAt: this.updatedAt
         };
+    }
+
+    isDataChanged(changeableFieldsObj) {
+        Object.keys(changeableFieldsObj).forEach((field) => {
+            if (changeableFieldsObj[field] !== this[field]) {
+                return true;
+            }
+        });
+        return false;
+    }
+
+    static createTask(dataSource) {
+        const newTask = new Task();
+
+        newTask.isDone = dataSource.isDone ?? false;
+        newTask.group = dataSource.group ?? EMPTY_GROUP;
+        newTask.priority = dataSource.priority ?? PRIORITY_DEFAULT;
+        newTask.details = dataSource.details ?? "";
+        newTask.deadline = dataSource.deadline ?? "";
+        newTask.createdAt = formatTime(null, LOCAL_EN);
+
+        return newTask;
     }
 }
