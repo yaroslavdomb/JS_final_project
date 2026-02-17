@@ -32,9 +32,12 @@ const tableColumnsConfig = [
     { name: "group", colHeader: "Group", isVisible: true },
     { name: "details", colHeader: "Task details", isVisible: true },
     { name: "deadline", colHeader: "Deadline", isVisible: true },
+    { name: "deadlineTs", colHeader: "", isVisible: false },
     { name: "createdAt", colHeader: "Created At", isVisible: (visabilityFlags) => visabilityFlags.isDescScreen },
+    { name: "createdAtTs", colHeader: "", isVisible: false },
     { name: "updatedAt", colHeader: "Updated At", isVisible: (visabilityFlags) => visabilityFlags.isDescScreen },
-    { name: "changes", colHeader: "Changes", isVisible: false },
+    { name: "updatedAtTs", colHeader: "", isVisible: false },
+    { name: "changes", colHeader: "", isVisible: false },
     { name: "actions", colHeader: "Actions", isVisible: (visabilityFlags) => !visabilityFlags.isHistoryTable }
 ];
 
@@ -85,7 +88,7 @@ function handleTableClick(e) {
         if (sortParams) {
             taskManager.sortBy(sortOrder, sortParams);
             sortOrder = !sortOrder;
-            updateDataOnScreen(taskManager.getAllTasks(), dom.taskTable);
+            updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         }
     }
 }
@@ -486,7 +489,7 @@ function enableActivity() {
     });
 }
 
-window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasks(), dom.taskTable));
+window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable));
 
 //Update selected priority value in the middle window
 document.addEventListener("DOMContentLoaded", () => {
@@ -499,7 +502,7 @@ document.addEventListener("DOMContentLoaded", () => {
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
     disableMassActivity();
     detectScreenSize();
-    updateDataOnScreen(taskManager.getAllTasks(), dom.taskTable);
+    updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     closeModal();
     closeHistoryModal();
 });

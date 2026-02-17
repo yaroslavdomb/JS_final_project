@@ -74,10 +74,6 @@ export class TaskManager {
         return groupAndCount;
     }
 
-    getAllExceptOne(id) {
-        return this.#existedTasks.filter((task) => Number(task.id) !== Number(id));
-    }
-
     //dataSource is single element/array of Task
     updateTaskHistoryById(id, dataSource) {
         const task = this.getTaskById(id);
@@ -91,6 +87,14 @@ export class TaskManager {
 
     getAllTasks() {
         return this.#existedTasks.map((task) => task.clone());
+    }
+
+    getAllExceptOne(id) {
+        return this.#existedTasks.filter((task) => Number(task.id) !== Number(id));
+    }
+
+    getAllTasksForDisplay() {
+        return this.#existedTasks.map((task) => task.getDisplayedFields());
     }
 
     clearAllTasks() {

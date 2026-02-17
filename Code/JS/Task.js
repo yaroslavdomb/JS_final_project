@@ -228,4 +228,18 @@ export class Task {
             this.actions ? [...this.actions] : []
         );
     }
+
+    getDisplayedFields() {
+        return {
+            select: this.select,
+            id: this.id,
+            isDone: this.isDone,
+            priority: this.priority,
+            group: this.group,
+            details: this.details,
+            deadline: this.deadline,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt
+        };
+    }
 }
