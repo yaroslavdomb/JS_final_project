@@ -167,7 +167,7 @@ export class Task {
     }
     set createdAt(value) {
         this.#createdAt = value;
-        this.#createdAt = Date.parse(value);
+        this.#createdAtTs = Date.parse(value);
     }
 
     get createdAtTs() {
@@ -182,7 +182,7 @@ export class Task {
     }
     set updatedAt(value) {
         this.#updatedAt = value;
-        this.#updatedAt = Date.parse(value);
+        this.#updatedAtTs = Date.parse(value);
     }
 
     get updatedAtTs() {

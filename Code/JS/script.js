@@ -511,26 +511,3 @@ dom.managingBlock.forEach((block) => {
 });
 dom.modal.modalWindow.addEventListener("click", handleModalClick);
 dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
-
-// function searchDone() {
-//     const doneTasks = Array.from(domSelection.rows).filter((currentRow) => isRowDone(currentRow));
-//     doneTasks.forEach((currenTask) => updateDesignForDone(currenTask));
-// }
-
-// function updateDesignForDone(currenTask) {
-//     const thirdTh = currentTask.querySelector("th")[2];
-//     thirdTh.style.textDecoration = "line-through";
-//     thirdTh.style.textAlign = "center";
-// }
-
-// function isRowDone(currentRow) {
-//     const done = currentRow.querySelector("th > input");
-//     return done?.checked ?? false;
-// }
-
-// function setRowDone(currentRow) {
-//     const done = currentRow.querySelector("th > input");
-//     done.checked = true;
-//     done.setAttribute("checked", "checked");
-//     done.classList.add("checked");
-// }
