@@ -28,13 +28,25 @@ export class Task {
      */
     #deadline;
     /**
+     * @type {number}
+     */
+    #deadlineTs;
+    /**
      * @type {string}
      */
     #createdAt;
     /**
+     * @type {number}
+     */
+    #createdAtTs;
+    /**
      * @type {string}
      */
     #updatedAt;
+    /**
+     * @type {number}
+     */
+    #updatedAtTs;
     /**
      * @type {Task[]}
      */
@@ -52,8 +64,11 @@ export class Task {
         "group",
         "details",
         "deadline",
+        "deadlineTs",
         "createdAt",
+        "createdAtTs",
         "updatedAt",
+        "updatedAtTs",
         "changes",
         "actions"
     ];
@@ -66,8 +81,11 @@ export class Task {
         group = "",
         details = "",
         deadline = "",
+        deadlineTs = 0,
         createdAt = "",
+        createdAtTs = 0,
         updatedAt = "",
+        updatedAtTs = 0,
         changes = [],
         actions = []
     ) {
@@ -78,8 +96,11 @@ export class Task {
         this.#group = group;
         this.#details = details;
         this.#deadline = deadline;
+        this.#deadlineTs = deadlineTs;
         this.#createdAt = createdAt;
+        this.#createdAtTs = createdAtTs;
         this.#updatedAt = updatedAt;
+        this.#updatedAtTs = updatedAtTs;
         this.#changes = changes;
         this.#actions = actions;
     }
@@ -131,6 +152,14 @@ export class Task {
     }
     set deadline(value) {
         this.#deadline = value;
+        this.#deadlineTs = Date.parse(value);
+    }
+
+    get deadlineTs() {
+        return this.#deadlineTs;
+    }
+    set deadlineTs(value) {
+        this.#deadlineTs = value;
     }
 
     get createdAt() {
@@ -138,6 +167,14 @@ export class Task {
     }
     set createdAt(value) {
         this.#createdAt = value;
+        this.#createdAt = Date.parse(value);
+    }
+
+    get createdAtTs() {
+        return this.#createdAtTs;
+    }
+    set createdAtTs(value) {
+        this.#createdAtTs = value;
     }
 
     get updatedAt() {
@@ -145,6 +182,14 @@ export class Task {
     }
     set updatedAt(value) {
         this.#updatedAt = value;
+        this.#updatedAt = Date.parse(value);
+    }
+
+    get updatedAtTs() {
+        return this.#updatedAtTs;
+    }
+    set updatedAtTs(value) {
+        this.#updatedAtTs = value;
     }
 
     get changes() {
@@ -174,8 +219,11 @@ export class Task {
             this.group,
             this.details,
             this.deadline,
+            this.deadlineTs,
             this.createdAt,
+            this.createdAtTs,
             this.updatedAt,
+            this.updatedAtTs,
             this.changes ? this.changes.map((change) => change.clone()) : [],
             this.actions ? [...this.actions] : []
         );

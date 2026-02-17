@@ -97,100 +97,46 @@ export class TaskManager {
         this.#existedTasks = [];
     }
 
+    /*
+    Detect name of sorting field and it's type.
+    This will allow to hold sorting code without duplication.
+    -- NOT related to sort efficiency algorithm!
+    
+    For faster sortign by dates columns will be used 
+    columns with XXXTS = means XXX TimeStamp.
+    This will allow to use number processing instead of new Date(date)  
+    */
     detectSortFunction(sortBy) {
-        switch (sortBy) {
-            case "select":
-                return this.sortBySelect;
-            case "number":
-                return this.sortById;
-            case "done":
-                return this.sortByTaskStatus;
-            case "group":
-                return this.sortByGroup;
-            case "priority":
-                return this.sortByPriority;
-            case "details":
-                return this.sortByDetails;
-            case "deadline":
-                return this.sortByDeadline;
-            case "created":
-                return this.sortByCreatedTime;
-            case "updated":
-                return this.sortByUpdatedTime;
-            default:
-                return null;
-        }
+        const sortingConfig = {
+            select: { field: "select", type: "boolean" },
+            number: { field: "id", type: "number" },
+            done: { field: "isDone", type: "boolean" },
+            group: { field: "group", type: "string" },
+            priority: { field: "priority", type: "number" },
+            details: { field: "details", type: "string" },
+            deadline: { field: "deadlineTs", type: "date" },
+            created: { field: "createdAtTs", type: "date" },
+            updated: { field: "updatedAtTs", type: "date" }
+        };
+
+        return sortingConfig[sortBy];
     }
 
-    sortBySelect(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => t1.select - t2.select);
-        } else {
-            this.#existedTasks.sort((t1, t2) => t2.select - t1.select);
-        }
-    }
-
-    sortById(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => t1.id - t2.id);
-        } else {
-            this.#existedTasks.sort((t1, t2) => t2.id - t1.id);
-        }
-    }
-
-    sortByTaskStatus(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => t1.isDone - t2.isDone);
-        } else {
-            this.#existedTasks.sort((t1, t2) => t2.isDone - t1.isDone);
-        }
-    }
-
-    sortByGroup(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => t1.group.localeCompare(t2.group));
-        } else {
-            this.#existedTasks.sort((t1, t2) => t2.group.localeCompare(t1.group));
-        }
-    }
-
-    sortByPriority(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => t1.priority - t2.priority);
-        } else {
-            this.#existedTasks.sort((t1, t2) => t2.priority - t1.priority);
-        }
-    }
-
-    sortByDeadline(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => new Date(t1.deadline) - new Date(t2.deadline));
-        } else {
-            this.#existedTasks.sort((t1, t2) => new Date(t2.deadline) - new Date(t1.deadline));
-        }
-    }
-
-    sortByCreatedTime(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => new Date(t1.createdAt) - new Date(t2.createdAt));
-        } else {
-            this.#existedTasks.sort((t1, t2) => new Date(t2.createdAt) - new Date(t1.createdAt));
-        }
-    }
-
-    sortByUpdatedTime(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => new Date(t1.updatedAt) - new Date(t2.updatedAt));
-        } else {
-            this.#existedTasks.sort((t1, t2) => new Date(t2.updatedAt) - new Date(t1.updatedAt));
-        }
-    }
-
-    sortByDetails(isASC) {
-        if (isASC) {
-            this.#existedTasks.sort((t1, t2) => t1.details.localeCompare(t2.details));
-        } else {
-            this.#existedTasks.sort((t1, t2) => t2.details.localeCompare(t1.details));
-        }
+    sortBy(isASC, sortParam) {
+        const sortOrder = isASC ? 1 : -1;
+        const sortField = sortParam.field;
+        const type = sortParam.type;
+        this.#existedTasks.sort((t1, t2) => {
+            switch (type) {
+                case "number":
+                case "boolean":
+                case "date":
+                    return (t1[sortField] - t2[sortField]) * sortOrder;
+                case "string":
+                    return t1[sortField].localeCompare(t2[sortField]) * sortOrder;
+                default:
+                    return 0;
+            }
+        });
     }
 }

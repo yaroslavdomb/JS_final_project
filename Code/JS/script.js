@@ -81,12 +81,12 @@ function handleTableClick(e) {
         handleCheckbox(e);
     } else if (e.target.matches("th")) {
         const sortBy = e.target.dataset.colSorting;
-        const sortFunction = taskManager.detectSortFunction(sortBy);
-        if (sortFunction) {
-            sortFunction.call(taskManager, sortOrder);
+        const sortParams = taskManager.detectSortFunction(sortBy);
+        if (sortParams) {
+            taskManager.sortBy(sortOrder, sortParams);
             sortOrder = !sortOrder;
             updateDataOnScreen(taskManager.getAllTasks(), dom.taskTable);
-        }        
+        }
     }
 }
 
