@@ -265,13 +265,9 @@ export class Task {
         };
     }
 
+    //forEach do not allow to exist with return immediatly
     isDataChanged(changeableFieldsObj) {
-        Object.keys(changeableFieldsObj).forEach((field) => {
-            if (changeableFieldsObj[field] !== this[field]) {
-                return true;
-            }
-        });
-        return false;
+        return Object.keys(changeableFieldsObj).some((field) => changeableFieldsObj[field] !== this[field]);
     }
 
     static createTask(dataSource) {
