@@ -1,5 +1,5 @@
-import { formatTime, LOCAL_EN } from "./helper";
-import { PRIORITY_DEFAULT, EMPTY_GROUP } from "./config";
+import { formatTime, LOCAL_EN } from "./helper.js";
+import { PRIORITY_DEFAULT, EMPTY_GROUP } from "./config.js";
 
 export class Task {
     /**

@@ -19,7 +19,7 @@ export class TaskManager {
         return this.#existedTasks.length === 0;
     }
 
-    addTask(task) {
+    addTask(newTask) {
         newTask.id = this.getMaxId() + 1;
         this.#existedTasks.push(newTask);
 
