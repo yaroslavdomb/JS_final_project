@@ -90,10 +90,107 @@ export class TaskManager {
     }
 
     getAllTasks() {
-        return this.#existedTasks.map(task => task.clone());
+        return this.#existedTasks.map((task) => task.clone());
     }
 
     clearAllTasks() {
         this.#existedTasks = [];
+    }
+
+    detectSortFunction(sortBy) {
+        switch (sortBy) {
+            case "select":
+                return this.sortBySelect;
+            case "number":
+                return this.sortById;
+            case "done":
+                return this.sortByTaskStatus;
+            case "group":
+                return this.sortByGroup;
+            case "priority":
+                return this.sortByPriority;
+            case "details":
+                return this.sortByDetails;
+            case "deadline":
+                return this.sortByDeadline;
+            case "created":
+                return this.sortByCreatedTime;
+            case "updated":
+                return this.sortByUpdatedTime;
+            default:
+                return null;
+        }
+    }
+
+    sortBySelect(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => t1.select - t2.select);
+        } else {
+            this.#existedTasks.sort((t1, t2) => t2.select - t1.select);
+        }
+    }
+
+    sortById(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => t1.id - t2.id);
+        } else {
+            this.#existedTasks.sort((t1, t2) => t2.id - t1.id);
+        }
+    }
+
+    sortByTaskStatus(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => t1.isDone - t2.isDone);
+        } else {
+            this.#existedTasks.sort((t1, t2) => t2.isDone - t1.isDone);
+        }
+    }
+
+    sortByGroup(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => t1.group.localeCompare(t2.group));
+        } else {
+            this.#existedTasks.sort((t1, t2) => t2.group.localeCompare(t1.group));
+        }
+    }
+
+    sortByPriority(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => t1.priority - t2.priority);
+        } else {
+            this.#existedTasks.sort((t1, t2) => t2.priority - t1.priority);
+        }
+    }
+
+    sortByDeadline(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => new Date(t1.deadline) - new Date(t2.deadline));
+        } else {
+            this.#existedTasks.sort((t1, t2) => new Date(t2.deadline) - new Date(t1.deadline));
+        }
+    }
+
+    sortByCreatedTime(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => new Date(t1.createdAt) - new Date(t2.createdAt));
+        } else {
+            this.#existedTasks.sort((t1, t2) => new Date(t2.createdAt) - new Date(t1.createdAt));
+        }
+    }
+
+    sortByUpdatedTime(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => new Date(t1.updatedAt) - new Date(t2.updatedAt));
+        } else {
+            this.#existedTasks.sort((t1, t2) => new Date(t2.updatedAt) - new Date(t1.updatedAt));
+        }
+    }
+
+    sortByDetails(isASC) {
+        if (isASC) {
+            this.#existedTasks.sort((t1, t2) => t1.details.localeCompare(t2.details));
+        } else {
+            this.#existedTasks.sort((t1, t2) => t2.details.localeCompare(t1.details));
+        }
     }
 }

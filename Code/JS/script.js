@@ -1,6 +1,6 @@
 import { Task } from "./Task.js";
 import { TaskManager } from "./TaskManager.js";
-import { formatTime, LOCAL_EN } from "./helper.js";
+import * as helper from "./helper.js";
 import { populateWithTestData } from "./testing.js";
 
 const TEST_MODE_ON = true;
@@ -11,6 +11,7 @@ const EMPTY_GROUP = "---";
 const PRIORITY_LOWEST = 10;
 
 const taskManager = new TaskManager();
+let sortOrder = true;
 
 const responsiveDesign = {
     backgroundColor: "",
@@ -78,6 +79,14 @@ function handleTableClick(e) {
         handleShowTaskHistory(e);
     } else if (e.target.matches('input[type="checkbox"]')) {
         handleCheckbox(e);
+    } else if (e.target.matches("th")) {
+        const sortBy = e.target.dataset.colSorting;
+        const sortFunction = taskManager.detectSortFunction(sortBy);
+        if (sortFunction) {
+            sortFunction.call(taskManager, sortOrder);
+            sortOrder = !sortOrder;
+            updateDataOnScreen(taskManager.getAllTasks(), dom.taskTable);
+        }        
     }
 }
 
@@ -88,7 +97,7 @@ function handleCheckbox(e) {
         updateTaskHistory();
         const oldTask = taskManager.getTaskById(htmlRow.id);
         oldTask.isDone = !oldTask.isDone;
-        oldTask.updatedAt = formatTime(null, LOCAL_EN);
+        oldTask.updatedAt = helper.formatTime(null, helper.LOCAL_EN);
         oldTask.changes[oldTask.changes.length - 1].changes = [];
         updateRowOnScreen(oldTask, dom.taskTable);
     } else {
@@ -114,10 +123,25 @@ function handleEditTask(event) {
     openModal();
 }
 
-function updateTaskHistory() {
-    const currentTask = taskManager.getTaskById(htmlRow.id);
-    const historyCopyOfTask = currentTask.clone();
-    currentTask.changes.push(historyCopyOfTask);
+// Click on remove button in the table row
+function handleRemoveTask(event) {
+    getHTMLEl(event);
+    //TODO: updateTasksStatistics(htmlRow.id, "remove");
+    taskManager.removeTaskById(htmlRow.id);
+    disableMassActivity();
+    htmlRow.rowEl.parentNode.removeChild(htmlRow.rowEl);
+}
+
+//Redirect clicks in managing section
+function handleManagingClick(e) {
+    if (e.target.matches(".add")) {
+        prepareModal(false);
+        openModal();
+    } else if (e.target.matches(".remove")) {
+        //removeTask(e);
+    } else if (e.target.matches(".edit")) {
+        //editTask(e);
+    }
 }
 
 //Click in the modal window to save the data after adding or editing a task
@@ -130,7 +154,7 @@ function handleSaveTask(isEditMode) {
         extractIncomingData(false, oldTask);
         const taskChanged = isTaskChanged(oldTask);
         if (taskChanged) {
-            oldTask.updatedAt = formatTime(null, LOCAL_EN);
+            oldTask.updatedAt = helper.formatTime(null, helper.LOCAL_EN);
             oldTask.changes[oldTask.changes.length - 1].changes = [];
             updateRowOnScreen(oldTask, dom.taskTable);
         } else {
@@ -140,13 +164,44 @@ function handleSaveTask(isEditMode) {
     } else {
         const newTask = new Task();
         extractIncomingData(true, newTask);
-        newTask.createdAt = formatTime(null, LOCAL_EN);
+        newTask.createdAt = helper.formatTime(null, helper.LOCAL_EN);
         taskManager.addTask(newTask);
         if (!taskManager.isEmpty()) {
             enableActivity();
         }
         addRowToScreen(newTask, dom.taskTable);
     }
+}
+
+//Redirect clicks in modal window
+function handleModalClick(e) {
+    if (e.target.matches("#submitBtn")) {
+        const form = e.target.closest("form");
+        if (!form.checkValidity()) {
+            return;
+        }
+
+        e.preventDefault();
+        const action = e.target.dataset.action;
+        const editModeFlag = action === "edit";
+        handleSaveTask(editModeFlag);
+        closeModal();
+    } else if (e.target.matches("#closeBtn")) {
+        closeModal();
+    }
+}
+
+function handleHistoryModalClick(e) {
+    if (e.target.matches("#historySubmitBtn") || e.target.matches("#historyCloseBtn")) {
+        e.preventDefault();
+        closeHistoryModal();
+    }
+}
+
+function updateTaskHistory() {
+    const currentTask = taskManager.getTaskById(htmlRow.id);
+    const historyCopyOfTask = currentTask.clone();
+    currentTask.changes.push(historyCopyOfTask);
 }
 
 function updateRowOnScreen(task, table) {
@@ -164,15 +219,6 @@ function isTaskChanged(currentTask) {
         currentTask.details !== historyTaskCopy.details ||
         currentTask.deadline !== historyTaskCopy.deadline
     );
-}
-
-// Click on remove button in the table row
-function handleRemoveTask(event) {
-    getHTMLEl(event);
-    //TODO: updateTasksStatistics(htmlRow.id, "remove");
-    taskManager.removeTaskById(htmlRow.id);
-    disableMassActivity();
-    htmlRow.rowEl.parentNode.removeChild(htmlRow.rowEl);
 }
 
 function prepareModal(isEditMode) {
@@ -226,39 +272,8 @@ function getHTMLEl(event) {
     htmlRow.id = htmlRow.rowEl.dataset.id;
 }
 
-function updateTasksStatistics(id, action) {
-    //TODO
-}
-
-//Redirect clicks in managing section
-function handleManagingClick(e) {
-    if (e.target.matches(".add")) {
-        prepareModal(false);
-        openModal();
-    } else if (e.target.matches(".remove")) {
-        //removeTask(e);
-    } else if (e.target.matches(".edit")) {
-        //editTask(e);
-    }
-}
-
-//Redirect clicks in modal window
-function handleModalClick(e) {
-    if (e.target.matches("#submitBtn")) {
-        const form = e.target.closest("form");
-        if (!form.checkValidity()) {
-            return;
-        }
-
-        e.preventDefault();
-        const action = e.target.dataset.action;
-        const editModeFlag = action === "edit";
-        handleSaveTask(editModeFlag);
-        closeModal();
-    } else if (e.target.matches("#closeBtn")) {
-        closeModal();
-    }
-}
+//TODO
+function updateTasksStatistics(id, action) {}
 
 function detectScreenSize() {
     const width = window.innerWidth;
@@ -322,6 +337,7 @@ function addRowToScreen(dataSource, tableForUpdate) {
 function buildHeader(columnsToShow) {
     const thead = document.createElement("thead");
 
+    //Header of the table
     if (!visabilityFlags.isHistoryTable) {
         const headerRow_mainHeader = thead.insertRow();
         headerRow_mainHeader.setAttribute("class", "full-table-header");
@@ -332,10 +348,13 @@ function buildHeader(columnsToShow) {
         headerRow_mainHeader.appendChild(th_main);
     }
 
+    //Columns headers
     const headerRow_headers = thead.insertRow();
     columnsToShow.forEach((col) => {
         const th = document.createElement("th");
         th.textContent = col.colHeader;
+        const sorting = helper.mapColumnName2Dataset(col.colHeader);
+        if (sorting) th.dataset.colSorting = sorting;
         headerRow_headers.appendChild(th);
     });
 
@@ -418,7 +437,7 @@ function extractIncomingData(shouldCreateNewId, task) {
     task.group = dom.modal.group.value.trim() || EMPTY_GROUP;
     task.priority = PRIORITY_LOWEST - Number(dom.modal.priority.value.trim());
     task.details = dom.modal.details.value;
-    task.deadline = formatTime(dom.modal.deadline.value, LOCAL_EN);
+    task.deadline = helper.formatTime(dom.modal.deadline.value, helper.LOCAL_EN);
 }
 
 function closeHistoryModal() {
@@ -465,13 +484,6 @@ function enableActivity() {
     dom.deactivated.forEach((el) => {
         el.removeAttribute("disabled");
     });
-}
-
-function handleHistoryModalClick(e) {
-    if (e.target.matches("#historySubmitBtn") || e.target.matches("#historyCloseBtn")) {
-        e.preventDefault();
-        closeHistoryModal();
-    }
 }
 
 window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasks(), dom.taskTable));

@@ -17,3 +17,21 @@ export function formatTime(timeToConvert, local = LOCAL_EN) {
 
     return `${dd}/${mo}/${yyyy} ${HH}:${mm} (${sign}${offsetHours}:${offsetMins} UTC)`;
 }
+
+export function mapColumnName2Dataset (columnName) {
+    let dataset;
+    switch (columnName) {
+        case "select": dataset = "select"; break;
+        case "ID": dataset = "number"; break;
+        case "Done": dataset = "done"; break;
+        case "Priority": dataset = "priority"; break;
+        case "Group": dataset = "group"; break;
+        case "Task details": dataset = "details"; break;
+        case "Deadline": dataset = "deadline"; break;
+        case "Created At": dataset = "created"; break;
+        case "Updated At": dataset = "updated"; break;
+        default: break;
+    }
+
+    return dataset;
+}

@@ -68,3 +68,11 @@ td button.activity {
     margin: 0.1rem;
     box-sizing: border-box;
 }
+
+tr th[data-col-sorting]{
+    cursor: pointer;
+}
+
+tr th:hover[data-col-sorting]{    
+    background-color: rgb(5, 192, 145);
+}
