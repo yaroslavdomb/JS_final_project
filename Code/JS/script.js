@@ -131,6 +131,8 @@ function handleManagingClick(e) {
         //removeTask(e);
     } else if (e.target.matches(".edit")) {
         //editTask(e);
+    } else if (e.target.matches(".save")) {
+        taskManager.saveInFile();
     }
 }
 
@@ -476,3 +478,6 @@ dom.managingBlock.forEach((block) => {
 });
 dom.modal.modalWindow.addEventListener("click", handleModalClick);
 dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
+
+
+//document.getElementById("saveDataBtn").addEventListener("click", () => );

@@ -282,4 +282,13 @@ export class Task {
 
         return newTask;
     }
+
+    toJSON() {
+        const jsonObj = {};
+        for (const field of Task.fields) {
+            jsonObj[field] = field === "actions" ? [] : this[field];
+        }
+
+        return jsonObj;
+    }
 }
