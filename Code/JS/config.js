@@ -1,4 +1,4 @@
-export const TEST_MODE_ON = true;
+export const TEST_MODE_ON = false;
 
 export const EMPTY_GROUP = "---";
 export const PRIORITY_LOWEST = 10;

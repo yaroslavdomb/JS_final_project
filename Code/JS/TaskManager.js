@@ -145,8 +145,12 @@ export class TaskManager {
         });
     }
 
-    saveInFile () {
-        const content = JSON.stringify(this.#existedTasks.map((task) => task.toJSON()), null, 2);
+    saveInFile() {
+        const content = JSON.stringify(
+            this.#existedTasks.map((task) => task.toJSON()),
+            null,
+            2
+        );
         const blob = new Blob([content], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -156,6 +160,25 @@ export class TaskManager {
         URL.revokeObjectURL(url);
     }
 
-
-    
+    uploadTasks(taskArr) {
+        taskArr.forEach((taskData) => {
+            const task = new Task(
+                taskData.select,
+                taskData.id,
+                taskData.isDone,
+                taskData.priority,
+                taskData.group,
+                taskData.details,
+                taskData.deadline,
+                taskData.deadlineTs,
+                taskData.createdAt,
+                taskData.createdAtTs,
+                taskData.updatedAt,
+                taskData.updatedAtTs,
+                taskData.changes || [],
+                taskData.actions || []
+            );
+            this.addTask(task);
+        });
+    }
 }

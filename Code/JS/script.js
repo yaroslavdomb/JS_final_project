@@ -136,6 +136,21 @@ function handleManagingClick(e) {
     }
 }
 
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file && file.type === "application/json") {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const taskArray = JSON.parse(e.target.result);
+            taskManager.uploadTasks(taskArray);
+            updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        };
+        reader.readAsText(file);
+    } else {
+        alert("Please select JSON file.");
+    }
+}
+
 function handleSaveTask(isEditMode) {
     const incomingData = getChangeableFieldsFromModal();
     if (isEditMode) {
@@ -475,9 +490,13 @@ document.addEventListener("DOMContentLoaded", () => {
 dom.taskTable.addEventListener("click", handleTableClick);
 dom.managingBlock.forEach((block) => {
     block.addEventListener("click", handleManagingClick);
+    const fileInputs = block.querySelectorAll('input[type="file"]');
+    fileInputs.forEach((fileInput) => {
+        fileInput.addEventListener("change", handleFileUpload);
+        fileInput.removeEventListener("click", handleManagingClick);
+    });
 });
 dom.modal.modalWindow.addEventListener("click", handleModalClick);
 dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
-
 
 //document.getElementById("saveDataBtn").addEventListener("click", () => );

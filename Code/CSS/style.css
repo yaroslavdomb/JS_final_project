@@ -76,3 +76,11 @@ tr th[data-col-sorting]{
 tr th:hover[data-col-sorting]{    
     background-color: rgb(5, 192, 145);
 }
+
+.upload {
+    color: transparent;
+    text-align: center;
+    cursor: pointer;
+    border: 1px black solid;
+    width: 5.4rem;
+}
