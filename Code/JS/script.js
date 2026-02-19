@@ -83,17 +83,19 @@ function handleTableClick(e) {
 
 function handleCheckbox(e) {
     getHTMLEl(e);
+    
     const checkboxType = e.target.dataset.taskChecked;
     if (checkboxType === "status") {
+        const clickedTask = taskManager.getTaskById(htmlRow.id);
         updateTaskHistory();
-        const oldTask = taskManager.getTaskById(htmlRow.id);
-        oldTask.isDone = !oldTask.isDone;
-        oldTask.updatedAt = helper.formatTime(null, helper.LOCAL_EN);
-        oldTask.changes[oldTask.changes.length - 1].changes = [];
-        updateRowOnScreen(oldTask, dom.taskTable);
+        clickedTask.isDone = !clickedTask.isDone;
+        clickedTask.updatedAt = helper.formatTime(null, helper.LOCAL_EN);
+        clickedTask.changes[clickedTask.changes.length - 1].changes = [];
+        updateRowOnScreen(clickedTask, dom.taskTable);
     } else {
-        //TODO: selection check box checked
-        htmlRow.classList.toggle("row-selected", e.target.selected);
+        const clickedTask = taskManager.getTaskById(htmlRow.id);
+        taskManager.toggleSelection(htmlRow.id);
+        updateRowOnScreen(clickedTask, dom.taskTable);
     }
 }
 

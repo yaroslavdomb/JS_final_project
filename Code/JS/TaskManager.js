@@ -185,4 +185,9 @@ export class TaskManager {
     toggleAllSelected(isAllSelected) {
         this.#existedTasks.forEach((task) => (task.select = !isAllSelected));
     }
+
+    toggleSelection(id) {
+        const task = this.getTaskById(id);
+        task.select = !task.select;
+    }
 }
