@@ -6,6 +6,7 @@ import { TEST_MODE_ON, SCREEN_SIZES, EMPTY_GROUP, PRIORITY_LOWEST, visabilityFla
 
 const taskManager = new TaskManager();
 let sortOrder = true;
+let selectedAll = false;
 
 const responsiveDesign = {
     backgroundColor: "",
@@ -127,12 +128,12 @@ function handleManagingClick(e) {
     if (e.target.matches(".add")) {
         prepareModal(false);
         openModal();
-    } else if (e.target.matches(".remove")) {
-        //removeTask(e);
-    } else if (e.target.matches(".edit")) {
-        //editTask(e);
-    } else if (e.target.matches(".save")) {
+    } else if (e.target.matches(".download")) {
         taskManager.saveInFile();
+    } else if (e.target.matches(".select")){
+        taskManager.toggleAllSelected(selectedAll);
+        selectedAll = !selectedAll;
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     }
 }
 

@@ -181,4 +181,8 @@ export class TaskManager {
             this.addTask(task);
         });
     }
+
+    toggleAllSelected(isAllSelected) {
+        this.#existedTasks.forEach((task) => (task.select = !isAllSelected));
+    }
 }
