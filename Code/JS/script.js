@@ -136,18 +136,25 @@ function handleManagingClick(e) {
     }
 }
 
-function handleFileUpload(event) {
+async function handleFileUpload(event) {
     const file = event.target.files[0];
-    if (file && file.type === "application/json") {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const taskArray = JSON.parse(e.target.result);
-            taskManager.uploadTasks(taskArray);
-            updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
-        };
-        reader.readAsText(file);
-    } else {
+    if (!file || file.type !== "application/json") {
+        console.error(`${file.name} is not a JSON file.`);
         alert("Please select JSON file.");
+        return; 
+    } else if (file.size === 0) {
+        console.error(`File ${file.name} is empty!`);
+        alert(`File ${file.name} is empty!`);
+        return;
+    }
+
+    try {
+        const text = await file.text();
+        const taskArr = JSON.parse(text);
+        taskManager.uploadTasks(taskArr);
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+    } catch (error) {
+        console.error(`Error while processing ${file.name}: ` + error);
     }
 }
 
