@@ -227,7 +227,7 @@ export class Task {
             this.createdAtTs,
             this.updatedAt,
             this.updatedAtTs,
-            this.changes ? this.changes.map((change) => change.deepClone()) : [],
+            this.changes ? this.changes.map((change) => change instanceof Task ? change.deepClone() : change) : [],
             this.actions ? [...this.actions] : []
         );
     }

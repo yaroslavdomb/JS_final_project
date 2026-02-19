@@ -44,16 +44,6 @@ thead .column-header {
     color: blue;
 }
 
-div.managing {
-    margin-top: 0.5rem;
-    width: var(--my-width);
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-}
-
 .activity {
     font-size: 1.3rem;
     width: 1.5rem;
@@ -77,8 +67,39 @@ tr th:hover[data-col-sorting] {
     background-color: rgb(5, 192, 145);
 }
 
-.upload {
-    border: 1px black solid;
-    width: 5.4rem;
-    border-radius: 0.2rem;
+.upload-input {
+    display: none;
+}
+
+div.managing {
+    margin-top: 0.5rem;
+    width: var(--my-width);
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+div.managing button, 
+div.managing .custom-upload-btn {    
+    padding: 0.1rem 0.35rem;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.hide-if-no-tasks {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+.hide-if-no-tasks.btn-is-active {
+  pointer-events: auto;
+  opacity: 1;
 }

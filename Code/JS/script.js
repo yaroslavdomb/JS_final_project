@@ -141,7 +141,7 @@ async function handleFileUpload(event) {
     if (!file || file.type !== "application/json") {
         console.error(`${file.name} is not a JSON file.`);
         alert("Please select JSON file.");
-        return; 
+        return;
     } else if (file.size === 0) {
         console.error(`File ${file.name} is empty!`);
         alert(`File ${file.name} is empty!`);
@@ -153,6 +153,7 @@ async function handleFileUpload(event) {
         const taskArr = JSON.parse(text);
         taskManager.uploadTasks(taskArr);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        enableMassActivity();
     } catch (error) {
         console.error(`Error while processing ${file.name}: ` + error);
     }
@@ -170,7 +171,7 @@ function handleSaveTask(isEditMode) {
         taskManager.addTask(newTask);
         addRowToScreen(newTask, dom.taskTable);
         if (!taskManager.isEmpty()) {
-            enableActivity();
+            enableMassActivity();
         }
     }
 }
@@ -464,15 +465,17 @@ function updatePriorityValue(priorityIn, priorityOut) {
 function disableMassActivity() {
     if (taskManager.isEmpty()) {
         dom.deactivated.forEach((el) => {
-            el.setAttribute("disabled", "");
+            el.classList.remove("btn-is-active");
         });
     }
 }
 
-function enableActivity() {
-    dom.deactivated.forEach((el) => {
-        el.removeAttribute("disabled");
-    });
+function enableMassActivity() {
+    if (!taskManager.isEmpty()) {
+        dom.deactivated.forEach((el) => {
+            el.classList.add("btn-is-active");
+        });
+    }
 }
 
 window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable));
@@ -481,6 +484,7 @@ window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTas
 document.addEventListener("DOMContentLoaded", () => {
     if (TEST_MODE_ON) {
         populateWithTestData(taskManager);
+        enableMassActivity();
     }
 
     const priorityInput = document.getElementById("task-priority");
