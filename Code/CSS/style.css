@@ -77,10 +77,15 @@ div.managing {
     margin-left: auto;
     margin-right: auto;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: 0.5rem;
     align-items: center;
 }
+
+div.managing .complex {
+    margin-right: auto;
+}
+
 
 div.managing button, 
 div.managing .custom-upload-btn {    
