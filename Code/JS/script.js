@@ -48,6 +48,7 @@ const dom = {
     modal: {
         modalWindow: document.getElementById("modalOverlay"),
         historyModalWindow: document.getElementById("historyModalOverlay"),
+        filterModalWindow: document.getElementById("filterModalOverlay"),
         historyTable: document.getElementById("history-table"),
         submitBtn: document.getElementById("submitBtn"),
         isDone: document.getElementById("task-is-done"),
@@ -56,9 +57,12 @@ const dom = {
         details: document.getElementById("task-details"),
         deadline: document.getElementById("task-deadline"),
         legend: document.getElementById("modal-legend"),
-        priorityOut: document.getElementById("priority-value")
+        priorityOut: document.getElementById("priority-value"),
+        finalFilterTextarea: document.getElementById("finalFilter")
     }
 };
+
+
 
 // Redirect clicks in table
 function handleTableClick(e) {
@@ -83,7 +87,7 @@ function handleTableClick(e) {
 
 function handleCheckbox(e) {
     getHTMLEl(e);
-    
+
     const checkboxType = e.target.dataset.taskChecked;
     if (checkboxType === "status") {
         const clickedTask = taskManager.getTaskById(htmlRow.id);
@@ -126,16 +130,20 @@ function handleRemoveTask(event) {
 }
 
 //Redirect clicks in managing section
+//Upload click propcessed by handleFileUpload cause
+// it's a different type of event - "change"? not an action
 function handleManagingClick(e) {
     if (e.target.matches(".add")) {
         prepareModal(false);
         openModal();
     } else if (e.target.matches(".download")) {
         taskManager.saveInFile();
-    } else if (e.target.matches(".select")){
+    } else if (e.target.matches(".select")) {
         taskManager.toggleAllSelected(selectedAll);
         selectedAll = !selectedAll;
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+    } else if (e.target.matches(".filter")) {
+        openFilterModal();
     }
 }
 
@@ -204,6 +212,20 @@ function handleHistoryModalClick(e) {
     }
 }
 
+function handleFilterModalClick (e){
+    if (e.target.matches("#filterSubmitBtn")) {
+        e.preventDefault();
+        //TODO - get data from modal and do parsing
+        closeFilterModal();
+    } else if (e.target.matches("#filterCloseBtn")) {
+        e.preventDefault();
+        closeFilterModal();
+    } else if (e.target.matches("#clearFilter")) {
+        const finalFilterTextarea = document.getElementById("finalFilter");
+        finalFilterTextarea.value = "";
+    }
+}
+
 function updateTaskHistory() {
     const currentTask = taskManager.getTaskById(htmlRow.id);
     const historyCopyOfTask = currentTask.deepClone();
@@ -216,6 +238,8 @@ function updateRowOnScreen(task, table) {
     buildRowFromTask(task, columnsToShow, existingRow);
 }
 
+//order of updateDomWithExistedGroups and setModalFields is important
+// as otherwise existed groups will be loosed in modal window
 function prepareModal(isEditMode) {
     if (isEditMode) {
         dom.modal.submitBtn.dataset.action = "edit";
@@ -433,6 +457,10 @@ function getChangeableFieldsFromModal() {
     };
 }
 
+function closeFilterModal() {
+    dom.modal.filterModalWindow.classList.add("hidden");
+}
+
 function closeHistoryModal() {
     visabilityFlags.isHistoryTable = false;
     dom.modal.historyModalWindow.classList.add("hidden");
@@ -440,6 +468,10 @@ function closeHistoryModal() {
 
 function closeModal() {
     dom.modal.modalWindow.classList.add("hidden");
+}
+
+function openFilterModal() {
+    dom.modal.filterModalWindow.classList.remove("hidden");
 }
 
 function openHistoryModal() {
@@ -498,6 +530,114 @@ document.addEventListener("DOMContentLoaded", () => {
     updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     closeModal();
     closeHistoryModal();
+    closeFilterModal();
+
+    //filter builder functionality
+    const modal = document.getElementById("filterModalOverlay");
+    //const openModalBtn = document.getElementById("openModalBtn");
+    //const closeBtn = document.getElementById("closeBtn");
+    const applyFilterBtn = document.getElementById("filterSubmitBtn");
+    const clearFilterBtn = document.getElementById("clearFilter");
+    const finalFilterTextarea = document.getElementById("finalFilter");
+    const dragBtns = document.querySelectorAll(".drag-btn");
+    const fieldSelect = document.querySelector(".field");
+    const operationSelect = document.querySelector(".operation");
+    const valueContainer = document.querySelector(".value-container");
+    const filterRow = document.querySelector(".filter-row");
+
+    const fieldOperations = {
+        bool: ["="],
+        number: [">", ">=", "=", "<", "<="],
+        string: ["equalTo", "startFrom", "endWith", "includes"],
+        "date-time": [">", ">=", "=", "<", "<="]
+    };
+
+    const fieldValues = {
+        bool: () => {
+            valueContainer.innerHTML = `<label><input type="radio" name="bool" value="true">true</label>
+            <label><input type="radio" name="bool" value="false">false</label>`;
+        },
+        number: () => {
+            valueContainer.innerHTML = `<input type="text" class="value-input" placeholder="012..." />`;
+        },
+        string: () => {
+            valueContainer.innerHTML = `<input type="text" class="value-input" placeholder="ABC..." />`;
+        },
+        "date-time": () => {
+            valueContainer.innerHTML = `<input type="datetime-local" class="value-input" />`;
+        }
+    };
+
+    function getCurrentValue() {
+        const checked = document.querySelector('input[name="bool"]:checked');
+        if (checked) return checked.value;
+        const input = document.querySelector(".value-input");
+        return input ? input.value : "";
+    }
+
+    dragBtns.forEach((btn) => {
+        btn.addEventListener("dragstart", (e) => {
+            e.dataTransfer.setData("text", e.target.innerText);
+        });
+    });
+
+    filterRow.addEventListener("dragstart", (e) => {
+        const field = fieldSelect.value;
+        const operation = operationSelect.value;
+        const value = getCurrentValue();
+        const filterString = `${field} ${operation} ${value}`;
+        e.dataTransfer.setData("text", filterString);
+    });
+
+    finalFilterTextarea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+    });
+
+    finalFilterTextarea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        const draggedText = e.dataTransfer.getData("text");
+        finalFilterTextarea.value += draggedText + " ";
+    });
+
+    // openModalBtn.addEventListener("click", () => {
+    //     modal.style.display = "flex";
+    // });
+
+    // closeBtn.addEventListener("click", () => {
+    //     modal.style.display = "none";
+    // });
+
+    applyFilterBtn.addEventListener("click", () => {
+        //TODO: use finalFilterTextarea.value ;
+    });
+
+    clearFilterBtn.addEventListener("click", () => {
+        finalFilterTextarea.value = "";
+    });
+
+    fieldSelect.addEventListener("change", (e) => {
+        const fieldType = e.target.selectedOptions[0].getAttribute("data-type");
+        updateOperations(fieldType);
+        updateValues(fieldType);
+    });
+
+    function updateOperations(fieldType) {
+        operationSelect.innerHTML = "";
+        fieldOperations[fieldType].forEach((op) => {
+            const option = document.createElement("option");
+            option.value = op;
+            option.textContent = op;
+            operationSelect.appendChild(option);
+        });
+    }
+
+    function updateValues(fieldType) {
+        fieldValues[fieldType]();
+    }
+
+    const defaultFieldType = fieldSelect.selectedOptions[0].getAttribute("data-type");
+    updateOperations(defaultFieldType);
+    updateValues(defaultFieldType);
 });
 
 //Add click listeners
@@ -512,5 +652,6 @@ dom.managingBlock.forEach((block) => {
 });
 dom.modal.modalWindow.addEventListener("click", handleModalClick);
 dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
+dom.modal.filterModalWindow.addEventListener("click", handleFilterModalClick);
 
 //document.getElementById("saveDataBtn").addEventListener("click", () => );

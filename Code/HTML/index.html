@@ -126,10 +126,66 @@
             </div>
         </div>
 
-       
+        <div class="filter-modal-overlay" id="filterModalOverlay">
+            <div class="filter-modal">
+                <button id="filterCloseBtn" class="filter-close-button">&times;</button>
+                <form id="logicalOperatorsForm">
+                    <fieldset>
+                        <legend>Logical operators</legend>
+                        <div class="drag-row">
+                            <button type="button" class="drag-btn" draggable="true" data-type="operator">AND</button>
+                            <button type="button" class="drag-btn" draggable="true" data-type="operator">OR</button>
+                            <button type="button" class="drag-btn" draggable="true" data-type="operator">(</button>
+                            <button type="button" class="drag-btn" draggable="true" data-type="operator">)</button>
+                        </div>
+                    </fieldset>
+                </form>
+
+                <form id="relationsForm">
+                    <fieldset>
+                        <legend>Relations</legend>
+                        <div class="filter-row" id="draggableRow" draggable="true">
+                            <div class="field-group">
+                                <label for="field-name">Field name:</label>
+                                <select class="field" id="field-name" data-type="bool">
+                                    <option value="select" data-type="bool" default>select</option>
+                                    <option value="id" data-type="number">id</option>
+                                    <option value="isDone" data-type="bool">isDone</option>
+                                    <option value="priority" data-type="number">priority</option>
+                                    <option value="group" data-type="string">group</option>
+                                    <option value="details" data-type="string">details</option>
+                                    <option value="deadline" data-type="date-time">deadline</option>
+                                    <option value="createdAt" data-type="date-time">createdAt</option>
+                                    <option value="updatedAt" data-type="date-time">updatedAt</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label for="operation">Operation:</label>
+                                <select class="operation" id="operation"></select>
+                            </div>
+                            <div class="field-group">
+                                <label>Value:</label>
+                                <div class="value-container" id="field-value"></div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+
+                <form id="finalFilterForm">
+                    <fieldset>
+                        <legend>Final filter</legend>
+                        <textarea id="finalFilter" rows="5" readonly></textarea>
+                    </fieldset>
+                </form>
+                <div class="filter-buttons">
+                    <button type="button" id="clearFilter">Clear filter</button>
+                    <button type="button" type="submit" id="filterSubmitBtn">Apply filter</button>
+                </div>
+            </div>
+        </div>
 
         <div class="managing">
-            <button class="complex hide-if-no-tasks">Complex action</button>
+            <button class="filter hide-if-no-tasks">Build Filter</button>
             <button class="add">Add new task</button>
             <button class="download hide-if-no-tasks">Download &#9660;</button>
             <div class="upload-container">
@@ -182,7 +238,7 @@
         </table>
 
         <div class="managing">
-            <button class="complex hide-if-no-tasks">Complex action</button>
+            <button class="filter hide-if-no-tasks">Build Filter</button>
             <button class="add">Add new task</button>
             <button class="download hide-if-no-tasks">Download &#9660;</button>
             <div class="upload-container">

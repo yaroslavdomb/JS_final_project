@@ -1,3 +1,4 @@
+.filter-modal-overlay,
 .history-modal-overlay,
 .modal-overlay {
     position: fixed;
@@ -12,20 +13,14 @@
     z-index: 1000;
 }
 
+.filter-modal-overlay.hidden,
 .history-modal-overlay.hidden,
 .modal-overlay.hidden {
     display: none;
 }
 
-.history-modal {
-    position: relative;
-    width: 83%;
-    background: rgb(128, 193, 227);
-    padding: 2.5rem 0.5rem 1rem 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
-}
-
+.filter-modal,
+.history-modal,
 .modal {
     position: relative;
     width: 30%;
@@ -35,7 +30,24 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
-.history-close-button, 
+.filter-modal {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-buttons {
+    align-self: flex-end;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.history-modal {
+    width: 83%;
+}
+
+.filter-close-button,
+.history-close-button,
 .close-button {
     position: absolute;
     top: 0.7rem;
@@ -46,13 +58,14 @@
     cursor: pointer;
     line-height: 1;
     z-index: 1001;
-    border: 2px solid rgb(44, 143, 94);
+    border: 2px solid rgb(34, 128, 81);
     border-radius: 0.3rem;
 }
 
-.history-close-button:hover, 
+.filter-close-button:hover,
+.history-close-button:hover,
 .close-button:hover {
-    background: rgb(30, 102, 135);
+    background: rgb(183, 230, 252);
 }
 
 fieldset {
@@ -65,8 +78,9 @@ fieldset {
 }
 
 legend {
-    font-weight: bold;
-    padding: 0 0.5rem;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    font-weight: 600;
 }
 
 .form-group {
@@ -94,6 +108,8 @@ legend {
     margin-right: auto;
 }
 
+#clearFilter,
+#filterSubmitBtn,
 #historySubmitBtn,
 #submitBtn {
     width: auto;
@@ -105,9 +121,11 @@ legend {
     border-radius: 0.5rem;
 }
 
+#clearFilter:hover,
+#filterSubmitBtn:hover,
 #historySubmitBtn:hover,
 #submitBtn:hover {
-    background: rgb(37, 192, 114);
+    background: rgb(142, 255, 198);
 }
 
 .slider-row {
@@ -166,3 +184,61 @@ legend {
     display: none;
 }
 
+.drag-row,
+.filter-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.drag-btn,
+.filter-row select,
+.filter-row input {
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.filter-row select {
+    width: 30%;
+}
+
+.filter-row input {
+    width: 60%;
+}
+
+textarea {
+    width: 99%;
+    padding: 0.3rem;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.drag-btn {
+    cursor: move;
+    padding: 0.8rem;
+    border: 1px solid blue;
+    background-color: #c6e2ff;
+    border-radius: 0.3rem;
+}
+
+#draggableRow {
+    cursor: move;
+}
+
+.field-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.field-group label {
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.filter-row select {
+    width: auto;
+}
