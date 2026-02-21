@@ -17,10 +17,16 @@ What supposed to be implemented:
         2.2.1) deadlines
         2.2.2) groups
     2.3) Deletion all the tasks related to the group
-    2.4) Show selected only
-        2.4.1) by group
-        2.4.2) by priority
-        2.4.3) by status
+    2.4) Filter by
+        2.4.1) id        = done
+        2.4.2) select    = done
+        2.4.3) status    = done
+        2.4.4) group     = done
+        2.4.5) priority  = done
+        2.4.6) details   = done
+        2.4.7) deadline  = done
+        2.4.8) created   = done?
+        2.4.9) updated   = done?
 
     3) Sorting (once clicking on appropriate table header) ASC and DESC = done
         3.1) by id

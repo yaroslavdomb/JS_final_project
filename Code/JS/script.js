@@ -235,15 +235,26 @@ function formatFilter(preformatedFilter) {
     const afterFormat = preformatedFilter
         .replace(/AND/g, "&&")
         .replace(/OR/g, "||")
-        .replace(/=/g, "===")
-        .replace(/select/g, "task.select")
-        .replace(/isDone/g, "task.isDone")
+        .replace(/equalTo/g, "===")
+        .replace(/\s+startsWith\s+"(\w+)"/g, (match, p1) => {
+            return `.startsWith("${p1}")`;
+        })
+        .replace(/\s+endsWith\s+"(\w+)"/g, (match, p1) => {
+            return `.endsWith("${p1}")`;
+        })
+        .replace(/\s+includes\s+"(\w+)"/g, (match, p1) => {
+            return `.includes("${p1}")`;
+        })
+
+        .replace(/task-select/g, "task.select")
+        .replace(/task-id/g, "task.id")
+        .replace(/task-isDone/g, "task.isDone")
         .replace(/task-group/g, "task.group")
         .replace(/task-priority/g, "task.priority")
         .replace(/task-details/g, "task.details")
-        .replace(/time-deadline/g, "new Date(task.deadline).getTime()")
-        .replace(/time-created/g, "new Date(task.createdAt).getTime()")
-        .replace(/time-updated/g, "new Date(task.updatedAt).getTime()")
+        .replace(/task-deadline/g, "new Date(task.deadline).getTime()")
+        .replace(/task-created/g, "new Date(task.createdAt).getTime()")
+        .replace(/task-updated/g, "new Date(task.updatedAt).getTime()")
         .replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})'/g, (match) => {
             const dateStr = match.slice(1, -1);
             const date = new Date(dateStr + ":00Z");
@@ -609,10 +620,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterRow = document.querySelector(".filter-row");
 
     const fieldOperations = {
-        bool: ["="],
-        number: [">", ">=", "=", "<", "<="],
-        string: ["equalTo", "startFrom", "endWith", "includes"],
-        "date-time": [">", ">=", "=", "<", "<="]
+        bool: ["==="],
+        number: [">", ">=", "===", "<", "<="],
+        string: ["equalTo", "startsWith", "endsWith", "includes"],
+        "date-time": [">", ">=", "===", "<", "<="]
     };
 
     const fieldValues = {
@@ -633,9 +644,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getCurrentValue() {
         const checked = document.querySelector('input[name="bool"]:checked');
-        if (checked) return checked.value;
+        if (checked) return { val: checked.value, type:checked.type };
         const input = document.querySelector(".value-input");
-        return input ? input.value : "";
+        if (input) return { val: input.value, type: input.type };
     }
 
     dragBtns.forEach((btn) => {
@@ -648,7 +659,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const field = fieldSelect.value;
         const operation = operationSelect.value;
         const value = getCurrentValue();
-        const filterString = `${field} ${operation} ${value}`;
+        let finalValue = value.val;
+        if (value.type === "text") {
+            finalValue = `"${value.val}"`;
+        } else if (value.type === "datetime-local") {
+            finalValue = `'${value.val}'`;
+        }
+        const filterString = `${field} ${operation} ${finalValue}`;
         e.dataTransfer.setData("text", filterString);
     });
 
@@ -666,9 +683,9 @@ document.addEventListener("DOMContentLoaded", () => {
         //TODO: use finalFilterTextarea.value ;
     });
 
-    clearFilterBtn.addEventListener("click", () => {
-        finalFilterTextarea.value = "";
-    });
+    // clearFilterBtn.addEventListener("click", () => {
+    //     finalFilterTextarea.value = "";
+    // });
 
     fieldSelect.addEventListener("change", (e) => {
         const fieldType = e.target.selectedOptions[0].getAttribute("data-type");
