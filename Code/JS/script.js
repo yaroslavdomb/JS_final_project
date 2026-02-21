@@ -115,7 +115,6 @@ function handleShowTaskHistory(event) {
 function handleEditTask(event) {
     getHTMLEl(event);
     //TODO: updateTasksStatistics(htmlRow.id, "edit");
-    updateTaskHistory();
     prepareModal(true);
     openModal();
 }
