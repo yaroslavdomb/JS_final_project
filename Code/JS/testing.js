@@ -9,8 +9,8 @@ const testData = {
 export function populateWithTestData(taskManager) {
     createTestTasks(testData.currentTasksCount, null).forEach((t) => taskManager.addTask(t));
     for (let i = 0; i < testData.currentTasksCount; i++) {
-        // const details = taskManager.getTaskById(i + 1).details;
-        // taskManager.updateTaskHistoryById(i + 1, createTestTasks(testData.historyTasksCount, details));
+        const details = taskManager.getTaskById(i + 1).details;
+        taskManager.updateTaskHistoryById(i + 1, createTestTasks(testData.historyTasksCount, details));
     }
 }
 
@@ -34,8 +34,10 @@ function createTestTasks(taskLimit, keepTaskDetails) {
         newTestTask.updatedAt = formatTime(null, LOCAL_EN);
         testTaskArr.push(newTestTask);
     }
-    const tt = prepare(testTaskArr);
-    return tt;
+
+    return testTaskArr;
+    //const tt = prepare(testTaskArr);
+    //return tt;
 }
 
 function prepare(testTaskArr) {
