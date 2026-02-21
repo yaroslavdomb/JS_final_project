@@ -7,6 +7,7 @@ import { TEST_MODE_ON, SCREEN_SIZES, EMPTY_GROUP, PRIORITY_LOWEST, visabilityFla
 const taskManager = new TaskManager();
 let sortOrder = true;
 let selectedAll = false;
+let dropFilterBtnEnabled = true;
 
 const responsiveDesign = {
     backgroundColor: "",
@@ -44,6 +45,7 @@ const dom = {
     headerWidth: document.getElementById("full-table-header-width"),
     hideOnNarrow: document.querySelectorAll(".hide-on-narrow-screen"),
     deactivated: document.querySelectorAll(".hide-if-no-tasks"),
+    dropFilterToggle: document.querySelector(".hide-if-no-filter"),
 
     modal: {
         modalWindow: document.getElementById("modalOverlay"),
@@ -58,11 +60,10 @@ const dom = {
         deadline: document.getElementById("task-deadline"),
         legend: document.getElementById("modal-legend"),
         priorityOut: document.getElementById("priority-value"),
-        finalFilterTextarea: document.getElementById("finalFilter")
+        finalFilterTextarea: document.getElementById("finalFilter"),
+        filter: document.getElementById("finalFilter")
     }
 };
-
-
 
 // Redirect clicks in table
 function handleTableClick(e) {
@@ -124,7 +125,7 @@ function handleRemoveTask(event) {
     getHTMLEl(event);
     //TODO: updateTasksStatistics(htmlRow.id, "remove");
     taskManager.removeTaskById(htmlRow.id);
-    disableMassActivity();
+    disableBtnsForNoTasksTable();
     htmlRow.rowEl.parentNode.removeChild(htmlRow.rowEl);
 }
 
@@ -143,6 +144,8 @@ function handleManagingClick(e) {
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     } else if (e.target.matches(".filter")) {
         openFilterModal();
+    } else if (e.target.matches(".drop")) {
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     }
 }
 
@@ -163,7 +166,7 @@ async function handleFileUpload(event) {
         const taskArr = JSON.parse(text);
         taskManager.uploadTasks(taskArr);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
-        enableMassActivity();
+        enableBtnsForNoTasksTable();
     } catch (error) {
         console.error(`Error while processing ${file.name}: ` + error);
     }
@@ -181,7 +184,7 @@ function handleSaveTask(isEditMode) {
         taskManager.addTask(newTask);
         addRowToScreen(newTask, dom.taskTable);
         if (!taskManager.isEmpty()) {
-            enableMassActivity();
+            enableBtnsForNoTasksTable();
         }
     }
 }
@@ -211,18 +214,53 @@ function handleHistoryModalClick(e) {
     }
 }
 
-function handleFilterModalClick (e){
+function handleFilterModalClick(e) {
     if (e.target.matches("#filterSubmitBtn")) {
         e.preventDefault();
-        //TODO - get data from modal and do parsing
+        const preformatedFilter = dom.modal.filter.value;
+        const formatedFilter = formatFilter(preformatedFilter);
+        const tasksAfterFiltering = filterTasks(formatedFilter);
+        updateDataOnScreen(tasksAfterFiltering, dom.taskTable);
+        enableDropFilterBtn();
         closeFilterModal();
     } else if (e.target.matches("#filterCloseBtn")) {
         e.preventDefault();
         closeFilterModal();
     } else if (e.target.matches("#clearFilter")) {
-        const finalFilterTextarea = document.getElementById("finalFilter");
-        finalFilterTextarea.value = "";
+        dom.modal.filter.value = "";
     }
+}
+
+function formatFilter(preformatedFilter) {
+    const afterFormat = preformatedFilter
+        .replace(/AND/g, "&&")
+        .replace(/OR/g, "||")
+        .replace(/=/g, "===")
+        .replace(/select/g, "task.select")
+        .replace(/isDone/g, "task.isDone")
+        .replace(/task-group/g, "task.group")
+        .replace(/task-priority/g, "task.priority")
+        .replace(/task-details/g, "task.details")
+        .replace(/time-deadline/g, "new Date(task.deadline).getTime()")
+        .replace(/time-created/g, "new Date(task.createdAt).getTime()")
+        .replace(/time-updated/g, "new Date(task.updatedAt).getTime()")
+        .replace(/'(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})'/g, (match) => {
+            const dateStr = match.slice(1, -1);
+            const date = new Date(dateStr + ":00Z");
+            return `new Date('${date.toISOString()}').getTime()`;
+        });
+    if (TEST_MODE_ON) {
+        console.warn("preformatedFilter = " + preformatedFilter);
+        console.warn("afterFormat = " + afterFormat);
+    }
+
+    return afterFormat;
+}
+
+function filterTasks(filterExpression) {
+    const filterFunction = new Function("task", `return ${filterExpression};`);
+    const tasksAfterFilter = taskManager.getAllTasksForDisplay().filter((task) => filterFunction(task));
+    return tasksAfterFilter;
 }
 
 function updateTaskHistory() {
@@ -310,13 +348,11 @@ function detectScreenSize() {
     }
 }
 
-/*
-isNewElemExist: If there is no new element, 
-the function is called due to screen resize, and 
-all elements should be added to the table with new styles.
-
-Otherwise, it adds just a single element, so no redesign is needed.
-*/
+/**
+ * @dataSource = array of tasks to be displayed on the screen
+ * @tableForUpdate = wich table should be updated.
+ *  Currently it can be table on main screen or table of history modal.
+ */
 function updateDataOnScreen(dataSource, tableForUpdate) {
     const columnsToShow = getColumnsToShow();
 
@@ -496,7 +532,14 @@ function updatePriorityValue(priorityIn, priorityOut) {
     priorityOut.textContent = PRIORITY_LOWEST - priorityIn.value;
 }
 
-function disableMassActivity() {
+function disableDropFilterBtn() {
+    if (dropFilterBtnEnabled) {
+        dom.dropFilterToggle.classList.remove("btn-is-active");
+        dropFilterBtnEnabled = false;
+    }
+}
+
+function disableBtnsForNoTasksTable() {
     if (taskManager.isEmpty()) {
         dom.deactivated.forEach((el) => {
             el.classList.remove("btn-is-active");
@@ -504,7 +547,14 @@ function disableMassActivity() {
     }
 }
 
-function enableMassActivity() {
+function enableDropFilterBtn() {
+    if (!dropFilterBtnEnabled) {
+        dom.dropFilterToggle.classList.add("btn-is-active");
+        dropFilterBtnEnabled = true;
+    }
+}
+
+function enableBtnsForNoTasksTable() {
     if (!taskManager.isEmpty()) {
         dom.deactivated.forEach((el) => {
             el.classList.add("btn-is-active");
@@ -512,19 +562,35 @@ function enableMassActivity() {
     }
 }
 
-window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable));
-
-//Update selected priority value in the middle window
 document.addEventListener("DOMContentLoaded", () => {
     if (TEST_MODE_ON) {
         populateWithTestData(taskManager);
-        enableMassActivity();
+        enableBtnsForNoTasksTable();
     }
 
+    //Init - add click listeners
+    window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable));
+    dom.taskTable.addEventListener("click", handleTableClick);
+    dom.managingBlock.forEach((block) => {
+        block.addEventListener("click", handleManagingClick);
+        const fileInputs = block.querySelectorAll('input[type="file"]');
+        fileInputs.forEach((fileInput) => {
+            fileInput.addEventListener("change", handleFileUpload);
+            fileInput.removeEventListener("click", handleManagingClick);
+        });
+    });
+    dom.modal.modalWindow.addEventListener("click", handleModalClick);
+    dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
+    dom.modal.filterModalWindow.addEventListener("click", handleFilterModalClick);
+
+    //Init - slider need first time to be run automatically
     const priorityInput = document.getElementById("task-priority");
     const priorityOutput = document.getElementById("priority-value");
     priorityInput.addEventListener("input", () => updatePriorityValue(priorityInput, priorityOutput));
-    disableMassActivity();
+
+    //Init - main window preparations
+    disableBtnsForNoTasksTable();
+    disableDropFilterBtn();
     detectScreenSize();
     updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     closeModal();
@@ -533,8 +599,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //filter builder functionality
     const modal = document.getElementById("filterModalOverlay");
-    //const openModalBtn = document.getElementById("openModalBtn");
-    //const closeBtn = document.getElementById("closeBtn");
     const applyFilterBtn = document.getElementById("filterSubmitBtn");
     const clearFilterBtn = document.getElementById("clearFilter");
     const finalFilterTextarea = document.getElementById("finalFilter");
@@ -598,14 +662,6 @@ document.addEventListener("DOMContentLoaded", () => {
         finalFilterTextarea.value += draggedText + " ";
     });
 
-    // openModalBtn.addEventListener("click", () => {
-    //     modal.style.display = "flex";
-    // });
-
-    // closeBtn.addEventListener("click", () => {
-    //     modal.style.display = "none";
-    // });
-
     applyFilterBtn.addEventListener("click", () => {
         //TODO: use finalFilterTextarea.value ;
     });
@@ -638,19 +694,5 @@ document.addEventListener("DOMContentLoaded", () => {
     updateOperations(defaultFieldType);
     updateValues(defaultFieldType);
 });
-
-//Add click listeners
-dom.taskTable.addEventListener("click", handleTableClick);
-dom.managingBlock.forEach((block) => {
-    block.addEventListener("click", handleManagingClick);
-    const fileInputs = block.querySelectorAll('input[type="file"]');
-    fileInputs.forEach((fileInput) => {
-        fileInput.addEventListener("change", handleFileUpload);
-        fileInput.removeEventListener("click", handleManagingClick);
-    });
-});
-dom.modal.modalWindow.addEventListener("click", handleModalClick);
-dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
-dom.modal.filterModalWindow.addEventListener("click", handleFilterModalClick);
 
 //document.getElementById("saveDataBtn").addEventListener("click", () => );

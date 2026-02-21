@@ -82,7 +82,7 @@ div.managing {
     align-items: center;
 }
 
-div.managing .filter {
+div.managing .drop {
     margin-right: auto;
 }
 
@@ -98,11 +98,13 @@ div.managing .custom-upload-btn {
     cursor: pointer;
 }
 
+.hide-if-no-filter,
 .hide-if-no-tasks {
     pointer-events: none;
     opacity: 0.3;
 }
 
+.hide-if-no-filter.btn-is-active,
 .hide-if-no-tasks.btn-is-active {
     pointer-events: auto;
     opacity: 1;
