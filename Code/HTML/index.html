@@ -132,11 +132,48 @@
                 <form id="logicalOperatorsForm">
                     <fieldset>
                         <legend>Logical operators</legend>
+                        <span id="drag-hint" class="visually-hidden">Drag to the filter field below</span>
                         <div class="drag-row">
-                            <button type="button" class="drag-btn" draggable="true" data-type="operator">AND</button>
-                            <button type="button" class="drag-btn" draggable="true" data-type="operator">OR</button>
-                            <button type="button" class="drag-btn" draggable="true" data-type="operator">(</button>
-                            <button type="button" class="drag-btn" draggable="true" data-type="operator">)</button>
+                            <button
+                                type="button"
+                                class="drag-btn"
+                                draggable="true"
+                                data-type="operator"
+                                aria-label="Logical AND operator"
+                                aria-describedby="drag-hint"
+                            >
+                                AND
+                            </button>
+                            <button
+                                type="button"
+                                class="drag-btn"
+                                draggable="true"
+                                data-type="operator"
+                                aria-label="Logical OR operator"
+                                aria-describedby="drag-hint"
+                            >
+                                OR
+                            </button>
+                            <button
+                                type="button"
+                                class="drag-btn"
+                                draggable="true"
+                                data-type="operator"
+                                aria-label="Open parenthesis"
+                                aria-describedby="drag-hint"
+                            >
+                                (
+                            </button>
+                            <button
+                                type="button"
+                                class="drag-btn"
+                                draggable="true"
+                                data-type="operator"
+                                aria-label="Close parenthesis"
+                                aria-describedby="drag-hint"
+                            >
+                                )
+                            </button>
                         </div>
                     </fieldset>
                 </form>
@@ -144,11 +181,13 @@
                 <form id="relationsForm">
                     <fieldset>
                         <legend>Relations</legend>
-                        <div class="filter-row" id="draggableRow" draggable="true">
+                        <div class="filter-row" id="draggableRow" draggable="true" role="group"
+    aria-label="Filter condition row, draggable"
+    aria-describedby="drag-hint">
                             <div class="field-group">
                                 <label for="field-name">Field name:</label>
                                 <select class="field" id="field-name" data-type="bool">
-                                    <option value="task-select" data-type="bool" default>select</option>
+                                    <option value="task-select" data-type="bool">select</option>
                                     <option value="task-id" data-type="number">id</option>
                                     <option value="task-isDone" data-type="bool">isDone</option>
                                     <option value="task-priority" data-type="number">priority</option>
@@ -174,12 +213,12 @@
                 <form id="finalFilterForm">
                     <fieldset>
                         <legend>Final filter</legend>
-                        <textarea id="finalFilter" rows="5" readonly></textarea>
+                        <textarea id="finalFilter" rows="5" aria-label="Final filter result" readonly></textarea>
                     </fieldset>
                 </form>
                 <div class="filter-buttons">
                     <button type="button" id="clearFilter">Clear filter</button>
-                    <button type="button" type="submit" id="filterSubmitBtn">Apply filter</button>
+                    <button type="submit" id="filterSubmitBtn">Apply filter</button>
                 </div>
             </div>
         </div>
@@ -190,8 +229,8 @@
             <button class="add">Add new task</button>
             <button class="download hide-if-no-tasks">Download &#9660;</button>
             <div class="upload-container">
-                <input type="file" id="file-upload" class="upload-input" hidden />
-                <label for="file-upload" class="custom-upload-btn">Upload &#9650;</label>
+                <input type="file" id="file-upload-1" class="upload-input" hidden />
+                <label for="file-upload-1" class="custom-upload-btn">Upload &#9650;</label>
             </div>
             <button class="select hide-if-no-tasks">Un/Select All</button>
         </div>
@@ -203,9 +242,9 @@
                 </tr>
                 <tr class="column-header">
                     <th data-col-sorting="select">select</th>
-                    <th data-col-sorting="number">#</th>
+                    <th data-col-sorting="number">ID</th>
                     <th data-col-sorting="done">Done</th>
-                    <th data-col-sorting="group">Task group</th>
+                    <th data-col-sorting="group">Group</th>
                     <th data-col-sorting="priority">Priority</th>
                     <th data-col-sorting="details">Task details</th>
                     <th data-col-sorting="deadline">Deadline</th>
@@ -230,9 +269,9 @@
                     <td>9/Mar/2026 10:56 (Isr TZ)</td>
                     <td>22/Jun/2028 22:12 (Isr TZ)</td>
                     <td>
-                        <button class="activity editRow">+</button>
-                        <button class="activity removeRow">-</button>
-                        <button class="activity showRow">...</button>
+                        <button class="activity editRow" aria-label="Edit task">+</button>
+                        <button class="activity removeRow" aria-label="Remove task">-</button>
+                        <button class="activity showTaskHistory" aria-label="Show task history">...</button>
                     </td>
                 </tr>
             </tbody>
@@ -244,8 +283,8 @@
             <button class="add">Add new task</button>
             <button class="download hide-if-no-tasks">Download &#9660;</button>
             <div class="upload-container">
-                <input type="file" id="file-upload" class="upload-input" hidden />
-                <label for="file-upload" class="custom-upload-btn">Upload &#9650;</label>
+                <input type="file" id="file-upload-2" class="upload-input" hidden />
+                <label for="file-upload-2" class="custom-upload-btn">Upload &#9650;</label>
             </div>
             <button class="select hide-if-no-tasks">Un/Select All</button>
         </div>

@@ -71,7 +71,7 @@ function handleTableClick(e) {
         handleEditTask(e);
     } else if (e.target.matches("button.removeRow")) {
         handleRemoveTask(e);
-    } else if (e.target.matches("button.showRow")) {
+    } else if (e.target.matches("button.showTaskHistory")) {
         handleShowTaskHistory(e);
     } else if (e.target.matches('input[type="checkbox"]')) {
         handleCheckbox(e);
@@ -446,16 +446,19 @@ function buildRowFromTask(task, columnsToShow, existingRow = null) {
         if (col.name === "actions") {
             const editBtn = document.createElement("button");
             editBtn.className = "activity editRow";
+            editBtn.setAttribute("aria-label", "Edit task");
             editBtn.textContent = "+";
             cell.appendChild(editBtn);
 
             const removeBtn = document.createElement("button");
             removeBtn.className = "activity removeRow";
+            editBtn.setAttribute("aria-label", "Remove task");
             removeBtn.textContent = "-";
             cell.appendChild(removeBtn);
 
             const showBtn = document.createElement("button");
-            showBtn.className = "activity showRow";
+            showBtn.className = "activity showTaskHistory";
+            editBtn.setAttribute("aria-label", "Show task history");
             showBtn.textContent = "...";
             cell.appendChild(showBtn);
         } else if (col.name === "isDone" || col.name === "select") {
@@ -584,11 +587,9 @@ document.addEventListener("DOMContentLoaded", () => {
     dom.taskTable.addEventListener("click", handleTableClick);
     dom.managingBlock.forEach((block) => {
         block.addEventListener("click", handleManagingClick);
-        const fileInputs = block.querySelectorAll('input[type="file"]');
-        fileInputs.forEach((fileInput) => {
-            fileInput.addEventListener("change", handleFileUpload);
-            fileInput.removeEventListener("click", handleManagingClick);
-        });
+        const fileInput = block.querySelector('input[type="file"]');
+        fileInput.addEventListener("change", handleFileUpload);
+        fileInput.removeEventListener("click", handleManagingClick);
     });
     dom.modal.modalWindow.addEventListener("click", handleModalClick);
     dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
@@ -611,7 +612,6 @@ document.addEventListener("DOMContentLoaded", () => {
     //filter builder functionality
     const modal = document.getElementById("filterModalOverlay");
     const applyFilterBtn = document.getElementById("filterSubmitBtn");
-    const clearFilterBtn = document.getElementById("clearFilter");
     const finalFilterTextarea = document.getElementById("finalFilter");
     const dragBtns = document.querySelectorAll(".drag-btn");
     const fieldSelect = document.querySelector(".field");
@@ -682,10 +682,6 @@ document.addEventListener("DOMContentLoaded", () => {
     applyFilterBtn.addEventListener("click", () => {
         //TODO: use finalFilterTextarea.value ;
     });
-
-    // clearFilterBtn.addEventListener("click", () => {
-    //     finalFilterTextarea.value = "";
-    // });
 
     fieldSelect.addEventListener("change", (e) => {
         const fieldType = e.target.selectedOptions[0].getAttribute("data-type");
