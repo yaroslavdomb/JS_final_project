@@ -82,7 +82,8 @@ div.managing {
     align-items: center;
 }
 
-div.managing .drop {
+/* set after wich button all others will be moved to the right end */
+div.managing .filter {
     margin-right: auto;
 }
 
@@ -144,6 +145,6 @@ div.managing .custom-upload-btn {
     width: 1px;
     height: 1px;
     overflow: hidden;
-    clip: rect(0,0,0,0);
+    clip: rect(0, 0, 0, 0);
     white-space: nowrap;
 }

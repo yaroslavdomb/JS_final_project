@@ -45,8 +45,6 @@ What supposed to be implemented:
 
 4) Responsivity
 
-
-
 6) Actions with confirmation
     6.1) Deletion
     6.2) Editing

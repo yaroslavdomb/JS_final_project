@@ -11,7 +11,8 @@ let dropFilterBtnEnabled = true;
 
 const responsiveDesign = {
     backgroundColor: "",
-    myWidth: ""
+    myWidth: "",
+    myModalWith: ""
 };
 
 const htmlRow = {
@@ -45,7 +46,7 @@ const dom = {
     headerWidth: document.getElementById("full-table-header-width"),
     hideOnNarrow: document.querySelectorAll(".hide-on-narrow-screen"),
     deactivated: document.querySelectorAll(".hide-if-no-tasks"),
-    dropFilterToggle: document.querySelector(".hide-if-no-filter"),
+    dropFilterToggle: document.querySelectorAll(".hide-if-no-filter"),
 
     modal: {
         modalWindow: document.getElementById("modalOverlay"),
@@ -144,8 +145,6 @@ function handleManagingClick(e) {
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     } else if (e.target.matches(".filter")) {
         openFilterModal();
-    } else if (e.target.matches(".drop")) {
-        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     }
 }
 
@@ -228,6 +227,8 @@ function handleFilterModalClick(e) {
         closeFilterModal();
     } else if (e.target.matches("#clearFilter")) {
         dom.modal.filter.value = "";
+    } else if (e.target.matches("#dropFilter")) {
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     }
 }
 
@@ -483,17 +484,21 @@ function setBodyDesign(element, isScreenChanged) {
         if (visabilityFlags.isMobScreen) {
             responsiveDesign.backgroundColor = "yellow";
             responsiveDesign.myWidth = "100%";
+            responsiveDesign.myModalWith = "100%";
         } else if (visabilityFlags.isTabScreen) {
             responsiveDesign.backgroundColor = "aqua";
-            responsiveDesign.myWidth = "90%";
+            responsiveDesign.myWidth = "85%";
+            responsiveDesign.myModalWith = "60%";
         } else if (visabilityFlags.isDescScreen) {
             responsiveDesign.backgroundColor = "lightblue";
-            responsiveDesign.myWidth = "80%";
+            responsiveDesign.myWidth = "75%";
+            responsiveDesign.myModalWith = "40%";
         }
     }
 
     element.setAttribute("style", `background-color:${responsiveDesign.backgroundColor}`);
     document.documentElement.style.setProperty("--my-width", responsiveDesign.myWidth);
+    document.documentElement.style.setProperty("--my-modal-width", responsiveDesign.myModalWith);
 }
 
 function getChangeableFieldsFromModal() {
@@ -548,7 +553,9 @@ function updatePriorityValue(priorityIn, priorityOut) {
 
 function disableDropFilterBtn() {
     if (dropFilterBtnEnabled) {
-        dom.dropFilterToggle.classList.remove("btn-is-active");
+        dom.dropFilterToggle.forEach(x => {
+            x.classList.remove("btn-is-active");
+        });
         dropFilterBtnEnabled = false;
     }
 }
@@ -563,7 +570,9 @@ function disableBtnsForNoTasksTable() {
 
 function enableDropFilterBtn() {
     if (!dropFilterBtnEnabled) {
-        dom.dropFilterToggle.classList.add("btn-is-active");
+        dom.dropFilterToggle.forEach((x) => {
+            x.classList.add("btn-is-active");
+        });
         dropFilterBtnEnabled = true;
     }
 }
@@ -632,10 +641,10 @@ document.addEventListener("DOMContentLoaded", () => {
             <label><input type="radio" name="bool" value="false">false</label>`;
         },
         number: () => {
-            valueContainer.innerHTML = `<input type="text" class="value-input" placeholder="012..." />`;
+            valueContainer.innerHTML = `<input type="text" class="value-input num" placeholder="012..." />`;
         },
         string: () => {
-            valueContainer.innerHTML = `<input type="text" class="value-input" placeholder="ABC..." />`;
+            valueContainer.innerHTML = `<input type="text" class="value-input txt" placeholder="ABC..." />`;
         },
         "date-time": () => {
             valueContainer.innerHTML = `<input type="datetime-local" class="value-input" />`;
@@ -644,8 +653,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function getCurrentValue() {
         const checked = document.querySelector('input[name="bool"]:checked');
-        if (checked) return { val: checked.value, type:checked.type };
+        if (checked) return { val: checked.value, type: checked.type };
         const input = document.querySelector(".value-input");
+        if (input.type === "text") {
+            if (input.classList.contains("txt")) {
+                return { val: input.value, type: "txt" };
+            } else {
+                return { val: input.value, type: "num" };
+            }
+        }
         if (input) return { val: input.value, type: input.type };
     }
 
@@ -660,8 +676,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const operation = operationSelect.value;
         const value = getCurrentValue();
         let finalValue = value.val;
-        if (value.type === "text") {
+        if (value.type === "txt") {
             finalValue = `"${value.val}"`;
+        } else if (value.type === "num") {
+            finalValue = Number(`${value.val}`);
         } else if (value.type === "datetime-local") {
             finalValue = `'${value.val}'`;
         }

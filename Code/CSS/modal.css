@@ -23,27 +23,23 @@
 .history-modal,
 .modal {
     position: relative;
-    width: 30%;
+    width: var(--my-modal-width);
     background: rgb(128, 193, 227);
     padding: 2.5rem 0.5rem 1rem 1rem;
     border-radius: 0.5rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
+.history-modal {
+    max-width: 95%;
+    max-height: 90vh;
+    overflow: auto;
+}
+
 .filter-modal {
-    width: 30%;
     display: flex;
     flex-direction: column;
-}
-
-.filter-buttons {
-    align-self: flex-end;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
-}
-
-.history-modal {
-    width: 83%;
+    box-sizing: border-box;
 }
 
 .filter-close-button,
@@ -53,12 +49,11 @@
     top: 0.7rem;
     right: 0.7rem;
     background: none;
-    border: none;
+    border: 0.125rem solid rgb(34, 128, 81);
     font-size: 1.5rem;
     cursor: pointer;
     line-height: 1;
     z-index: 1001;
-    border: 2px solid rgb(34, 128, 81);
     border-radius: 0.3rem;
 }
 
@@ -69,12 +64,13 @@
 }
 
 fieldset {
-    border: 2px solid rgb(44, 143, 94);
+    border: 0.125rem solid rgb(44, 143, 94);
     border-radius: 0.3rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
+    min-width: 0;
 }
 
 legend {
@@ -98,7 +94,7 @@ legend {
     width: 60%;
     padding: 0.5rem;
     font-size: 1rem;
-    border: 1px solid #ccc;
+    border: 0.0625rem solid #ccc;
     border-radius: 0.5rem;
     box-sizing: border-box;
 }
@@ -108,6 +104,7 @@ legend {
     margin-right: auto;
 }
 
+#dropFilter,
 #clearFilter,
 #filterSubmitBtn,
 #historySubmitBtn,
@@ -121,6 +118,7 @@ legend {
     border-radius: 0.5rem;
 }
 
+#dropFilter:hover,
 #clearFilter:hover,
 #filterSubmitBtn:hover,
 #historySubmitBtn:hover,
@@ -155,11 +153,6 @@ legend {
     margin-top: 0.1rem;
 }
 
-.range-container {
-    position: relative;
-    width: 100%;
-}
-
 .priority-slider {
     width: 100% !important;
     height: 1.5rem !important;
@@ -171,7 +164,7 @@ legend {
 
 .priority-output {
     background: white;
-    border: 1px solid rgb(44, 143, 94);
+    border: 0.0625rem solid rgb(44, 143, 94);
     border-radius: 0.3rem;
     padding: 0 0.5rem;
     min-width: 1.5rem;
@@ -184,25 +177,57 @@ legend {
     display: none;
 }
 
-.drag-row,
-.filter-row {
+.drag-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 1rem;
 }
 
-.drag-btn,
-.filter-row select,
-.filter-row input {
+.drag-btn {
+    cursor: move;
+    padding: 0.8rem;
+    border: 0.0625rem solid blue;
+    background-color: #c6e2ff;
+    border-radius: 0.3rem;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.5rem 1rem;
+    align-items: center;
+    cursor: move;
+}
+
+.field-group {
+    display: contents;
+}
+
+.field-group label {
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.field-group input,
+.field-group select,
+.value-container {
+    width: 100%;
     padding: 0.5rem;
     font-size: 1rem;
+    box-sizing: border-box;
 }
 
-.filter-row select {
-    width: 30%;
+.value-container {
+    display: flex;
+    gap: 2rem;
+    align-items:center;
+    padding: 0;
 }
 
-.filter-row input {
-    width: 60%;
+.value-container label {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
 }
 
 textarea {
@@ -212,33 +237,17 @@ textarea {
 
 .filter-buttons {
     display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.2rem;
+    align-self: stretch;
 }
 
-.drag-btn {
-    cursor: move;
-    padding: 0.8rem;
-    border: 1px solid blue;
-    background-color: #c6e2ff;
-    border-radius: 0.3rem;
-}
-
-#draggableRow {
-    cursor: move;
-}
-
-.field-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.field-group label {
-    font-size: 1.2rem;
+.visually-hidden {
+    position: absolute;
+    width: 0.0625rem;
+    height: 0.0625rem;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
     white-space: nowrap;
-}
-
-.filter-row select {
-    width: auto;
 }
