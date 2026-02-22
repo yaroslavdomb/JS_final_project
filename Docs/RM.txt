@@ -34,7 +34,43 @@ What supposed to be implemented:
 
     5) Accessability
 
+    6) Responsivity
+
 //***********************************************************************************
+
+1) Change download button action:
+    1.1) On download click Open a new modal where will be options for selection:
+        Download all tasks OR
+        Download all displayed tasks OR
+        Download all non-displayed tasks
+        
+        Save on localstorage OR
+        Save on local disk (+selection where to save)
+
+2) Change upload button functionality:
+    2.1) On upload click Open a new modal where will be options for selection:
+        Upload from localstorage
+        Upload from local disk (+selection where to save)
+
+3) Statistics for tasks
+    3.1) On click - Open a new modal where will be options for selection:
+        Total tasks = num of all tasks
+        Done = num of done tasks
+        Priority 
+            0 = ...
+            1 = ...
+            
+            10 = ...
+        Groups =  count of groups
+        Latest deadline = date of latest deadline
+        Closest deadline = date of closest deadline
+        Mostly changed = @id of task with longest history
+
+
+
+
+
+
 
 2) Tasks group actions:
     2.1) Adding batch of tasks (all the accessable fields)
@@ -43,13 +79,11 @@ What supposed to be implemented:
         2.2.2) groups
     2.3) Deletion all the tasks related to the group
 
-4) Responsivity
-
 6) Actions with confirmation
     6.1) Deletion
     6.2) Editing
 
-7) Statistics for tasks
+
 
 8) Modal with Full statistic for single task
     8.1) History of all editions

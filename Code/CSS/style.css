@@ -14,6 +14,11 @@ table#history-table {
     border: none;
 }
 
+table#statistic-table {
+    width: calc(var(--my-modal-width) -5%) ;
+    border: none;
+}
+
 thead tr,
 thead th {
     border: 0.2rem solid black;

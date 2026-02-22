@@ -222,15 +222,120 @@
                     </fieldset>
                 </form>
                 <div class="filter-buttons">
-                    <button type="button" id="dropFilter" class="hide-if-no-tasks hide-if-no-filter">Drop filter</button>
+                    <button type="button" id="dropFilter" class="hide-if-no-tasks hide-if-no-filter">
+                        Drop filter
+                    </button>
                     <button type="button" id="clearFilter">Clear filter</button>
                     <button type="submit" id="filterSubmitBtn">Apply filter</button>
                 </div>
             </div>
         </div>
 
+        <div class="statistic-modal-overlay" id="statisticModalOverlay">
+            <div class="statistic-modal">
+                <button id="statisticCloseBtn" class="statistic-close-button">&times;</button>
+                <form>
+                    <fieldset>
+                        <legend id="modal-legend">Global task review</legend>
+                        <table id="statistic-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Number of tasks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total tasks</td>
+                                    <td id="total-task"></td>
+                                </tr>
+                                <tr>
+                                    <td>Done before deadline</td>
+                                    <td id="done-bef-dead"></td>
+                                </tr>
+                                <tr id="not-done-bef-dead">
+                                    <td>Not done before deadline</td>
+                                    <td></td>
+                                </tr>
+                                <tr id="done-aft-dead">
+                                    <td>Done after deadline</td>
+                                    <td></td>
+                                </tr>
+                                <tr id="not-done-after-dead">
+                                    <td>Not done after deadline</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-0</td>
+                                    <td id="p0"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-1</td>
+                                    <td id="p1"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-2</td>
+                                    <td id="p2"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-3</td>
+                                    <td id="p3"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-4</td>
+                                    <td id="p4"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-5</td>
+                                    <td id="p5"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-6</td>
+                                    <td id="p6"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-7</td>
+                                    <td id="p7"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-8</td>
+                                    <td id="p8"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-9</td>
+                                    <td id="p9"></td>
+                                </tr>
+                                <tr>
+                                    <td>Priority-10</td>
+                                    <td id="p10"></td>
+                                </tr>
+                                <tr>
+                                    <td>Groups</td>
+                                    <td id="groups-stat"></td>
+                                </tr>
+                                <tr>
+                                    <td>Latest deadline</td>
+                                    <td id="latest-dead"></td>
+                                </tr>
+                                <tr>
+                                    <td>Closest deadline</td>
+                                    <td id="closest-dead"></td>
+                                </tr>
+                                <tr>
+                                    <td>Mostly changed</td>
+                                    <td id="mostly-changed"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button type="submit" id="statisticSubmitBtn" class="hide-only-one">Close</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
         <div class="managing">
             <button class="filter hide-if-no-tasks">Filter</button>
+            <button class="stat hide-if-no-tasks">Statistic</button>
             <button class="add">Add new task</button>
             <button class="download hide-if-no-tasks">Download &#9660;</button>
             <div class="upload-container">
@@ -284,7 +389,7 @@
 
         <div class="managing">
             <button class="filter hide-if-no-tasks">Filter</button>
-            <!-- <button class="drop hide-if-no-tasks hide-if-no-filter">Drop filter</button> -->
+            <button class="stat hide-if-no-tasks">Statistic</button>
             <button class="add">Add new task</button>
             <button class="download hide-if-no-tasks">Download &#9660;</button>
             <div class="upload-container">

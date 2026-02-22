@@ -190,4 +190,55 @@ export class TaskManager {
         const task = this.getTaskById(id);
         task.select = !task.select;
     }
+
+    getTasksCount() {
+        return this.#existedTasks.length;
+    }
+
+    getExistingPrioritiesAndCount() {
+        const priorityAndCount = {};
+        this.#existedTasks.forEach((task) => {
+            priorityAndCount[task.priority] = (priorityAndCount[task.priority] || 0) + 1;
+        });
+        return priorityAndCount;
+    }
+
+    getMaxDeadline(){
+        let maxDate = -Infinity;
+        let id = -Infinity;
+        this.#existedTasks.forEach((task) => {
+            if (task.deadlineTs > maxDate) {
+                id = task.id;
+                maxDate = task.deadline;
+            }
+        });
+
+        return {id:id, maxDate:maxDate};
+    };
+
+    getClosestDeadline() {
+        let closest = -Infinity;
+        let id;
+        let now = new Date().getTime();
+        this.#existedTasks.forEach((task) => {
+            if (task.deadlineTs - now > 0 && task.deadlineTs - now > closest ) {
+                id = task.id;
+                closest = task.deadline;
+            }
+        });
+        return { id: id, closest: closest };
+    }
+
+    getMostlyChanged() {
+        let changesCount = 0;
+        let id;
+        let max = -Infinity;
+        this.#existedTasks.forEach((task) => {
+            if (changesCount > max) {
+                id = task.id;
+                changesCount = task.changes.length;
+            }
+        });
+        return { id: id, changesCount: changesCount };
+    }
 }

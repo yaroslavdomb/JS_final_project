@@ -52,6 +52,7 @@ const dom = {
         modalWindow: document.getElementById("modalOverlay"),
         historyModalWindow: document.getElementById("historyModalOverlay"),
         filterModalWindow: document.getElementById("filterModalOverlay"),
+        statisticModalWindow: document.getElementById("statisticModalOverlay"),
         historyTable: document.getElementById("history-table"),
         submitBtn: document.getElementById("submitBtn"),
         isDone: document.getElementById("task-is-done"),
@@ -63,6 +64,29 @@ const dom = {
         priorityOut: document.getElementById("priority-value"),
         finalFilterTextarea: document.getElementById("finalFilter"),
         filter: document.getElementById("finalFilter")
+    },
+
+    statistic: {
+        totalTasks: document.getElementById("total-task"),
+        doneBeforeD: document.getElementById("done-bef-dead"),
+        notDoneBeforeD: document.getElementById("not-done-bef-dead"),
+        doneAfterD: document.getElementById("done-aft-dead"),
+        notDoneAfterD: document.getElementById("not-done-after-dead"),
+        p0: document.getElementById("p0"),
+        p1: document.getElementById("p1"),
+        p2: document.getElementById("p2"),
+        p3: document.getElementById("p3"),
+        p4: document.getElementById("p4"),
+        p5: document.getElementById("p5"),
+        p6: document.getElementById("p6"),
+        p7: document.getElementById("p7"),
+        p8: document.getElementById("p8"),
+        p9: document.getElementById("p9"),
+        p10: document.getElementById("p10"),
+        groups: document.getElementById("groups-stat"),
+        latestByD: document.getElementById("latest-dead"),
+        closestByD: document.getElementById("closest-dead"),
+        mostlyChanged: document.getElementById("mostly-changed")
     }
 };
 
@@ -145,6 +169,9 @@ function handleManagingClick(e) {
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     } else if (e.target.matches(".filter")) {
         openFilterModal();
+    } else if (e.target.matches(".stat")) {
+        prepareStatisticModal();
+        openStatisticModal();
     }
 }
 
@@ -230,6 +257,48 @@ function handleFilterModalClick(e) {
     } else if (e.target.matches("#dropFilter")) {
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     }
+}
+
+function handleStatisticModalClick(e) {
+    if (e.target.matches("#statisticSubmitBtn") || e.target.matches("#statisticCloseBtn")) {
+        closeStatisticModal();
+    }
+}
+
+function prepareStatisticModal() {
+    dom.statistic.totalTasks.textContent = taskManager.getTasksCount();
+    // dom.statistic.totalTasks.textContent =
+    // dom.statistic.totalTasks.textContent =
+    // dom.statistic.totalTasks.textContent =
+    // dom.statistic.totalTasks.textContent =
+
+    //priority
+    const priorityMap = taskManager.getExistingPrioritiesAndCount();
+    dom.statistic.p0.textContent = priorityMap[0] ?? 0;
+    dom.statistic.p1.textContent = priorityMap[1] ?? 0;
+    dom.statistic.p2.textContent = priorityMap[2] ?? 0;
+    dom.statistic.p3.textContent = priorityMap[3] ?? 0;
+    dom.statistic.p4.textContent = priorityMap[4] ?? 0;
+    dom.statistic.p5.textContent = priorityMap[5] ?? 0;
+    dom.statistic.p6.textContent = priorityMap[6] ?? 0;
+    dom.statistic.p7.textContent = priorityMap[7] ?? 0;
+    dom.statistic.p8.textContent = priorityMap[8] ?? 0;
+    dom.statistic.p9.textContent = priorityMap[9] ?? 0;
+    dom.statistic.p10.textContent = priorityMap[10] ?? 0;
+
+    dom.statistic.groups.textContent = taskManager.getExistingGroups().size;
+    const maxDeadLine = taskManager.getMaxDeadline();
+    dom.statistic.latestByD.textContent = `TaskID = ${maxDeadLine.id} (${maxDeadLine.maxDate})`;
+
+    const closestDeadLine = taskManager.getClosestDeadline();
+    const closestByDeadline =
+        closestDeadLine.id === undefined
+            ? `No future tasks found`
+            : `TaskID = ${closestDeadLine.id} (${closestDeadLine.closest})`;
+    dom.statistic.closestByD.textContent = closestByDeadline;
+
+    const response = taskManager.getMostlyChanged();
+    dom.statistic.mostlyChanged.textContent = `TaskID = ${response.id}(${response.changesCount} changes)`;
 }
 
 function formatFilter(preformatedFilter) {
@@ -511,6 +580,10 @@ function getChangeableFieldsFromModal() {
     };
 }
 
+function closeStatisticModal() {
+    dom.modal.statisticModalWindow.classList.add("hidden");
+}
+
 function closeFilterModal() {
     dom.modal.filterModalWindow.classList.add("hidden");
 }
@@ -522,6 +595,10 @@ function closeHistoryModal() {
 
 function closeModal() {
     dom.modal.modalWindow.classList.add("hidden");
+}
+
+function openStatisticModal() {
+    dom.modal.statisticModalWindow.classList.remove("hidden");
 }
 
 function openFilterModal() {
@@ -553,7 +630,7 @@ function updatePriorityValue(priorityIn, priorityOut) {
 
 function disableDropFilterBtn() {
     if (dropFilterBtnEnabled) {
-        dom.dropFilterToggle.forEach(x => {
+        dom.dropFilterToggle.forEach((x) => {
             x.classList.remove("btn-is-active");
         });
         dropFilterBtnEnabled = false;
@@ -603,6 +680,7 @@ document.addEventListener("DOMContentLoaded", () => {
     dom.modal.modalWindow.addEventListener("click", handleModalClick);
     dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
     dom.modal.filterModalWindow.addEventListener("click", handleFilterModalClick);
+    dom.modal.statisticModalWindow.addEventListener("click", handleStatisticModalClick);
 
     //Init - slider need first time to be run automatically
     const priorityInput = document.getElementById("task-priority");
@@ -617,6 +695,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModal();
     closeHistoryModal();
     closeFilterModal();
+    closeStatisticModal();
 
     //filter builder functionality
     const modal = document.getElementById("filterModalOverlay");
