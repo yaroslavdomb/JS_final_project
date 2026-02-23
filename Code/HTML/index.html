@@ -338,9 +338,16 @@
             <button class="stat hide-if-no-tasks">Statistic</button>
             <button class="add">Add new task</button>
             <button class="download hide-if-no-tasks">Download &#9660;</button>
+
             <div class="upload-container">
-                <input type="file" id="file-upload-1" class="upload-input" hidden />
-                <label for="file-upload-1" class="custom-upload-btn">Upload &#9650;</label>
+                <button class="upload custom-upload-btn">Upload &#9650;</button>
+                <div class="upload-menu">
+                    <input type="file" id="file-upload-1" class="upload-input" />
+                    <label for="file-upload-1" id="lbl-file-upload-1" class="upload-menu-item">Upload from file</label>
+                    <button id="upload-from-localstorage" class="upload-loc upload-menu-item">
+                        Upload from localstorage
+                    </button>
+                </div>
             </div>
             <button class="select hide-if-no-tasks">Un/Select All</button>
         </div>
@@ -387,7 +394,7 @@
             </tbody>
         </table>
 
-        <div class="managing">
+        <!-- <div class="managing">
             <button class="filter hide-if-no-tasks">Filter</button>
             <button class="stat hide-if-no-tasks">Statistic</button>
             <button class="add">Add new task</button>
@@ -397,6 +404,6 @@
                 <label for="file-upload-2" class="custom-upload-btn">Upload &#9650;</label>
             </div>
             <button class="select hide-if-no-tasks">Un/Select All</button>
-        </div>
+        </div> -->
     </body>
 </html>

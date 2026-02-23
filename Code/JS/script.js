@@ -163,6 +163,12 @@ function handleManagingClick(e) {
         openModal();
     } else if (e.target.matches(".download")) {
         taskManager.saveInFile();
+    } else if (e.target.matches(".upload")) {
+        document.querySelector(".upload-menu").classList.toggle("open");
+    } else if (e.target.matches(".upload-loc")) {
+        const tasks = getTasksFromLocalstorage();
+        taskManager.uploadTasks(tasks);
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
     } else if (e.target.matches(".select")) {
         taskManager.toggleAllSelected(selectedAll);
         selectedAll = !selectedAll;
@@ -263,6 +269,10 @@ function handleStatisticModalClick(e) {
     if (e.target.matches("#statisticSubmitBtn") || e.target.matches("#statisticCloseBtn")) {
         closeStatisticModal();
     }
+}
+
+function getTasksFromLocalstorage() {
+    //TODO
 }
 
 function prepareStatisticModal() {
@@ -803,6 +813,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const defaultFieldType = fieldSelect.selectedOptions[0].getAttribute("data-type");
     updateOperations(defaultFieldType);
     updateValues(defaultFieldType);
+
+    //************************************************************************************** */
+
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".upload-container")) {
+            document.querySelector(".upload-menu").classList.remove("open");
+        }
+    });
 });
 
 //document.getElementById("saveDataBtn").addEventListener("click", () => );

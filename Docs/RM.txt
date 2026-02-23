@@ -67,7 +67,11 @@ What supposed to be implemented:
         Mostly changed = @id of task with longest history
 
 
-
+4) Responsivity-additional:
+    for mob screen:
+    - replace "Upload" with "U" and arrow up
+    - replace "Download" with "D" and arrow down
+    - move (+XXX UTC) to the header of deadline
 
 
 

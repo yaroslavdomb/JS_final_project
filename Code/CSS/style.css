@@ -15,7 +15,7 @@ table#history-table {
 }
 
 table#statistic-table {
-    width: calc(var(--my-modal-width) -5%) ;
+    width: calc(var(--my-modal-width) -5%);
     border: none;
 }
 
@@ -92,6 +92,7 @@ div.managing .filter {
     margin-right: auto;
 }
 
+#lbl-file-upload-1,
 div.managing button,
 div.managing .custom-upload-btn {
     padding: 0.1rem 0.35rem;
@@ -102,6 +103,12 @@ div.managing .custom-upload-btn {
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
     font-size: 1rem;
     cursor: pointer;
+}
+
+#lbl-file-upload-1:hover,
+div.managing button:hover,
+div.managing .custom-upload-btn:hover {
+    background-color: rgb(152, 247, 223);
 }
 
 .hide-if-no-filter,
@@ -152,4 +159,37 @@ div.managing .custom-upload-btn {
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
+}
+
+.upload-container {
+    position: relative;
+    display: inline-block;
+}
+
+.upload-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    min-width: 180px;
+}
+
+.upload-menu.open {
+    display: block;
+}
+
+.upload-menu-item {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    text-align: left;
+    font-size: 1rem;
+    box-sizing: border-box;
+    text-decoration: none;
+    color: inherit;
 }
