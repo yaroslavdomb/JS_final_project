@@ -337,27 +337,23 @@
             <button class="filter hide-if-no-tasks">Filter</button>
             <button class="stat hide-if-no-tasks">Statistic</button>
             <button class="add">Add new task</button>
-            <button class="download hide-if-no-tasks">Download &#9660;</button>
-
-            <!-- <div class="download-container">
-                <button class="download custom-download-btn">Download &#9650;</button>
-                <div class="download-menu">
-                    <input type="file" id="file-download-1" class="download-input" />
-                    <label for="file-download-1" id="lbl-file-download-1" class="download-menu-item">download from file</label>
-                    <button id="download-from-localstorage" class="download-loc download-menu-item">
-                        download from localstorage
-                    </button>
+            
+            <div class="export-container">
+                <button class="export custom-export-btn">Export &#9660;</button>
+                <div class="export-menu">
+                    <button class="export-file export-menu-item">Export to file</button>
+                    <button class="export-add export-menu-item">Add to localstorage</button>
+                    <button class="export-rep export-menu-item">Replace localstorage</button>
                 </div>
-            </div> -->
+            </div>
 
             <div class="import-container">
                 <button class="import custom-import-btn">Import &#9650;</button>
                 <div class="import-menu">
                     <input type="file" id="file-import-1" class="import-input" />
                     <label for="file-import-1" id="lbl-file-import-1" class="import-menu-item">Import from file</label>
-                    <button id="import-from-localstorage" class="import-loc upload-menu-item">
-                        Import from localstorage
-                    </button>
+                    <button class="import-loc-add upload-menu-item">from localstorage (&amp;add)</button>
+                    <button class="import-loc-rep upload-menu-item">from localstorage (&amp;replace)</button>
                 </div>
             </div>
             <button class="select hide-if-no-tasks">Un/Select All</button>

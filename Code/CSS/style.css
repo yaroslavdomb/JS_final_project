@@ -72,6 +72,7 @@ tr th:hover[data-col-sorting] {
     background-color: rgb(5, 192, 145);
 }
 
+.export-input,
 .import-input {
     display: none;
 }
@@ -92,6 +93,7 @@ div.managing .filter {
     margin-right: auto;
 }
 
+#lbl-file-export-1,
 #lbl-file-import-1,
 div.managing button,
 div.managing .custom-import-btn {
@@ -105,6 +107,7 @@ div.managing .custom-import-btn {
     cursor: pointer;
 }
 
+#lbl-file-export-1:hover,
 #lbl-file-import-1:hover,
 div.managing button:hover,
 div.managing .custom-import-btn:hover {
@@ -161,11 +164,13 @@ div.managing .custom-import-btn:hover {
     white-space: nowrap;
 }
 
+.export-container,
 .import-container {
     position: relative;
     display: inline-block;
 }
 
+.export-menu,
 .import-menu {
     display: none;
     position: absolute;
@@ -179,10 +184,12 @@ div.managing .custom-import-btn:hover {
     min-width: 180px;
 }
 
+.export-menu.open,
 .import-menu.open {
     display: block;
 }
 
+.export-menu-item,
 .import-menu-item {
     display: block;
     width: 100%;

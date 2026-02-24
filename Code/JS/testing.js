@@ -23,7 +23,7 @@ export function populateMainTable(taskManager) {
 
 export function populateLocalStorage() {
     if (POPULATE_LOCAL_STORAGE) {
-        const currTasks = createTestTasksArr(testData.localStorageTasksCount, null);
+        const currTasks = createTestTasksArr(testData.localStorageTasksCount, "localStor");
         populateTasksHistory(currTasks);
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(currTasks));
     }
@@ -43,8 +43,8 @@ function createTestTasksArr(taskLimit, keepTaskDetails) {
         newTestTask.id = i + 1;
         newTestTask.isDone = Math.floor(Math.random() * 10) >= 5;
         newTestTask.group = "test group" + Math.floor(Math.random() * 10);
-        newTestTask.priority = Math.floor(Math.random() * 10);
-        newTestTask.details = keepTaskDetails ?? "task details for " + i;
+        newTestTask.priority = Math.floor(Math.random() * 11);
+        newTestTask.details = keepTaskDetails === null ? "task details for " + i : keepTaskDetails + "__0" + i;
         newTestTask.deadline = formatTime(null, LOCAL_EN);
         newTestTask.createdAt = formatTime(null, LOCAL_EN);
         newTestTask.updatedAt = formatTime(null, LOCAL_EN);

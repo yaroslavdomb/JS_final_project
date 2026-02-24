@@ -1,12 +1,10 @@
 import { Task } from "./Task.js";
 import { TaskManager } from "./TaskManager.js";
 import * as helper from "./helper.js";
-import { populateWithTestData, populateMainTable, populateLocalStorage } from "./testing.js";
+import { populateWithTestData } from "./testing.js";
 import {
     TEST_MODE_ON,
-    LOG_ON,
     LOCALSTORAGE_KEY,
-    POPULATE_LOCAL_STORAGE,
     SCREEN_SIZES,
     EMPTY_GROUP,
     PRIORITY_LOWEST,
@@ -170,15 +168,31 @@ function handleManagingClick(e) {
     if (e.target.matches(".add")) {
         prepareModal(false);
         openModal();
-    } else if (e.target.matches(".download")) {
-        document.querySelector(".download-menu").classList.toggle("open");
+    } else if (e.target.matches(".export")) {
+        document.querySelector(".export-menu").classList.toggle("open");        
+    } else if (e.target.matches(".export-file")) {
         taskManager.saveInFile();
+        document.querySelector(".export-menu").classList.toggle("open");
+    } else if (e.target.matches(".export-add")) {
+        const localStorageDta = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || [];
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks().concat(localStorageDta)));
+        document.querySelector(".export-menu").classList.toggle("open");
+    } else if (e.target.matches(".export-rep")) {
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks()));
+        document.querySelector(".export-menu").classList.toggle("open");
     } else if (e.target.matches(".import")) {
         document.querySelector(".import-menu").classList.toggle("open");
-    } else if (e.target.matches(".import-loc")) {
+    } else if (e.target.matches(".import-loc-add")) {
         const tasksInLocalStorage = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
         taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        document.querySelector(".import-menu").classList.toggle("open");
+    } else if (e.target.matches(".import-loc-rep")) {
+        const tasksInLocalStorage = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
+        taskManager.clearAllTasks();
+        taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        document.querySelector(".import-menu").classList.toggle("open");
     } else if (e.target.matches(".select")) {
         taskManager.toggleAllSelected(selectedAll);
         selectedAll = !selectedAll;
@@ -209,6 +223,7 @@ async function handleImportFile(event) {
         taskManager.hydrateAndAppendTasks(taskArr);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         enableBtnsForNoTasksTable();
+        document.querySelector(".import-menu").classList.toggle("open");
     } catch (error) {
         console.error(`Error while processing ${file.name}: ` + error);
     }
@@ -825,6 +840,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", (e) => {
         if (!e.target.closest(".import-container")) {
             document.querySelector(".import-menu").classList.remove("open");
+        }
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".export-container")) {
+            document.querySelector(".export-menu").classList.remove("open");
         }
     });
 });
