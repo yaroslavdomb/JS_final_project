@@ -227,11 +227,11 @@ export class TaskManager {
         let id;
         let now = new Date().getTime();
         this.#existedTasks.forEach((task) => {
-            if (task.deadlineTs - now > 0){
+            if (task.deadlineTs - now > 0) {
                 if (closest === -Infinity) {
                     id = task.id;
                     closest = task.deadlineTs;
-                } else  if (closest > task.deadlineTs) {
+                } else if (closest > task.deadlineTs) {
                     id = task.id;
                     closest = task.deadlineTs;
                 }
@@ -251,5 +251,12 @@ export class TaskManager {
             }
         });
         return { id: id, changesCount: changesCount };
+    }
+
+    getExecutedTasksCount(){
+        return this.#existedTasks.reduce((counter, t) => {
+            if (t.isDone) counter++;
+            return counter;
+        }, 0);
     }
 }

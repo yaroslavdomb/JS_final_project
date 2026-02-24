@@ -75,10 +75,7 @@ const dom = {
 
     statistic: {
         totalTasks: document.getElementById("total-task"),
-        doneBeforeD: document.getElementById("done-bef-dead"),
-        notDoneBeforeD: document.getElementById("not-done-bef-dead"),
-        doneAfterD: document.getElementById("done-aft-dead"),
-        notDoneAfterD: document.getElementById("not-done-after-dead"),
+        done: document.getElementById("done"),
         p0: document.getElementById("p0"),
         p1: document.getElementById("p1"),
         p2: document.getElementById("p2"),
@@ -298,10 +295,7 @@ function handleStatisticModalClick(e) {
 
 function prepareStatisticModal() {
     dom.statistic.totalTasks.textContent = taskManager.getTasksCount();
-    // dom.statistic.totalTasks.textContent =
-    // dom.statistic.totalTasks.textContent =
-    // dom.statistic.totalTasks.textContent =
-    // dom.statistic.totalTasks.textContent =
+    dom.statistic.done.textContent = taskManager.getExecutedTasksCount();
 
     //priority
     const priorityMap = taskManager.getExistingPrioritiesAndCount();
