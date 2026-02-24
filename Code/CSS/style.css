@@ -72,7 +72,7 @@ tr th:hover[data-col-sorting] {
     background-color: rgb(5, 192, 145);
 }
 
-.upload-input {
+.import-input {
     display: none;
 }
 
@@ -92,9 +92,9 @@ div.managing .filter {
     margin-right: auto;
 }
 
-#lbl-file-upload-1,
+#lbl-file-import-1,
 div.managing button,
-div.managing .custom-upload-btn {
+div.managing .custom-import-btn {
     padding: 0.1rem 0.35rem;
     background-color: white;
     color: black;
@@ -105,9 +105,9 @@ div.managing .custom-upload-btn {
     cursor: pointer;
 }
 
-#lbl-file-upload-1:hover,
+#lbl-file-import-1:hover,
 div.managing button:hover,
-div.managing .custom-upload-btn:hover {
+div.managing .custom-import-btn:hover {
     background-color: rgb(152, 247, 223);
 }
 
@@ -161,12 +161,12 @@ div.managing .custom-upload-btn:hover {
     white-space: nowrap;
 }
 
-.upload-container {
+.import-container {
     position: relative;
     display: inline-block;
 }
 
-.upload-menu {
+.import-menu {
     display: none;
     position: absolute;
     top: 100%;
@@ -179,11 +179,11 @@ div.managing .custom-upload-btn:hover {
     min-width: 180px;
 }
 
-.upload-menu.open {
+.import-menu.open {
     display: block;
 }
 
-.upload-menu-item {
+.import-menu-item {
     display: block;
     width: 100%;
     padding: 0.5rem 1rem;

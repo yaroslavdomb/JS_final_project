@@ -160,23 +160,29 @@ export class TaskManager {
         URL.revokeObjectURL(url);
     }
 
-    uploadTasks(taskArr) {
-        taskArr.forEach((taskData) => {
+    /**
+     *  @taskObjArr = array of Task _objects_
+     *
+     * Convert each object into Task and
+     * add it to the array of existed Tasks
+     */
+    hydrateAndAppendTasks(taskObjArr) {
+        taskObjArr.forEach((obj) => {
             const task = new Task(
-                taskData.select,
-                taskData.id,
-                taskData.isDone,
-                taskData.priority,
-                taskData.group,
-                taskData.details,
-                taskData.deadline,
-                taskData.deadlineTs,
-                taskData.createdAt,
-                taskData.createdAtTs,
-                taskData.updatedAt,
-                taskData.updatedAtTs,
-                taskData.changes || [],
-                taskData.actions || []
+                obj.select,
+                obj.id,
+                obj.isDone,
+                obj.priority,
+                obj.group,
+                obj.details,
+                obj.deadline,
+                obj.deadlineTs,
+                obj.createdAt,
+                obj.createdAtTs,
+                obj.updatedAt,
+                obj.updatedAtTs,
+                obj.changes || [],
+                obj.actions || []
             );
             this.addTask(task);
         });
@@ -203,7 +209,7 @@ export class TaskManager {
         return priorityAndCount;
     }
 
-    getMaxDeadline(){
+    getMaxDeadline() {
         let maxDate = -Infinity;
         let id = -Infinity;
         this.#existedTasks.forEach((task) => {
@@ -213,15 +219,15 @@ export class TaskManager {
             }
         });
 
-        return {id:id, maxDate:maxDate};
-    };
+        return { id: id, maxDate: maxDate };
+    }
 
     getClosestDeadline() {
         let closest = -Infinity;
         let id;
         let now = new Date().getTime();
         this.#existedTasks.forEach((task) => {
-            if (task.deadlineTs - now > 0 && task.deadlineTs - now > closest ) {
+            if (task.deadlineTs - now > 0 && task.deadlineTs - now > closest) {
                 id = task.id;
                 closest = task.deadline;
             }

@@ -36,9 +36,14 @@ What supposed to be implemented:
 
     6) Responsivity
 
+    7) Upload button functionality:
+        On upload click Open a new modal where will be options for selection:
+            - Upload from localstorage
+            - Upload from local disk (+selection where to save)
+
 //***********************************************************************************
 
-1) Change download button action:
+1) Download button functionality:
     1.1) On download click Open a new modal where will be options for selection:
         Download all tasks OR
         Download all displayed tasks OR
@@ -46,11 +51,6 @@ What supposed to be implemented:
         
         Save on localstorage OR
         Save on local disk (+selection where to save)
-
-2) Change upload button functionality:
-    2.1) On upload click Open a new modal where will be options for selection:
-        Upload from localstorage
-        Upload from local disk (+selection where to save)
 
 3) Statistics for tasks
     3.1) On click - Open a new modal where will be options for selection:
