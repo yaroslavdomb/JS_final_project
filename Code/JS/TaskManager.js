@@ -211,15 +211,15 @@ export class TaskManager {
 
     getMaxDeadline() {
         let maxDate = -Infinity;
-        let id = -Infinity;
+        let id;
         this.#existedTasks.forEach((task) => {
             if (task.deadlineTs > maxDate) {
                 id = task.id;
-                maxDate = task.deadline;
+                maxDate = task.deadlineTs;
             }
         });
 
-        return { id: id, maxDate: maxDate };
+        return { id: id, maxDate: this.getTaskById(id).deadline };
     }
 
     getClosestDeadline() {
@@ -227,12 +227,17 @@ export class TaskManager {
         let id;
         let now = new Date().getTime();
         this.#existedTasks.forEach((task) => {
-            if (task.deadlineTs - now > 0 && task.deadlineTs - now > closest) {
-                id = task.id;
-                closest = task.deadline;
+            if (task.deadlineTs - now > 0){
+                if (closest === -Infinity) {
+                    id = task.id;
+                    closest = task.deadlineTs;
+                } else  if (closest > task.deadlineTs) {
+                    id = task.id;
+                    closest = task.deadlineTs;
+                }
             }
         });
-        return { id: id, closest: closest };
+        return { id: id, closest: this.getTaskById(id).deadline };
     }
 
     getMostlyChanged() {
