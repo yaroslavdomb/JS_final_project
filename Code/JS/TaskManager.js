@@ -91,8 +91,11 @@ export class TaskManager {
         }
     }
 
-    getAllTasks() {
-        return this.#existedTasks.map((task) => task.deepClone());
+    getAllTasks(selectedOnly = false) {
+        const dataSource = selectedOnly
+            ? this.#existedTasks.filter((t) => t.select && t.isOnScreen)
+            : this.#existedTasks;
+        return dataSource.map((task) => task.deepClone());
     }
 
     getAllExceptOne(id) {
@@ -102,11 +105,20 @@ export class TaskManager {
     getAllTasksForDisplay(filter = false) {
         const toDisplay =
             filter === true
-                ? this.#existedTasks.filter((task) => task.isOnScreen === true)
+                ? this.#existedTasks.filter((task) => task.isOnScreen)
                 : this.#existedTasks;
 
         return toDisplay.map((task) => {
             return task.getDisplayedFields();
+        });
+    }
+
+    setVisibleOnScreen (tasksArr) {
+        this.hideAll();
+        const temp = [];
+        tasksArr.forEach((t) => temp.push(t.id));
+        temp.forEach((id) => {
+            this.getTaskById(id).isOnScreen = true;
         });
     }
 
@@ -129,7 +141,9 @@ export class TaskManager {
 
     hideSelected() {
         this.#existedTasks.forEach((t) => {
-            if (t.isOnScreen && t.select) {t.isOnScreen = false;}
+            if (t.isOnScreen && t.select) {
+                t.isOnScreen = false;
+            }
         });
     }
 
@@ -190,12 +204,17 @@ export class TaskManager {
         });
     }
 
-    saveInFile() {
+    saveInFile(selectedOnly = false) {
+        const dataSource = selectedOnly
+            ? this.#existedTasks.filter((t) => t.select && t.isOnScreen)
+            : this.#existedTasks;
+
         const content = JSON.stringify(
-            this.#existedTasks.map((task) => task.toJSON()),
+            dataSource.map((task) => task.toJSON()),
             null,
             2
         );
+
         const blob = new Blob([content], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -235,7 +254,8 @@ export class TaskManager {
     }
 
     toggleAllSelected(isAllSelected) {
-        this.#existedTasks.forEach((task) => (task.select = !isAllSelected));
+        const dataSource = this.#existedTasks.filter((t) => t.isOnScreen);
+        dataSource.forEach((task) => (task.select = !isAllSelected));
     }
 
     toggleSelection(id) {

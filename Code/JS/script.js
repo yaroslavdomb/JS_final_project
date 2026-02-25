@@ -217,7 +217,7 @@ const managingActions = {
     ".all-sel": () => {
         taskManager.toggleAllSelected(selectedAll);
         selectedAll = !selectedAll;
-        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
         document.querySelector(".all-menu").classList.toggle("open");
     },
 
@@ -255,20 +255,37 @@ const managingActions = {
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
         document.querySelector(".selected-menu").classList.toggle("open");
     },
-    
+
     ".selected-show": () => {
         taskManager.showSelected();
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
         document.querySelector(".selected-menu").classList.toggle("open");
     },
-    
+
     ".export-sub-btn": () => {
         document.querySelector(".export-sub-menu").classList.toggle("open");
     },
-    
-    ".export-sel-file": () => {},
-    ".export-sel-add": () => {},
-    ".export-sel-rep": () => {}
+
+    ".export-sel-file": () => {
+        taskManager.saveInFile(true);
+        document.querySelector(".export-sub-menu").classList.toggle("open");
+        document.querySelector(".selected-menu").classList.toggle("open");
+    },
+
+    ".export-sel-add": () => {
+        const selectedTasks = taskManager.getAllTasks(true);
+        const localStorageData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || [];
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(selectedTasks.concat(localStorageData)));
+        document.querySelector(".export-sub-menu").classList.toggle("open");
+        document.querySelector(".selected-menu").classList.toggle("open");
+    },
+
+    ".export-sel-rep": () => {
+        const selectedTasks = taskManager.getAllTasks(true);
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(selectedTasks));
+        document.querySelector(".export-sub-menu").classList.toggle("open");
+        document.querySelector(".selected-menu").classList.toggle("open");
+    }
 };
 
 function handleManagingClick(event) {
@@ -440,6 +457,7 @@ function formatFilter(preformatedFilter) {
 function filterTasks(filterExpression) {
     const filterFunction = new Function("task", `return ${filterExpression};`);
     const tasksAfterFilter = taskManager.getAllTasksForDisplay().filter((task) => filterFunction(task));
+    taskManager.setVisibleOnScreen(tasksAfterFilter);
     return tasksAfterFilter;
 }
 

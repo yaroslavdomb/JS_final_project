@@ -48,22 +48,21 @@ Implementation:
 
     8) History of each task changes
 
+    9)  Statistics for tasks
+        On click - Open a new modal where will be options for selection:
+            Total tasks = num of all tasks
+            Done = num of done tasks
+            Priority 
+                0 = ...
+                1 = ...
+                
+                10 = ...
+            Groups =  count of groups
+            Latest deadline = date of latest deadline
+            Closest deadline = date of closest deadline
+            Mostly changed = @id of task with longest history
+    10) 
 //***********************************************************************************
-
-1) Statistics for tasks
-    1.1) On click - Open a new modal where will be options for selection:
-        Total tasks = num of all tasks
-        Done = num of done tasks
-        Priority 
-            0 = ...
-            1 = ...
-            
-            10 = ...
-        Groups =  count of groups
-        Latest deadline = date of latest deadline
-        Closest deadline = date of closest deadline
-        Mostly changed = @id of task with longest history
-
 2) Responsivity-additional:
     for mob screen:
     - replace "Upload" with "U" and arrow up
@@ -76,7 +75,8 @@ Implementation:
         2.2.1) deadlines
         2.2.2) groups
     2.3) Deletion all the tasks related to the group
-
+    2.4) Selected
+    
 4) Documentation
 
 5) Optimization
