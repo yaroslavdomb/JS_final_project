@@ -158,48 +158,122 @@ function handleRemoveTask(event) {
     htmlRow.rowEl.parentNode.removeChild(htmlRow.rowEl);
 }
 
-//Redirect clicks in managing section
-//Upload click propcessed by handleFileUpload cause
-// it's a different type of event - "change"? not an action
-function handleManagingClick(e) {
-    if (e.target.matches(".add")) {
+const managingActions = {
+    ".filter": () => {
+        openFilterModal();
+    },
+
+    ".stat": () => {
+        prepareStatisticModal();
+        openStatisticModal();
+    },
+
+    ".add": () => {
         prepareModal(false);
         openModal();
-    } else if (e.target.matches(".export")) {
-        document.querySelector(".export-menu").classList.toggle("open");        
-    } else if (e.target.matches(".export-file")) {
-        taskManager.saveInFile();
-        document.querySelector(".export-menu").classList.toggle("open");
-    } else if (e.target.matches(".export-add")) {
-        const localStorageDta = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || [];
-        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks().concat(localStorageDta)));
-        document.querySelector(".export-menu").classList.toggle("open");
-    } else if (e.target.matches(".export-rep")) {
-        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks()));
-        document.querySelector(".export-menu").classList.toggle("open");
-    } else if (e.target.matches(".import")) {
+    },
+
+    ".import": () => {
         document.querySelector(".import-menu").classList.toggle("open");
-    } else if (e.target.matches(".import-loc-add")) {
+    },
+
+    ".import-loc-add": () => {
         const tasksInLocalStorage = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
         taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         document.querySelector(".import-menu").classList.toggle("open");
-    } else if (e.target.matches(".import-loc-rep")) {
+    },
+
+    ".import-loc-rep": () => {
         const tasksInLocalStorage = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
-        taskManager.clearAllTasks();
+        taskManager.removeAll();
         taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         document.querySelector(".import-menu").classList.toggle("open");
-    } else if (e.target.matches(".select")) {
+    },
+
+    ".all": () => {
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".all-hide": () => {
+        taskManager.hideAll();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".all-rem": () => {
+        taskManager.removeAll();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".all-show": () => {
+        taskManager.showAll();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".all-sel": () => {
         taskManager.toggleAllSelected(selectedAll);
         selectedAll = !selectedAll;
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
-    } else if (e.target.matches(".filter")) {
-        openFilterModal();
-    } else if (e.target.matches(".stat")) {
-        prepareStatisticModal();
-        openStatisticModal();
-    }
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".export-all-file": () => {
+        taskManager.saveInFile();
+        document.querySelector(".export-sub-menu").classList.toggle("open");
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".export-all-add": () => {
+        const localStorageDta = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || [];
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks().concat(localStorageDta)));
+        document.querySelector(".export-sub-menu").classList.toggle("open");
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".export-all-rep": () => {
+        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks()));
+        document.querySelector(".export-sub-menu").classList.toggle("open");
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".selected": () => {
+        document.querySelector(".selected-menu").classList.toggle("open");
+    },
+
+    ".selected-hide": () => {
+        taskManager.hideSelected();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        document.querySelector(".selected-menu").classList.toggle("open");
+    },
+
+    ".selected-rem": () => {
+        taskManager.removeSelected();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        document.querySelector(".selected-menu").classList.toggle("open");
+    },
+    
+    ".selected-show": () => {
+        taskManager.showSelected();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        document.querySelector(".selected-menu").classList.toggle("open");
+    },
+    
+    ".export-sub-btn": () => {
+        document.querySelector(".export-sub-menu").classList.toggle("open");
+    },
+    
+    ".export-sel-file": () => {},
+    ".export-sel-add": () => {},
+    ".export-sel-rep": () => {}
+};
+
+function handleManagingClick(event) {
+    const entry = Object.entries(managingActions).find((entry) => event.target.matches(entry[0]));
+    if (entry) entry[1](event);
 }
 
 async function handleImportFile(event) {
@@ -693,6 +767,21 @@ document.addEventListener("DOMContentLoaded", () => {
         enableBtnsForNoTasksTable();
     }
 
+    document.querySelectorAll(".export-sub-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const menu = btn.nextElementSibling;
+            document.querySelectorAll(".export-sub-menu").forEach((m) => {
+                if (m !== menu) m.classList.remove("open");
+            });
+            menu.classList.toggle("open");
+        });
+    });
+
+    document.addEventListener("click", () => {
+        document.querySelectorAll(".export-sub-menu").forEach((m) => m.classList.remove("open"));
+    });
+
     //Init - add click listeners
     window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable));
     dom.taskTable.addEventListener("click", handleTableClick);
@@ -838,10 +927,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.addEventListener("click", (e) => {
-        if (!e.target.closest(".export-container")) {
-            document.querySelector(".export-menu").classList.remove("open");
+        if (!e.target.closest(".all-container")) {
+            document.querySelector(".all-menu").classList.remove("open");
         }
     });
+
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest(".selected-container")) {
+            document.querySelector(".selected-menu").classList.remove("open");
+        }
+    });
+
+    // document.addEventListener("click", (e) => {
+    //     if (!e.target.closest(".export-container")) {
+    //         document.querySelector(".export-menu").classList.remove("open");
+    //     }
+    // });
 });
 
 //document.getElementById("saveDataBtn").addEventListener("click", () => );

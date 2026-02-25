@@ -58,6 +58,10 @@ export class Task {
      * @type {Array<string>}
      */
     #actions;
+    /**
+     * @type {boolean}
+     */
+    #isOnScreen;
 
     static fields = [
         "select",
@@ -73,7 +77,8 @@ export class Task {
         "updatedAt",
         "updatedAtTs",
         "changes",
-        "actions"
+        "actions",
+        "isOnScreen"
     ];
 
     constructor(
@@ -90,7 +95,8 @@ export class Task {
         updatedAt = "",
         updatedAtTs = 0,
         changes = [],
-        actions = []
+        actions = [],
+        isOnScreen = false
     ) {
         this.#select = select;
         this.#id = id;
@@ -106,6 +112,7 @@ export class Task {
         this.#updatedAtTs = updatedAtTs;
         this.#changes = changes;
         this.#actions = actions;
+        this.#isOnScreen = isOnScreen;
     }
 
     get select() {
@@ -209,6 +216,13 @@ export class Task {
         this.#actions = value;
     }
 
+    get isOnScreen() {
+        return this.#isOnScreen;
+    }
+    set isOnScreen(value) {
+        this.#isOnScreen = value;
+    }
+
     getColumnCount() {
         return this.fields.length;
     }
@@ -227,8 +241,9 @@ export class Task {
             this.createdAtTs,
             this.updatedAt,
             this.updatedAtTs,
-            this.changes ? this.changes.map((change) => change instanceof Task ? change.deepClone() : change) : [],
-            this.actions ? [...this.actions] : []
+            this.changes ? this.changes.map((change) => (change instanceof Task ? change.deepClone() : change)) : [],
+            this.actions ? [...this.actions] : [],
+            this.isOnScreen
         );
     }
 
@@ -247,7 +262,8 @@ export class Task {
             this.updatedAt,
             this.updatedAtTs,
             [],
-            []
+            [],
+            this.isOnScreen
         );
     }
 
@@ -279,6 +295,7 @@ export class Task {
         newTask.details = dataSource.details ?? "";
         newTask.deadline = dataSource.deadline ?? "";
         newTask.createdAt = formatTime(null, LOCAL_EN);
+        newTask.isOnScreen = true;
 
         return newTask;
     }

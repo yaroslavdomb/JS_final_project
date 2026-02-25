@@ -50,6 +50,8 @@ function createTestTasksArr(taskLimit, keepTaskDetails) {
         newTestTask.deadline = randomDate();
         newTestTask.createdAt = randomDate();
         newTestTask.updatedAt = randomDate();
+        newTestTask.isOnScreen = true;
+        
         testTaskArr.push(newTestTask);
     }
 

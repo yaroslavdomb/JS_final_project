@@ -325,26 +325,51 @@
             <button class="filter hide-if-no-tasks">Filter</button>
             <button class="stat hide-if-no-tasks">Statistic</button>
             <button class="add">Add new task</button>
-            
-            <div class="export-container">
-                <button class="export custom-export-btn">Export &#9660;</button>
-                <div class="export-menu">
-                    <button class="export-file export-menu-item">Export to file</button>
-                    <button class="export-add export-menu-item">Add to localstorage</button>
-                    <button class="export-rep export-menu-item">Replace localstorage</button>
+
+            <div class="import-container">
+                <button class="import">Import &#9660;</button>
+                <div class="import-menu">
+                    <input type="file" id="file-import-1" class="import-input" />
+                    <label for="file-import-1" class="menu-item">from file</label>
+                    <button class="import-loc-add menu-item">from localstorage (&amp;add)</button>
+                    <button class="import-loc-rep menu-item">from localstorage (&amp;replace)</button>
                 </div>
             </div>
 
-            <div class="import-container">
-                <button class="import custom-import-btn">Import &#9650;</button>
-                <div class="import-menu">
-                    <input type="file" id="file-import-1" class="import-input" />
-                    <label for="file-import-1" id="lbl-file-import-1" class="import-menu-item">Import from file</label>
-                    <button class="import-loc-add upload-menu-item">from localstorage (&amp;add)</button>
-                    <button class="import-loc-rep upload-menu-item">from localstorage (&amp;replace)</button>
+            <div class="all-container">
+                <button class="all">All tasks &#9660;</button>
+                <div class="all-menu">
+                    <button class="all-hide menu-item">Hide (from screen)</button>
+                    <button class="all-rem menu-item">Remove (totally)</button>
+                    <button class="all-show menu-item">Show (it and only it)</button>
+                    <button class="all-sel menu-item">Un/Select</button>
+                    <div class="export-sub-container">
+                        <button class="export-sub-btn menu-item">&#9664; Export ...</button>
+                        <div class="export-sub-menu">
+                            <button class="export-all-file menu-item">Export to file</button>
+                            <button class="export-all-add menu-item">Add to localstorage</button>
+                            <button class="export-all-rep menu-item">Replace localstorage</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button class="select hide-if-no-tasks">Un/Select All</button>
+
+            <div class="selected-container">
+                <button class="selected">Selected tasks &#9660;</button>
+                <div class="selected-menu">
+                    <button class="selected-hide menu-item">Hide (from screen)</button>
+                    <button class="selected-rem menu-item">Remove (totally)</button>
+                    <button class="selected-show menu-item">Show (it and only it)</button>
+                    <div class="export-sub-container">
+                        <button class="export-sub-btn menu-item">&#9664; Export ...</button>
+                        <div class="export-sub-menu">
+                            <button class="export-sel-file menu-item">Export to file</button>
+                            <button class="export-sel-add menu-item">Add to localstorage</button>
+                            <button class="export-sel-rep menu-item">Replace localstorage</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <table id="task-table">
@@ -388,17 +413,5 @@
                 </tr>
             </tbody>
         </table>
-
-        <!-- <div class="managing">
-            <button class="filter hide-if-no-tasks">Filter</button>
-            <button class="stat hide-if-no-tasks">Statistic</button>
-            <button class="add">Add new task</button>
-            <button class="download hide-if-no-tasks">Download &#9660;</button>
-            <div class="upload-container">
-                <input type="file" id="file-upload-2" class="upload-input" hidden />
-                <label for="file-upload-2" class="custom-upload-btn">Upload &#9650;</label>
-            </div>
-            <button class="select hide-if-no-tasks">Un/Select All</button>
-        </div> -->
     </body>
 </html>

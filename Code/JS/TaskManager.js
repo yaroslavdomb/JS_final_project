@@ -62,6 +62,11 @@ export class TaskManager {
         return this.#existedTasks.splice(indexOfRemovedTask, 1)[0];
     }
 
+    hideTaskById(id) {
+        const task = this.getTaskById(id);
+        if (task) task.isOnScreen = false;
+    }
+
     getExistingGroups() {
         return new Set(this.#existedTasks.map((task) => task.group));
     }
@@ -94,12 +99,52 @@ export class TaskManager {
         return this.#existedTasks.filter((task) => Number(task.id) !== Number(id));
     }
 
-    getAllTasksForDisplay() {
-        return this.#existedTasks.map((task) => task.getDisplayedFields());
+    getAllTasksForDisplay(filter = false) {
+        const toDisplay =
+            filter === true
+                ? this.#existedTasks.filter((task) => task.isOnScreen === true)
+                : this.#existedTasks;
+
+        return toDisplay.map((task) => {
+            return task.getDisplayedFields();
+        });
     }
 
-    clearAllTasks() {
+    removeAll() {
         this.#existedTasks = [];
+    }
+
+    hideAll() {
+        this.#existedTasks.forEach((t) => {
+            t.isOnScreen = false;
+        });
+    }
+
+    showAll() {
+        return this.#existedTasks.map((task) => {
+            task.isOnScreen = true;
+            return task.getDisplayedFields();
+        });
+    }
+
+    hideSelected() {
+        this.#existedTasks.forEach((t) => {
+            if (t.isOnScreen && t.select) {t.isOnScreen = false;}
+        });
+    }
+
+    showSelected() {
+        this.#existedTasks.forEach((t) => {
+            if (!t.select && t.isOnScreen) t.isOnScreen = false;
+        });
+    }
+
+    removeSelected() {
+        const toBeRemoved = [];
+        this.#existedTasks.forEach((t) => {
+            if (t.select && t.isOnScreen) toBeRemoved.push(t.id);
+        });
+        toBeRemoved.forEach((id) => this.removeTaskById(id));
     }
 
     /*
@@ -182,7 +227,8 @@ export class TaskManager {
                 obj.updatedAt,
                 obj.updatedAtTs,
                 obj.changes || [],
-                obj.actions || []
+                obj.actions || [],
+                obj.isOnScreen
             );
             this.addTask(task);
         });
@@ -253,7 +299,7 @@ export class TaskManager {
         return { id: id, changesCount: changesCount };
     }
 
-    getExecutedTasksCount(){
+    getExecutedTasksCount() {
         return this.#existedTasks.reduce((counter, t) => {
             if (t.isDone) counter++;
             return counter;
