@@ -6,6 +6,7 @@ const testData = {
     currentTasksCount: 50,
     historyTasksCount: 12,
     localStorageTasksCount: 15,
+    localStorageHistoryTasksCount: 15,
     from: new Date("2023-01-01"),
     till: new Date("2027-01-01")
 };

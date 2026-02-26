@@ -1,3 +1,4 @@
+.intro-modal-overlay,
 .statistic-modal-overlay,
 .filter-modal-overlay,
 .history-modal-overlay,
@@ -14,6 +15,7 @@
     z-index: 1000;
 }
 
+.intro-modal-overlay.hidden,
 .statistic-modal-overlay.hidden,
 .filter-modal-overlay.hidden,
 .history-modal-overlay.hidden,
@@ -21,13 +23,15 @@
     display: none;
 }
 
+.intro-modal,
 .statistic-modal,
 .filter-modal,
 .history-modal,
 .modal {
     position: relative;
     width: var(--my-modal-width);
-    background: rgb(128, 193, 227);
+    background-color: rgb(128, 193, 227);
+    color:rgb(44, 143, 94);    
     padding: 2.5rem 0.5rem 1rem 1rem;
     border-radius: 0.5rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
@@ -45,6 +49,26 @@
     box-sizing: border-box;
 }
 
+.intro-modal {
+    max-width: 95%;
+    max-height: 90vh;
+    overflow: auto;
+    background-color: azure;
+}
+
+.preformated {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word; 
+    overflow-wrap: break-word;
+    color:rgb(0, 0, 0);
+}
+
+.warning{
+    font-weight: 600;
+}
+
+.intro-close-button,
 .statistic-close-button,
 .filter-close-button,
 .history-close-button,
@@ -61,6 +85,7 @@
     border-radius: 0.3rem;
 }
 
+.intro-close-button:hover,
 .statistic-close-button:hover,
 .filter-close-button:hover,
 .history-close-button:hover,
@@ -109,6 +134,7 @@ legend {
     margin-right: auto;
 }
 
+#introSubmitBtn,
 #statisticSubmitBtn,
 #dropFilter,
 #clearFilter,
@@ -124,6 +150,7 @@ legend {
     border-radius: 0.5rem;
 }
 
+#introSubmitBtn:hover,
 #statisticSubmitBtn:hover,
 #dropFilter:hover,
 #clearFilter:hover,

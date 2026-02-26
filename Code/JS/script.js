@@ -49,6 +49,7 @@ const dom = {
     rows: document.querySelectorAll("tbody tr"),
     managingBlock: document.querySelectorAll("div.managing"),
     taskTable: document.getElementById("task-table"),
+    picture: document.getElementById("openIntroModalButton"),
     groupsList: document.getElementById("groups"),
     headerWidth: document.getElementById("full-table-header-width"),
     hideOnNarrow: document.querySelectorAll(".hide-on-narrow-screen"),
@@ -60,6 +61,7 @@ const dom = {
         historyModalWindow: document.getElementById("historyModalOverlay"),
         filterModalWindow: document.getElementById("filterModalOverlay"),
         statisticModalWindow: document.getElementById("statisticModalOverlay"),
+        introModalWindow: document.getElementById("introModalOverlay"),
         historyTable: document.getElementById("history-table"),
         submitBtn: document.getElementById("submitBtn"),
         isDone: document.getElementById("task-is-done"),
@@ -96,7 +98,9 @@ const dom = {
 
 // Redirect clicks in table
 function handleTableClick(e) {
-    if (e.target.matches("button.editRow")) {
+    if (e.target.closest("#openIntroModalButton")) {
+        handlePictureClick();
+    } else if (e.target.matches("button.editRow")) {
         handleEditTask(e);
     } else if (e.target.matches("button.removeRow")) {
         handleRemoveTask(e);
@@ -144,7 +148,6 @@ function handleShowTaskHistory(event) {
 // Click on edit button in the table row
 function handleEditTask(event) {
     getHTMLEl(event);
-    //TODO: updateTasksStatistics(htmlRow.id, "edit");
     prepareModal(true);
     openModal();
 }
@@ -152,7 +155,6 @@ function handleEditTask(event) {
 // Click on remove button in the table row
 function handleRemoveTask(event) {
     getHTMLEl(event);
-    //TODO: updateTasksStatistics(htmlRow.id, "remove");
     taskManager.removeTaskById(htmlRow.id);
     disableBtnsForNoTasksTable();
     htmlRow.rowEl.parentNode.removeChild(htmlRow.rowEl);
@@ -350,6 +352,10 @@ function handleSaveTask(isEditMode) {
     }
 }
 
+function handlePictureClick() {
+    openIntroModal();
+}
+
 //Redirect clicks in modal window
 function handleModalClick(e) {
     if (e.target.matches("#submitBtn")) {
@@ -397,6 +403,12 @@ function handleFilterModalClick(e) {
 function handleStatisticModalClick(e) {
     if (e.target.matches("#statisticSubmitBtn") || e.target.matches("#statisticCloseBtn")) {
         closeStatisticModal();
+    }
+}
+
+function handleIntroModalClick(e) {
+    if (e.target.matches("#introSubmitBtn") || e.target.matches("#introCloseBtn")) {
+        closeIntroModal();
     }
 }
 
@@ -606,10 +618,20 @@ function buildHeader(columnsToShow) {
     if (!visabilityFlags.isHistoryTable) {
         const headerRow_mainHeader = thead.insertRow();
         headerRow_mainHeader.setAttribute("class", "full-table-header");
+
         const th_main = document.createElement("th");
         th_main.setAttribute("colspan", `${columnsToShow.length}`);
         th_main.setAttribute("id", `full-table-header-width`);
+        
+        const button = document.createElement("button");
+        button.setAttribute("id", "openIntroModalButton");
+
+        const img = document.createElement("img");
+        img.setAttribute("src", "../Data/I_in_circle.png");
+        img.setAttribute("alt", "Open Modal");
+        button.appendChild(img);
         th_main.textContent = "Things to do";
+        th_main.insertBefore(button, th_main.firstChild);
         headerRow_mainHeader.appendChild(th_main);
     }
 
@@ -710,7 +732,15 @@ function getChangeableFieldsFromModal() {
     };
 }
 
-//Statistical modal  
+//Intro modal
+function closeIntroModal() {
+    dom.modal.introModalWindow.classList.add("hidden");
+}
+function openIntroModal() {
+    dom.modal.introModalWindow.classList.remove("hidden");
+}
+
+//Statistical modal
 function closeStatisticModal() {
     dom.modal.statisticModalWindow.classList.add("hidden");
 }
@@ -726,7 +756,7 @@ function openFilterModal() {
     dom.modal.filterModalWindow.classList.remove("hidden");
 }
 
-//History modal 
+//History modal
 function closeHistoryModal() {
     visabilityFlags.isHistoryTable = false;
     dom.modal.historyModalWindow.classList.add("hidden");
@@ -848,11 +878,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    //Add click listeners in modals
+    //Add click listeners inside modals
     dom.modal.modalWindow.addEventListener("click", handleModalClick);
     dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
     dom.modal.filterModalWindow.addEventListener("click", handleFilterModalClick);
     dom.modal.statisticModalWindow.addEventListener("click", handleStatisticModalClick);
+    dom.modal.introModalWindow.addEventListener("click", handleIntroModalClick);
 
     //Init - slider need first time to be run automatically
     const priorityInput = document.getElementById("task-priority");
@@ -868,6 +899,7 @@ document.addEventListener("DOMContentLoaded", () => {
     closeHistoryModal();
     closeFilterModal();
     closeStatisticModal();
+    openIntroModal();
 
     //filter builder functionality
     const modal = document.getElementById("filterModalOverlay");

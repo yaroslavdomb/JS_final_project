@@ -35,13 +35,6 @@ tbody th {
     text-align: center;
 }
 
-.full-table-header {
-    font-size: 2.71rem;
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-    font-weight: 600;
-    color: blue;
-}
-
 thead .column-header {
     font-size: large;
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
@@ -201,4 +194,35 @@ div.managing button:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     min-width: 180px;
     z-index: 1001;
+}
+
+.full-table-header {
+    font-size: 2.71rem;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+    font-weight: 600;
+    color: blue;
+}
+
+th#full-table-header-width {
+    position: relative;
+    text-align: center;
+}
+
+#openIntroModalButton {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    position: absolute;
+    left: 0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#openIntroModalButton img {
+    width: 2.71rem;
+    height: 2.71rem;
+    pointer-events: none;
 }

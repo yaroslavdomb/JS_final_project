@@ -76,7 +76,7 @@
                             <label for="task-deadline">Deadline:</label>
                             <input type="datetime-local" id="task-deadline" required />
                         </div>
-                        <button type="submit" id="submitBtn" class="hide-only-one">Add task</button>
+                        <button type="submit" id="submitBtn">Add task</button>
                     </fieldset>
                 </form>
             </div>
@@ -315,7 +315,136 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <button type="submit" id="statisticSubmitBtn" class="hide-only-one">Close</button>
+                        <button type="submit" id="statisticSubmitBtn">Close</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <div class="intro-modal-overlay" id="introModalOverlay">
+            <div class="intro-modal">
+                <button id="introCloseBtn" class="intro-close-button">&times;</button>
+                <form>
+                    <fieldset>
+                        <legend id="modal-legend">Intro or please ReadMe</legend>
+                        <details>
+                            <summary>Available functionality</summary>
+                            <div class="preformated">
+1) BASIC FUNCTIONALITY for single task:
+
+    - ADD - button "Add new task" in managing panel
+    - DELETE - button "--" in Actions column of the table (available after task creation)
+    - HIDE - button "-" in Actions column of the table (available after task creation)
+    - EDIT - button "+" in Actions column of the table (available after task creation)
+
+
+2) EXPORT button functionality:
+    
+    On click new buttons appears to allow
+        - Export to localstorage & REPLACE the tasks currently located in the localstorage 
+        - Export to localstorage & ADD to the tasks currently located in the localstorage
+        - Export to local disk
+
+    
+3) IMPORT button functionality:
+
+    On click new buttons appears to allow
+        - Import from localstorage & REPLACE current tasks in the table
+        - Import from localstorage & ADD to current tasks in the table
+        - Import from local disk & REPLACE the current tasks in the table
+        - Import from local disk & ADD to the current tasks in the table
+
+
+4) FILTERING by the following fields:
+
+    - id
+    - select
+    - status
+    - group   
+    - priority
+    - details 
+    - deadline
+    - creation date
+    - update date
+
+    __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
+
+
+5) SORTING 
+
+    once clicking on appropriate table header, ASC and DESC
+    - by id
+    - by status
+    - by priority
+    - by group name
+    - by deadlines
+    - by creation date
+    - by update date
+
+
+6) HISTORY of each task: 
+    
+    When clicking the "..." button in the "Actions" column of the appropriate row, a new History modal window should open, showing all changes related to the task.
+
+
+7) STATISTICS of the tasks: 
+    
+    Statistics will be counted according to the menu — for ALL or for SELECTED tasks. When the "Statistics" button in the appropriate menu is clicked, a new modal will open. The following options will be available for the retrospective:
+
+        Total tasks = number of tasks
+        Done = number of tasks with status "done"
+        Priority-0 = number of tasks with priority 0 
+        Priority-1 = number of tasks with priority 1    
+        ...
+        Priority-10 = number of tasks with priority 10
+        Groups =  count of groups
+        Latest deadline = @id of task with (date of latest deadline)
+        Closest deadline = @id of task with (date of closest deadline)
+        Mostly changed = @id of task with longest history (number of changes)
+
+    __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
+                            </div>
+                        </details>
+                        <details>
+                            <summary class="warning"> Test mode configuration</summary>
+                            <div class="preformated">
+You can provide the desired sizes of the auto-generated data below. This will allow you to immediately enjoy all the available functionality. The data will be randomly generated.
+
+<div class="warning">
+!!! Please note</div> The localStorage size is restricted to ~5MB (depend on browser & OS), so no more than 100 tasks, each with a history of 100 changes, can be saved in localStorage.
+
+<div class="warning">
+!!! Please note</div> The number of auto-generated History tasks is UP to your number and NOT EQUAL TO.You always can do some changes manually and reach the needed number of changes in task history.
+
+
+<div class="warning">TEST CONFIGURATION:</div>
+                                <div class="form-group">
+                                    <label for="test-data-main-table">Tasks to be generated on table:</label>
+                                    <input type="number" id="test-data-main-table" placeholder="012..." min="0"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="test-data-hist-table">History changes for each task on table (up to):</label>
+                                    <input type="number" id="test-data-main-table" placeholder="012..." min="0"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="test-data-main-table">Tasks to be generated for localStorage:</label>
+                                    <input type="number" id="test-data-main-table" placeholder="012..." min="0"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="test-data-main-table">History changes for each task in localStorage (up to):</label>
+                                    <input type="number" id="test-data-main-table" placeholder="012..." min="0"/>
+                                </div>                                
+                                <div class="form-group">
+                                    <label for="dates-gen-start">Dates generated from:</label>
+                                    <input type="datetime-local" id="dates-gen-start" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="dates-gen-finish">Dates generated till:</label>
+                                    <input type="datetime-local" id="dates-gen-finish" required />
+                                </div>
+                            </div>
+                        </details>
+                        <button type="submit" id="introSubmitBtn" class="">Close</button>
                     </fieldset>
                 </form>
             </div>
@@ -377,7 +506,12 @@
         <table id="task-table">
             <thead>
                 <tr class="full-table-header">
-                    <th colspan="9" id="full-table-header-width">Things to do</th>
+                    <th colspan="9" id="full-table-header-width">
+                        <button id="openIntroModalButton">
+                            <img src="../Data/I_in_circle.png" alt="Open Modal">
+                        </button>
+                        Things to do
+                    </th>
                 </tr>
                 <tr class="column-header">
                     <th data-col-sorting="select">select</th>
