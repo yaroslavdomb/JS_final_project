@@ -9,15 +9,15 @@ table {
     width: var(--my-width);
 }
 
-/* table#history-table {
+table#history-table {
     width: calc(var(--my-width) + 20%);
     border: none;
-} */
+}
 
-/* table#statistic-table {
+table#statistic-table {
     width: calc(var(--my-modal-width) -5%);
     border: none;
-} */
+}
 
 thead tr,
 thead th {

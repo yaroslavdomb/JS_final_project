@@ -745,11 +745,11 @@ function setBodyDesign(element, isScreenChanged) {
         } else if (visabilityFlags.isTabScreen) {
             responsiveDesign.backgroundColor = "aqua";
             responsiveDesign.myWidth = "85%";
-            responsiveDesign.myModalWith = "60%";
+            responsiveDesign.myModalWith = "85%";
         } else if (visabilityFlags.isDescScreen) {
             responsiveDesign.backgroundColor = "lightblue";
-            responsiveDesign.myWidth = "75%";
-            responsiveDesign.myModalWith = "40%";
+            responsiveDesign.myWidth = "85%";
+            responsiveDesign.myModalWith = "75%";
         }
     }
 
