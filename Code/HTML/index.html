@@ -10,8 +10,8 @@
     </head>
     <body>
         <div class="modal-overlay" id="modalOverlay">
-            <div class="modal">
-                <button id="closeBtn" class="close-button">&times;</button>
+            <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-legend">
+                <button id="closeBtn" class="close-button" aria-label="Close add task modal">&times;</button>
                 <form>
                     <fieldset>
                         <legend id="modal-legend">New Task Data</legend>
@@ -33,7 +33,7 @@
                             <div class="slider-wrapper">
                                 <div class="priority-labels-top">
                                     <span>LOWEST</span>
-                                    <output id="priority-value" class="priority-output">5</output>
+                                    <output id="priority-value" class="priority-output" for="task-priority">5</output>
                                     <span>HIGHEST</span>
                                 </div>
 
@@ -83,12 +83,17 @@
         </div>
 
         <div class="history-modal-overlay" id="historyModalOverlay">
-            <div class="history-modal">
-                <button id="historyCloseBtn" class="history-close-button">&times;</button>
+            <div class="history-modal" role="dialog" aria-modal="true" aria-labelledby="history-modal-legend">
+                <button id="historyCloseBtn" class="history-close-button" aria-label="Close history modal">
+                    &times;
+                </button>
                 <form>
                     <fieldset>
                         <legend id="history-modal-legend">Task history changes</legend>
                         <table id="history-table">
+                            <caption class="visually-hidden">
+                                Task history changes
+                            </caption>
                             <thead>
                                 <tr class="column-header">
                                     <th>Select</th>
@@ -105,11 +110,11 @@
                             <tbody id="history-body">
                                 <tr>
                                     <td>
-                                        <input type="checkbox" />
+                                        <input type="checkbox" aria-label="Select row" />
                                     </td>
                                     <td>10</td>
                                     <td>
-                                        <input type="checkbox" />
+                                        <input type="checkbox" aria-label="Task is done" />
                                     </td>
                                     <td>Home</td>
                                     <td>1</td>
@@ -127,11 +132,11 @@
         </div>
 
         <div class="filter-modal-overlay" id="filterModalOverlay">
-            <div class="filter-modal">
-                <button id="filterCloseBtn" class="filter-close-button">&times;</button>
+            <div class="filter-modal" role="dialog" aria-modal="true" aria-labelledby="filter-modal-legend">
+                <button id="filterCloseBtn" class="filter-close-button" aria-label="Close filter modal">&times;</button>
                 <form id="logicalOperatorsForm">
                     <fieldset>
-                        <legend>Logical operators</legend>
+                        <legend id="filter-modal-legend">Logical operators</legend>
                         <span id="drag-hint" class="visually-hidden">Drag to the filter field below</span>
                         <div class="drag-row">
                             <button
@@ -218,7 +223,13 @@
                 <form id="finalFilterForm">
                     <fieldset>
                         <legend>Final filter</legend>
-                        <textarea id="finalFilter" rows="5" aria-label="Final filter result" readonly></textarea>
+                        <textarea
+                            id="finalFilter"
+                            rows="5"
+                            aria-label="Final filter result"
+                            readonly
+                            aria-readonly="true"
+                        ></textarea>
                     </fieldset>
                 </form>
                 <div class="filter-buttons">
@@ -232,12 +243,17 @@
         </div>
 
         <div class="statistic-modal-overlay" id="statisticModalOverlay">
-            <div class="statistic-modal">
-                <button id="statisticCloseBtn" class="statistic-close-button">&times;</button>
+            <div class="statistic-modal" role="dialog" aria-modal="true" aria-labelledby="statistic-modal-legend">
+                <button id="statisticCloseBtn" class="statistic-close-button" aria-label="Close statistic modal">
+                    &times;
+                </button>
                 <form>
                     <fieldset>
-                        <legend id="modal-legend">Global task review</legend>
+                        <legend id="statistic-modal-legend">Global task review</legend>
                         <table id="statistic-table">
+                            <caption class="visually-hidden">
+                                Task statistics
+                            </caption>
                             <thead>
                                 <tr>
                                     <th>Parameter</th>
@@ -322,118 +338,127 @@
         </div>
 
         <div class="intro-modal-overlay" id="introModalOverlay">
-            <div class="intro-modal">
-                <button id="introCloseBtn" class="intro-close-button">&times;</button>
+            <div class="intro-modal" role="dialog" aria-modal="true" aria-labelledby="intro-modal-legend">
+                <button id="introCloseBtn" class="intro-close-button" aria-label="Close intro modal">&times;</button>
                 <form>
                     <fieldset>
-                        <legend id="modal-legend">Intro or please ReadMe</legend>
+                        <legend id="intro-modal-legend">Intro or please ReadMe</legend>
                         <details>
                             <summary>Available functionality</summary>
                             <div class="preformated">
-1) BASIC FUNCTIONALITY for single task:
+1) BASIC FUNCTIONALITY for single task: 
 
     - ADD - button "Add new task" in managing panel
-    - DELETE - button "--" in Actions column of the table (available after task creation)
-    - HIDE - button "-" in Actions column of the table (available after task creation)
-    - EDIT - button "+" in Actions column of the table (available after task creation)
-
-
-2) EXPORT button functionality:
+    - DELETE - button "--" in Actions column of the table (available after task creation) 
+    - HIDE - button "-" in Actions column of the table (available after task creation) 
+    - EDIT - button "+" in Actions column of the table (available after task creation) 
     
-    On click new buttons appears to allow
-        - Export to localstorage & REPLACE the tasks currently located in the localstorage 
-        - Export to localstorage & ADD to the tasks currently located in the localstorage
-        - Export to local disk
+2) EXPORT button functionality: 
 
+    On click new buttons appears to allow 
+    - Export to localstorage && REPLACE the tasks currently located in the localstorage 
+    - Export to localstorage && ADD to the tasks currently located in the localstorage 
+    - Export to local disk 
     
-3) IMPORT button functionality:
+3) IMPORT button functionality: 
 
-    On click new buttons appears to allow
-        - Import from localstorage & REPLACE current tasks in the table
-        - Import from localstorage & ADD to current tasks in the table
-        - Import from local disk & REPLACE the current tasks in the table
-        - Import from local disk & ADD to the current tasks in the table
+On click new buttons appears to allow 
+    - Import from localstorage && REPLACE current tasks in the table 
+    - Import from localstorage && ADD to current tasks in the table 
+    - Import from local disk && REPLACE the current tasks in the table 
+    - Import from local disk && ADD to the current tasks in the table 
 
-
-4) FILTERING by the following fields:
-
-    - id
-    - select
-    - status
-    - group   
-    - priority
+4) FILTERING by the following fields: 
+    
+    - id 
+    - select 
+    - status 
+    - group 
+    - priority 
     - details 
-    - deadline
-    - creation date
-    - update date
-
-    __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
-
-
-5) SORTING 
-
-    once clicking on appropriate table header, ASC and DESC
-    - by id
-    - by status
-    - by priority
-    - by group name
-    - by deadlines
-    - by creation date
-    - by update date
-
-
+    - deadline 
+    - creation date 
+    - update date 
+    
+    __WARNING: Available only if tasks exists (on screen/in TaskManager) !!! 
+    
+5) SORTING once clicking on appropriate table header, ASC and DESC 
+    
+    - by id 
+    - by task execution status 
+    - by priority 
+    - by group name 
+    - by deadlines 
+    - by creation date 
+    - by update date 
+    
 6) HISTORY of each task: 
+    When clicking the "..." button in the "Actions" column of the appropriate row, a new History modal window should open, showing all changes related to the task. 
     
-    When clicking the "..." button in the "Actions" column of the appropriate row, a new History modal window should open, showing all changes related to the task.
-
-
 7) STATISTICS of the tasks: 
-    
     Statistics will be counted according to the menu — for ALL or for SELECTED tasks. When the "Statistics" button in the appropriate menu is clicked, a new modal will open. The following options will be available for the retrospective:
-
-        Total tasks = number of tasks
-        Done = number of tasks with status "done"
-        Priority-0 = number of tasks with priority 0 
-        Priority-1 = number of tasks with priority 1    
-        ...
-        Priority-10 = number of tasks with priority 10
-        Groups =  count of groups
-        Latest deadline = @id of task with (date of latest deadline)
-        Closest deadline = @id of task with (date of closest deadline)
-        Mostly changed = @id of task with longest history (number of changes)
-
+        
+    Total tasks = number of tasks 
+    Done = number of tasks with status "done" 
+    Priority-0 = number of tasks with priority 0 
+    Priority-1 = number of tasks with priority 1 
+    ...
+    Priority-10 = number of tasks with priority 10 
+    Groups = count of groups 
+    Latest deadline = @id of task with (date of latest deadline) 
+    Closest deadline = @id of task with (date of closest deadline) 
+    Mostly changed = @id of task with longest history (number of changes) 
+    
     __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
+
+8) INTRO modal 
+    
+    - explanation about application functionality
+    - option to generate test data
                             </div>
                         </details>
                         <details>
-                            <summary class="warning"> Test mode configuration</summary>
+                            <summary class="warning">Test mode configuration</summary>
                             <div class="preformated">
-You can provide the desired sizes of the auto-generated data below. This will allow you to immediately enjoy all the available functionality. The data will be randomly generated.
+                                You can provide the desired sizes of the auto-generated data below. This will allow you
+                                to immediately enjoy all the available functionality. The data will be randomly
+                                generated.
 
-<div class="warning">
-!!! Please note</div> The localStorage size is restricted to ~5MB (depend on browser & OS), so no more than 100 tasks, each with a history of 100 changes, can be saved in localStorage.
+                                <div class="warning">!!! Please note</div>
+                                The localStorage size is restricted to ~5MB (depend on browser & OS), so no more than
+                                100 tasks, each with a history of 100 changes, can be saved in localStorage.
 
-<div class="warning">
-!!! Please note</div> The number of auto-generated History tasks is UP to your number and NOT EQUAL TO.You always can do some changes manually and reach the needed number of changes in task history.
+                                <div class="warning">!!! Please note</div>
+                                The number of auto-generated History tasks is UP to your number and NOT EQUAL TO.You
+                                always can do some changes manually and reach the needed number of changes in task
+                                history.
 
-
-<div class="warning">TEST CONFIGURATION:</div>
+                                <div class="warning">TEST CONFIGURATION:</div>
                                 <div class="form-group">
                                     <label for="test-data-main-table">Tasks to be generated on table:</label>
-                                    <input type="number" id="test-data-main-table" placeholder="012..." min="0"/>
+                                    <input type="number" id="test-data-main-table" placeholder="012..." min="0" />
                                 </div>
                                 <div class="form-group">
-                                    <label for="test-data-main-table-his">History changes for each task on table (up to):</label>
-                                    <input type="number" id="test-data-main-table-his" placeholder="012..." min="0"/>
+                                    <label for="test-data-main-table-his"
+                                        >History changes for each task on table (up to):</label
+                                    >
+                                    <input type="number" id="test-data-main-table-his" placeholder="012..." min="0" />
                                 </div>
                                 <div class="form-group">
                                     <label for="test-data-locstor-table">Tasks to be generated for localStorage:</label>
-                                    <input type="number" id="test-data-locstor-table" placeholder="012..." min="0"/>
+                                    <input type="number" id="test-data-locstor-table" placeholder="012..." min="0" />
                                 </div>
                                 <div class="form-group">
-                                    <label for="test-data-locstor-table-his">History changes for each task in localStorage (up to):</label>
-                                    <input type="number" id="test-data-locstor-table-his" placeholder="012..." min="0"/>
-                                </div>                                
+                                    <label for="test-data-locstor-table-his"
+                                        >History changes for each task in localStorage (up to):</label
+                                    >
+                                    <input
+                                        type="number"
+                                        id="test-data-locstor-table-his"
+                                        placeholder="012..."
+                                        min="0"
+                                    />
+                                </div>
                                 <div class="form-group">
                                     <label for="test-data-start">Dates generated from:</label>
                                     <input type="datetime-local" id="test-data-start" />
@@ -450,13 +475,14 @@ You can provide the desired sizes of the auto-generated data below. This will al
             </div>
         </div>
 
-        <div class="managing">
-            <button class="filter hide-if-no-tasks">Filter</button>            
+        <main>
+        <div class="managing" role="toolbar" aria-label="Task management actions">
+            <button class="filter hide-if-no-tasks">Filter</button>
             <button class="add">Add new task</button>
 
             <div class="all-container">
-                <button class="all">All tasks &#9660;</button>
-                <div class="all-menu">
+                <button class="all" aria-haspopup="true" aria-expanded="false" aria-controls="all-menu-list">All tasks &#9660;</button>
+                <div class="all-menu" id="all-menu-list" role="menu">
                     <button class="all-hide menu-item">Hide (from screen)</button>
                     <button class="all-rem menu-item">Remove (totally)</button>
                     <button class="all-show menu-item">Show (it and only it)</button>
@@ -473,9 +499,13 @@ You can provide the desired sizes of the auto-generated data below. This will al
                         <button class="import-sub-btn menu-item">&#9664; Import from ...</button>
                         <div class="import-sub-menu">
                             <input type="file" id="file-import-1" class="import-input-add" />
-                            <label for="file-import-1" class="menu-item lbl-file-import-add">External file (&amp;add)</label>
+                            <label for="file-import-1" class="menu-item lbl-file-import-add"
+                                >External file (&amp;add)</label
+                            >
                             <input type="file" id="file-import-rep-2" class="import-input-rep" />
-                            <label for="file-import-rep-2" class="lbl-file-import-rep menu-item">External file (&amp;replace)</label>
+                            <label for="file-import-rep-2" class="lbl-file-import-rep menu-item"
+                                >External file (&amp;replace)</label
+                            >
                             <button class="import-loc-add menu-item">Localstorage (&amp;add)</button>
                             <button class="import-loc-rep menu-item">Localstorage (&amp;replace)</button>
                         </div>
@@ -504,25 +534,38 @@ You can provide the desired sizes of the auto-generated data below. This will al
         </div>
 
         <table id="task-table">
+            <caption class="visually-hidden">
+                Tasks list
+            </caption>
             <thead>
                 <tr class="full-table-header">
                     <th colspan="9" id="full-table-header-width">
-                        <button id="openIntroModalButton">
-                            <img src="../Data/I_in_circle.png" alt="Open Modal">
+                        <button id="openIntroModalButton" aria-label="Open intro modal">
+                            <img src="../Data/I_in_circle.png" alt="" />
                         </button>
                         Things to do
                     </th>
                 </tr>
                 <tr class="column-header">
-                    <th data-col-sorting="select">select</th>
-                    <th data-col-sorting="number">ID</th>
-                    <th data-col-sorting="done">Done</th>
-                    <th data-col-sorting="group">Group</th>
-                    <th data-col-sorting="priority">Priority</th>
-                    <th data-col-sorting="details">Task details</th>
-                    <th data-col-sorting="deadline">Deadline</th>
-                    <th data-col-sorting="created">Created at</th>
-                    <th data-col-sorting="updated">Updated at</th>
+                    <th data-col-sorting="select" role="button" tabindex="0" aria-label="Sort by Selection">select</th>
+                    <th data-col-sorting="number" role="button" tabindex="1" aria-label="Sort by id">ID</th>
+                    <th data-col-sorting="done" role="button" tabindex="2" aria-label="Sort by Done">Done</th>
+                    <th data-col-sorting="group" role="button" tabindex="3" aria-label="Sort by Group">Group</th>
+                    <th data-col-sorting="priority" role="button" tabindex="4" aria-label="Sort by priority">
+                        Priority
+                    </th>
+                    <th data-col-sorting="details" role="button" tabindex="5" aria-label="Sort by details">
+                        Task details
+                    </th>
+                    <th data-col-sorting="deadline" role="button" tabindex="6" aria-label="Sort by deadline">
+                        Deadline
+                    </th>
+                    <th data-col-sorting="created" role="button" tabindex="7" aria-label="Sort by creation time">
+                        Created at
+                    </th>
+                    <th data-col-sorting="updated" role="button" tabindex="8" aria-label="Sort by updating time">
+                        Updated at
+                    </th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -548,6 +591,7 @@ You can provide the desired sizes of the auto-generated data below. This will al
                     </td>
                 </tr>
             </tbody>
+            </main>
         </table>
     </body>
 </html>

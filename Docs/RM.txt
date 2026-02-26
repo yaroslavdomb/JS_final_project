@@ -6,83 +6,81 @@
 Implementation:
     0) MAIN windows design
 
-    1) BASIC FUNCTIONALITY for single task:
-        - ADD - button "Add new task" in managing panel
-        - DELETE - button "--" in Actions column of the table  (available after task creation)
-        - HIDE - button "-" in Actions column of the table (available after task creation)
-        - EDIT - button "+" in Actions column of the table  (available after task creation)
+    1) BASIC FUNCTIONALITY for single task: 
 
-    2) EXPORT button functionality:
+    - ADD - button "Add new task" in managing panel
+    - DELETE - button "--" in Actions column of the table (available after task creation) 
+    - HIDE - button "-" in Actions column of the table (available after task creation) 
+    - EDIT - button "+" in Actions column of the table (available after task creation) 
+    
+    2) EXPORT button functionality: 
+
+        On click new buttons appears to allow 
+        - Export to localstorage && REPLACE the tasks currently located in the localstorage 
+        - Export to localstorage && ADD to the tasks currently located in the localstorage 
+        - Export to local disk 
         
-        On click new buttons appears to allow
-            - Export to localstorage & REPLACE the tasks currently located in the localstorage 
-            - Export to localstorage & ADD to the tasks currently located in the localstorage
-            - Export to local disk
+    3) IMPORT button functionality: 
+
+    On click new buttons appears to allow 
+        - Import from localstorage && REPLACE current tasks in the table 
+        - Import from localstorage && ADD to current tasks in the table 
+        - Import from local disk && REPLACE the current tasks in the table 
+        - Import from local disk && ADD to the current tasks in the table 
+
+    4) FILTERING by the following fields: 
         
-    3) IMPORT button functionality:
-        On click new buttons appears to allow
-            - Import from localstorage & REPLACE current tasks in the table
-            - Import from localstorage & ADD to current tasks in the table
-            - Import from local disk & REPLACE the current tasks in the table
-            - Import from local disk & ADD to the current tasks in the table
-   
-    4) FILTERING by the following fields:         
-        - id
-        - select
-        - status
-        - group   
-        - priority
+        - id 
+        - select 
+        - status 
+        - group 
+        - priority 
         - details 
-        - deadline
-        - creation date
-        - update date
-
-        __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
-
-    5) SORTING 
-        once clicking on appropriate table header, ASC and DESC
-        - by id
-        - by status
-        - by priority
-        - by group name
-        - by deadlines
-        - by creation date
-        - by update date
-
+        - deadline 
+        - creation date 
+        - update date 
+        
+        __WARNING: Available only if tasks exists (on screen/in TaskManager) !!! 
+        
+    5) SORTING once clicking on appropriate table header, ASC and DESC 
+        
+        - by id 
+        - by task execution status 
+        - by priority 
+        - by group name 
+        - by deadlines 
+        - by creation date 
+        - by update date 
+        
     6) HISTORY of each task: 
-        On clicking on "..." button in the "Actions" column in appropriate row
-        should open a new History modal window that will show all changes
-        related to the task.
-
+        When clicking the "..." button in the "Actions" column of the appropriate row, a new History modal window should open, showing all changes related to the task. 
+        
     7) STATISTICS of the tasks: 
-        Statistic will lbe counted according to the menu - for ALL or for SELECTED tasks. 
-        On click "Statistics" button in appropriate menu a new modal will be opened.         
-        The following options will be available for retrospective:
-
-            Total tasks = number of tasks
-            Done = number of tasks with status "done"
-            Priority-0 = number of tasks with priority 0 
-            Priority-1 = number of tasks with priority 1    
-            ...
-            Priority-10 = number of tasks with priority 10
-            Groups =  count of groups
-            Latest deadline = @id of task with (date of latest deadline)
-            Closest deadline = @id of task with (date of closest deadline)
-            Mostly changed = @id of task with longest history (number of changed)
-
+        Statistics will be counted according to the menu — for ALL or for SELECTED tasks. When the "Statistics" button in the appropriate menu is clicked, a new modal will open. The following options will be available for the retrospective:
+            
+        Total tasks = number of tasks 
+        Done = number of tasks with status "done" 
+        Priority-0 = number of tasks with priority 0 
+        Priority-1 = number of tasks with priority 1 
+        ...
+        Priority-10 = number of tasks with priority 10 
+        Groups = count of groups 
+        Latest deadline = @id of task with (date of latest deadline) 
+        Closest deadline = @id of task with (date of closest deadline) 
+        Mostly changed = @id of task with longest history (number of changes) 
+        
         __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
+
+    8) INTRO modal 
+        - explanation about application functionality
+        - option to generate test data
 
     8) A11Y
 
     9) RESPONSIVITY
 //***********************************************************************************
 
-2) Create intro modal with option to start with test mode OR real.
-    2.1) for test mode - in modal there will be options to enter data to populate
-    2.2) create button that will open (2.1) at any time
-
 3) Create button that will open modal with help
-
 
 4) Responsivity-additional:
     for mob screen:
@@ -97,8 +95,6 @@ Implementation:
         2.2.2) groups
     2.3) Deletion all the tasks related to the group
     2.4) Selected
-    
-6) Documentation
 
 7) Optimization
 

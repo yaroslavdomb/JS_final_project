@@ -113,6 +113,10 @@ function handleTableClick(e) {
         const sortBy = e.target.dataset.colSorting;
         const sortParams = taskManager.detectSortFunction(sortBy);
         if (sortParams) {
+            dom.taskTable.querySelectorAll("th[data-col-sorting]").forEach((th) => {
+                th.removeAttribute("aria-sort");
+            });
+            e.target.setAttribute("aria-sort", sortOrder ? "ascending" : "descending");
             taskManager.sortBy(sortOrder, sortParams);
             sortOrder = !sortOrder;
             updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
@@ -722,6 +726,7 @@ function buildRowFromTask(task, columnsToShow, existingRow = null) {
         } else if (col.name === "isDone" || col.name === "select") {
             const checkbox = document.createElement("input");
             const dataType = col.name === "isDone" ? "status" : "selection";
+            checkbox.setAttribute("aria-label", col.name === "isDone" ? "Mark as done" : "Select task");
             checkbox.dataset.taskChecked = dataType;
             checkbox.type = "checkbox";
             checkbox.checked = !!task[col.name];
@@ -775,6 +780,7 @@ function closeIntroModal() {
 function openIntroModal() {
     console.trace("openIntroModal called");
     dom.modal.introModalWindow.classList.remove("hidden");
+    dom.modal.introModalWindow.querySelector("input, button, details, summary").focus();
 }
 
 //Statistical modal
@@ -783,6 +789,7 @@ function closeStatisticModal() {
 }
 function openStatisticModal() {
     dom.modal.statisticModalWindow.classList.remove("hidden");
+    dom.modal.statisticModalWindow.querySelector("input, button").focus();
 }
 
 //Filter modal
@@ -791,6 +798,7 @@ function closeFilterModal() {
 }
 function openFilterModal() {
     dom.modal.filterModalWindow.classList.remove("hidden");
+    dom.modal.filterModalWindow.querySelector("input, button").focus();
 }
 
 //History modal
@@ -800,6 +808,7 @@ function closeHistoryModal() {
 }
 function openHistoryModal() {
     dom.modal.historyModalWindow.classList.remove("hidden");
+    dom.modal.historyModalWindow.querySelector("button").focus();
 }
 
 //Add modal
@@ -808,6 +817,7 @@ function closeModal() {
 }
 function openModal() {
     dom.modal.modalWindow.classList.remove("hidden");
+    dom.modal.modalWindow.querySelector("input, button").focus();
 }
 
 function updateDomWithExistedGroups() {
@@ -932,6 +942,16 @@ document.addEventListener("DOMContentLoaded", () => {
     closeFilterModal();
     closeStatisticModal();
     openIntroModal();
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            closeModal();
+            closeHistoryModal();
+            closeFilterModal();
+            closeStatisticModal();
+            closeIntroModal();
+        }
+    });
 
     //filter builder functionality
     const applyFilterBtn = document.getElementById("filterSubmitBtn");
