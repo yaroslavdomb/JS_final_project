@@ -182,7 +182,7 @@ export class Testing {
         if (POPULATE_MAIN_TABLE) {
             const currTasks = this.createTestTasksArr(this.mainTableTaskCount, null);
             if (currTasks) {
-                this.populateTasksHistory(currTasks, this.localStorageTasksCount);
+                this.populateTasksHistory(currTasks, this.mainTableHistoryTasksCount);
                 taskManager.hydrateAndAppendTasks(currTasks);
             }
         }
