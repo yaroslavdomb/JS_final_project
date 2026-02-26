@@ -72,7 +72,8 @@ tr th:hover[data-col-sorting] {
     background-color: rgb(5, 192, 145);
 }
 
-.import-input {
+.import-input-rep,
+.import-input-add {
     display: none;
 }
 
@@ -88,7 +89,7 @@ div.managing {
 }
 
 /* set after wich button all others will be moved to the right end */
-div.managing .stat {
+div.managing .filter {
     margin-right: auto;
 }
 
@@ -159,11 +160,10 @@ div.managing button:hover {
     min-width: 180px;
 }
 
+.import-sub-menu.open,
 .export-sub-menu.open,
 .selected-menu.open,
-.all-menu.open,
-.export-menu.open,
-.import-menu.open {
+.all-menu.open {
     display: block;
 }
 
@@ -178,15 +178,18 @@ div.managing button:hover {
     color: inherit;
 }
 
+.import-sub-container,
 .export-sub-container {
     position: relative;
 }
 
+.import-sub-btn,
 .export-sub-btn {
     width: 100%;
     text-align: left;
 }
 
+.import-sub-menu,
 .export-sub-menu {
     display: none;
     position: absolute;

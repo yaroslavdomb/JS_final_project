@@ -322,19 +322,8 @@
         </div>
 
         <div class="managing">
-            <button class="filter hide-if-no-tasks">Filter</button>
-            <button class="stat hide-if-no-tasks">Statistic</button>
+            <button class="filter hide-if-no-tasks">Filter</button>            
             <button class="add">Add new task</button>
-
-            <div class="import-container">
-                <button class="import">Import &#9660;</button>
-                <div class="import-menu">
-                    <input type="file" id="file-import-1" class="import-input" />
-                    <label for="file-import-1" class="menu-item">from file</label>
-                    <button class="import-loc-add menu-item">from localstorage (&amp;add)</button>
-                    <button class="import-loc-rep menu-item">from localstorage (&amp;replace)</button>
-                </div>
-            </div>
 
             <div class="all-container">
                 <button class="all">All tasks &#9660;</button>
@@ -344,13 +333,25 @@
                     <button class="all-show menu-item">Show (it and only it)</button>
                     <button class="all-sel menu-item">Un/Select</button>
                     <div class="export-sub-container">
-                        <button class="export-sub-btn menu-item">&#9664; Export ...</button>
+                        <button class="export-sub-btn menu-item">&#9664; Export to ...</button>
                         <div class="export-sub-menu">
-                            <button class="export-all-file menu-item">Export to file</button>
-                            <button class="export-all-add menu-item">Add to localstorage</button>
-                            <button class="export-all-rep menu-item">Replace localstorage</button>
+                            <button class="export-all-file menu-item">External file</button>
+                            <button class="export-all-add menu-item">Localstorage (&amp;add)</button>
+                            <button class="export-all-rep menu-item">Localstorage (&amp;replace)</button>
                         </div>
                     </div>
+                    <div class="import-sub-container">
+                        <button class="import-sub-btn menu-item">&#9664; Import from ...</button>
+                        <div class="import-sub-menu">
+                            <input type="file" id="file-import-1" class="import-input-add" />
+                            <label for="file-import-1" class="menu-item lbl-file-import-add">External file (&amp;add)</label>
+                            <input type="file" id="file-import-rep-2" class="import-input-rep" />
+                            <label for="file-import-rep-2" class="lbl-file-import-rep menu-item">External file (&amp;replace)</label>
+                            <button class="import-loc-add menu-item">Localstorage (&amp;add)</button>
+                            <button class="import-loc-rep menu-item">Localstorage (&amp;replace)</button>
+                        </div>
+                    </div>
+                    <button class="all-stat hide-if-no-tasks menu-item">Statistic</button>
                 </div>
             </div>
 
@@ -368,6 +369,7 @@
                             <button class="export-sel-rep menu-item">Replace localstorage</button>
                         </div>
                     </div>
+                    <button class="selected-stat hide-if-no-tasks menu-item">Statistic</button>
                 </div>
             </div>
         </div>

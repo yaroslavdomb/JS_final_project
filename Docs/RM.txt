@@ -4,72 +4,93 @@
 4) https://github.com/3831991/W140925ER
 
 Implementation:
-    0) Main windows design
+    0) MAIN windows design
 
-    1) Basic functionality for single task:
-        1.1) add
-        1.2) delete
-        1.3) edit
+    1) BASIC FUNCTIONALITY for single task:
+        - ADD - button "Add new task" in managing panel
+        - DELETE - button "--" in Actions column of the table  (available after task creation)
+        - HIDE - button "-" in Actions column of the table (available after task creation)
+        - EDIT - button "+" in Actions column of the table  (available after task creation)
 
-    2) Filtering by
-        2.1) id
-        2.2) select
-        2.3) status
-        2.4) group   
-        2.5) priority
-        2.6) details 
-        2.7) deadline
-        2.8) created
-        2.9) updated
-
-    3) Sorting (once clicking on appropriate table header) ASC and DESC
-        3.1) by id
-        3.2) by status
-        3.3) by group name
-        3.4) by deadlines
-        3.5) by creation date
-        3.6) by priority
-    
-    4) Accessability
-
-    5) Responsivity
-
-    6) Export button functionality:
+    2) EXPORT button functionality:
+        
         On click new buttons appears to allow
-            - Export to localstorage & replace localstorage 
-            - Export to localstorage & add to localstorage
+            - Export to localstorage & REPLACE the tasks currently located in the localstorage 
+            - Export to localstorage & ADD to the tasks currently located in the localstorage
             - Export to local disk
-
-    7) Import button functionality:
+        
+    3) IMPORT button functionality:
         On click new buttons appears to allow
-            - Import from localstorage & replace current 
-            - Import from localstorage & add to current
-            - Import from local disk
+            - Import from localstorage & REPLACE current tasks in the table
+            - Import from localstorage & ADD to current tasks in the table
+            - Import from local disk & REPLACE the current tasks in the table
+            - Import from local disk & ADD to the current tasks in the table
+   
+    4) FILTERING by the following fields:         
+        - id
+        - select
+        - status
+        - group   
+        - priority
+        - details 
+        - deadline
+        - creation date
+        - update date
 
-    8) History of each task changes
+        __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
 
-    9)  Statistics for tasks
-        On click - Open a new modal where will be options for selection:
-            Total tasks = num of all tasks
-            Done = num of done tasks
-            Priority 
-                0 = ...
-                1 = ...
-                
-                10 = ...
+    5) SORTING 
+        once clicking on appropriate table header, ASC and DESC
+        - by id
+        - by status
+        - by priority
+        - by group name
+        - by deadlines
+        - by creation date
+        - by update date
+
+    6) HISTORY of each task: 
+        On clicking on "..." button in the "Actions" column in appropriate row
+        should open a new History modal window that will show all changes
+        related to the task.
+
+    7) STATISTICS of the tasks: 
+        Statistic will lbe counted according to the menu - for ALL or for SELECTED tasks. 
+        On click "Statistics" button in appropriate menu a new modal will be opened.         
+        The following options will be available for retrospective:
+
+            Total tasks = number of tasks
+            Done = number of tasks with status "done"
+            Priority-0 = number of tasks with priority 0 
+            Priority-1 = number of tasks with priority 1    
+            ...
+            Priority-10 = number of tasks with priority 10
             Groups =  count of groups
-            Latest deadline = date of latest deadline
-            Closest deadline = date of closest deadline
-            Mostly changed = @id of task with longest history
-    10) 
+            Latest deadline = @id of task with (date of latest deadline)
+            Closest deadline = @id of task with (date of closest deadline)
+            Mostly changed = @id of task with longest history (number of changed)
+
+        __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
+
+    8) A11Y
+
+    9) RESPONSIVITY
 //***********************************************************************************
-2) Responsivity-additional:
+
+2) Create intro modal with option to start with test mode OR real.
+    2.1) for test mode - in modal there will be options to enter data to populate
+    2.2) create button that will open (2.1) at any time
+
+3) Create button that will open modal with help
+
+
+4) Responsivity-additional:
     for mob screen:
     - replace "Upload" with "U" and arrow up
     - replace "Download" with "D" and arrow down
     - move (+XXX UTC) to the header of deadline
 
-3) Tasks group actions:
+5) Tasks group actions:
     2.1) Adding batch of tasks (all the accessable fields)
     2.2) Editing batch of tasks 
         2.2.1) deadlines
@@ -77,10 +98,10 @@ Implementation:
     2.3) Deletion all the tasks related to the group
     2.4) Selected
     
-4) Documentation
+6) Documentation
 
-5) Optimization
+7) Optimization
 
-6) Actions with confirmation
+8) Actions with confirmation
     6.1) Deletion
     6.2) Editing

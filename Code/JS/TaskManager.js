@@ -67,8 +67,10 @@ export class TaskManager {
         if (task) task.isOnScreen = false;
     }
 
-    getExistingGroups() {
-        return new Set(this.#existedTasks.map((task) => task.group));
+    getExistingGroups(selectedOnly = false) {
+        return new Set(
+            this.#existedTasks.filter((task) => !selectedOnly || task.isSelectedAndOnScr()).map((task) => task.group)
+        );
     }
 
     //Create and return map of type {group_name : num_of_tasks_in_the_group}
@@ -103,18 +105,15 @@ export class TaskManager {
     }
 
     getAllTasksForDisplay(filter = false) {
-        const toDisplay =
-            filter === true
-                ? this.#existedTasks.filter((task) => task.isOnScreen)
-                : this.#existedTasks;
+        const toDisplay = filter === true ? this.#existedTasks.filter((task) => task.isOnScreen) : this.#existedTasks;
 
         return toDisplay.map((task) => {
             return task.getDisplayedFields();
         });
     }
 
-    setVisibleOnScreen (tasksArr) {
-        this.hideAll();
+    setVisibleOnScreen(tasksArr) {
+        this.hideTasks();
         const temp = [];
         tasksArr.forEach((t) => temp.push(t.id));
         temp.forEach((id) => {
@@ -122,13 +121,23 @@ export class TaskManager {
         });
     }
 
-    removeAll() {
-        this.#existedTasks = [];
+    removeTasks(selectedOnly = false) {
+        if (!selectedOnly) {
+            this.#existedTasks = [];
+        } else {
+            const toBeRemoved = [];
+            this.#existedTasks.forEach((t) => {
+                if (t.isSelectedAndOnScr()) toBeRemoved.push(t.id);
+            });
+            toBeRemoved.forEach((id) => this.removeTaskById(id));
+        }
     }
 
-    hideAll() {
+    hideTasks(selectedOnly = false) {
         this.#existedTasks.forEach((t) => {
-            t.isOnScreen = false;
+            if (!selectedOnly || t.isSelectedAndOnScr()) {
+                t.isOnScreen = false;
+            }
         });
     }
 
@@ -139,26 +148,10 @@ export class TaskManager {
         });
     }
 
-    hideSelected() {
-        this.#existedTasks.forEach((t) => {
-            if (t.isOnScreen && t.select) {
-                t.isOnScreen = false;
-            }
-        });
-    }
-
     showSelected() {
         this.#existedTasks.forEach((t) => {
             if (!t.select && t.isOnScreen) t.isOnScreen = false;
         });
-    }
-
-    removeSelected() {
-        const toBeRemoved = [];
-        this.#existedTasks.forEach((t) => {
-            if (t.select && t.isOnScreen) toBeRemoved.push(t.id);
-        });
-        toBeRemoved.forEach((id) => this.removeTaskById(id));
     }
 
     /*
@@ -263,23 +256,31 @@ export class TaskManager {
         task.select = !task.select;
     }
 
-    getTasksCount() {
-        return this.#existedTasks.length;
+    //statistic methods
+    getTasksCount(selectedOnly = false) {
+        return selectedOnly
+            ? this.#existedTasks.reduce((count, t) => {
+                  if (t.isSelectedAndOnScr()) count++;
+                  return count;
+              }, 0)
+            : this.#existedTasks.length;
     }
 
-    getExistingPrioritiesAndCount() {
+    getExistingPrioritiesAndCount(selectedOnly = false) {
         const priorityAndCount = {};
         this.#existedTasks.forEach((task) => {
-            priorityAndCount[task.priority] = (priorityAndCount[task.priority] || 0) + 1;
+            if (!selectedOnly || task.isSelectedAndOnScr()) {
+                priorityAndCount[task.priority] = (priorityAndCount[task.priority] || 0) + 1;
+            }
         });
         return priorityAndCount;
     }
 
-    getMaxDeadline() {
+    getMaxDeadline(selectedOnly = false) {
         let maxDate = -Infinity;
         let id;
         this.#existedTasks.forEach((task) => {
-            if (task.deadlineTs > maxDate) {
+            if ((!selectedOnly || task.isSelectedAndOnScr()) && task.deadlineTs > maxDate) {
                 id = task.id;
                 maxDate = task.deadlineTs;
             }
@@ -288,40 +289,44 @@ export class TaskManager {
         return { id: id, maxDate: this.getTaskById(id).deadline };
     }
 
-    getClosestDeadline() {
+    getClosestDeadline(selectedOnly = false) {
         let closest = -Infinity;
         let id;
         let now = new Date().getTime();
         this.#existedTasks.forEach((task) => {
-            if (task.deadlineTs - now > 0) {
-                if (closest === -Infinity) {
-                    id = task.id;
-                    closest = task.deadlineTs;
-                } else if (closest > task.deadlineTs) {
-                    id = task.id;
-                    closest = task.deadlineTs;
+            if (!selectedOnly || task.isSelectedAndOnScr()) {
+                if (task.deadlineTs - now > 0) {
+                    if (closest === -Infinity) {
+                        id = task.id;
+                        closest = task.deadlineTs;
+                    } else if (closest > task.deadlineTs) {
+                        id = task.id;
+                        closest = task.deadlineTs;
+                    }
                 }
             }
         });
+
         return { id: id, closest: this.getTaskById(id).deadline };
     }
 
-    getMostlyChanged() {
+    getMostlyChanged(selectedOnly = false) {
         let changesCount = 0;
         let id;
         let max = -Infinity;
         this.#existedTasks.forEach((task) => {
-            if (changesCount > max) {
+            if ((!selectedOnly || task.isSelectedAndOnScr()) && changesCount > max) {
                 id = task.id;
                 changesCount = task.changes.length;
             }
         });
+
         return { id: id, changesCount: changesCount };
     }
 
-    getExecutedTasksCount() {
+    getExecutedTasksCount(selectedOnly = false) {
         return this.#existedTasks.reduce((counter, t) => {
-            if (t.isDone) counter++;
+            if (t.isDone && (!selectedOnly || t.isSelectedAndOnScr())) counter++;
             return counter;
         }, 0);
     }

@@ -308,4 +308,8 @@ export class Task {
 
         return jsonObj;
     }
+
+    isSelectedAndOnScr(){
+        return this.select && this.isOnScreen;
+    }
 }

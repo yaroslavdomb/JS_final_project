@@ -163,33 +163,30 @@ const managingActions = {
         openFilterModal();
     },
 
-    ".stat": () => {
-        prepareStatisticModal();
-        openStatisticModal();
-    },
-
     ".add": () => {
         prepareModal(false);
         openModal();
     },
 
-    ".import": () => {
-        document.querySelector(".import-menu").classList.toggle("open");
+    ".import-sub-btn": () => {
+        document.querySelector(".import-sub-menu").classList.toggle("open");
     },
 
     ".import-loc-add": () => {
         const tasksInLocalStorage = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
         taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
-        document.querySelector(".import-menu").classList.toggle("open");
+        document.querySelector(".import-sub-menu").classList.toggle("open");
+        document.querySelector(".all-menu").classList.toggle("open");
     },
 
     ".import-loc-rep": () => {
         const tasksInLocalStorage = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
-        taskManager.removeAll();
+        taskManager.removeTasks();
         taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
-        document.querySelector(".import-menu").classList.toggle("open");
+        document.querySelector(".import-sub-menu").classList.toggle("open");
+        document.querySelector(".all-menu").classList.toggle("open");
     },
 
     ".all": () => {
@@ -197,13 +194,13 @@ const managingActions = {
     },
 
     ".all-hide": () => {
-        taskManager.hideAll();
+        taskManager.hideTasks();
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
         document.querySelector(".all-menu").classList.toggle("open");
     },
 
     ".all-rem": () => {
-        taskManager.removeAll();
+        taskManager.removeTasks();
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         document.querySelector(".all-menu").classList.toggle("open");
     },
@@ -218,6 +215,12 @@ const managingActions = {
         taskManager.toggleAllSelected(selectedAll);
         selectedAll = !selectedAll;
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        document.querySelector(".all-menu").classList.toggle("open");
+    },
+
+    ".all-stat": () => {
+        prepareStatisticModal(false);
+        openStatisticModal();
         document.querySelector(".all-menu").classList.toggle("open");
     },
 
@@ -245,13 +248,13 @@ const managingActions = {
     },
 
     ".selected-hide": () => {
-        taskManager.hideSelected();
+        taskManager.hideTasks(true);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
         document.querySelector(".selected-menu").classList.toggle("open");
     },
 
     ".selected-rem": () => {
-        taskManager.removeSelected();
+        taskManager.removeTasks(true);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
         document.querySelector(".selected-menu").classList.toggle("open");
     },
@@ -259,6 +262,12 @@ const managingActions = {
     ".selected-show": () => {
         taskManager.showSelected();
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        document.querySelector(".selected-menu").classList.toggle("open");
+    },
+
+    ".selected-stat": () => {
+        prepareStatisticModal(true);
+        openStatisticModal();
         document.querySelector(".selected-menu").classList.toggle("open");
     },
 
@@ -294,6 +303,7 @@ function handleManagingClick(event) {
 }
 
 async function handleImportFile(event) {
+    const toAdd = event.target.matches(".lbl-file-import-add");
     const file = event.target.files[0];
     if (!file || file.type !== "application/json") {
         console.error(`${file.name} is not a JSON file.`);
@@ -308,12 +318,18 @@ async function handleImportFile(event) {
     try {
         const text = await file.text();
         const taskArr = JSON.parse(text);
+        if (!toAdd) {
+            taskManager.removeTasks();
+        }
         taskManager.hydrateAndAppendTasks(taskArr);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         enableBtnsForNoTasksTable();
         document.querySelector(".import-menu").classList.toggle("open");
     } catch (error) {
         console.error(`Error while processing ${file.name}: ` + error);
+    } finally {
+        document.querySelector(".import-sub-menu").classList.toggle("open");
+        document.querySelector(".all-menu").classList.toggle("open");
     }
 }
 
@@ -384,12 +400,12 @@ function handleStatisticModalClick(e) {
     }
 }
 
-function prepareStatisticModal() {
-    dom.statistic.totalTasks.textContent = taskManager.getTasksCount();
-    dom.statistic.done.textContent = taskManager.getExecutedTasksCount();
+function prepareStatisticModal(selectedOnly = false) {
+    dom.statistic.totalTasks.textContent = taskManager.getTasksCount(selectedOnly);
+    dom.statistic.done.textContent = taskManager.getExecutedTasksCount(selectedOnly);
 
     //priority
-    const priorityMap = taskManager.getExistingPrioritiesAndCount();
+    const priorityMap = taskManager.getExistingPrioritiesAndCount(selectedOnly);
     dom.statistic.p0.textContent = priorityMap[0] ?? 0;
     dom.statistic.p1.textContent = priorityMap[1] ?? 0;
     dom.statistic.p2.textContent = priorityMap[2] ?? 0;
@@ -402,18 +418,18 @@ function prepareStatisticModal() {
     dom.statistic.p9.textContent = priorityMap[9] ?? 0;
     dom.statistic.p10.textContent = priorityMap[10] ?? 0;
 
-    dom.statistic.groups.textContent = taskManager.getExistingGroups().size;
-    const maxDeadLine = taskManager.getMaxDeadline();
+    dom.statistic.groups.textContent = taskManager.getExistingGroups(selectedOnly).size;
+    const maxDeadLine = taskManager.getMaxDeadline(selectedOnly);
     dom.statistic.latestByD.textContent = `TaskID = ${maxDeadLine.id} (${maxDeadLine.maxDate})`;
 
-    const closestDeadLine = taskManager.getClosestDeadline();
+    const closestDeadLine = taskManager.getClosestDeadline(selectedOnly);
     const closestByDeadline =
         closestDeadLine.id === undefined
             ? `No future tasks found`
             : `TaskID = ${closestDeadLine.id} (${closestDeadLine.closest})`;
     dom.statistic.closestByD.textContent = closestByDeadline;
 
-    const response = taskManager.getMostlyChanged();
+    const response = taskManager.getMostlyChanged(selectedOnly);
     dom.statistic.mostlyChanged.textContent = `TaskID = ${response.id}(${response.changesCount} changes)`;
 }
 
@@ -525,9 +541,6 @@ function getHTMLEl(event) {
     htmlRow.rowEl = event.target.closest("tr");
     htmlRow.id = htmlRow.rowEl.dataset.id;
 }
-
-//TODO
-function updateTasksStatistics(id, action) {}
 
 function detectScreenSize() {
     const width = window.innerWidth;
@@ -697,35 +710,35 @@ function getChangeableFieldsFromModal() {
     };
 }
 
+//Statistical modal  
 function closeStatisticModal() {
     dom.modal.statisticModalWindow.classList.add("hidden");
 }
-
-function closeFilterModal() {
-    dom.modal.filterModalWindow.classList.add("hidden");
-}
-
-function closeHistoryModal() {
-    visabilityFlags.isHistoryTable = false;
-    dom.modal.historyModalWindow.classList.add("hidden");
-}
-
-function closeModal() {
-    dom.modal.modalWindow.classList.add("hidden");
-}
-
 function openStatisticModal() {
     dom.modal.statisticModalWindow.classList.remove("hidden");
 }
 
+//Filter modal
+function closeFilterModal() {
+    dom.modal.filterModalWindow.classList.add("hidden");
+}
 function openFilterModal() {
     dom.modal.filterModalWindow.classList.remove("hidden");
 }
 
+//History modal 
+function closeHistoryModal() {
+    visabilityFlags.isHistoryTable = false;
+    dom.modal.historyModalWindow.classList.add("hidden");
+}
 function openHistoryModal() {
     dom.modal.historyModalWindow.classList.remove("hidden");
 }
 
+//Add modal
+function closeModal() {
+    dom.modal.modalWindow.classList.add("hidden");
+}
 function openModal() {
     dom.modal.modalWindow.classList.remove("hidden");
 }
@@ -779,6 +792,11 @@ function enableBtnsForNoTasksTable() {
     }
 }
 
+/**
+ * Initialization block
+ *
+ *
+ */
 document.addEventListener("DOMContentLoaded", () => {
     if (TEST_MODE_ON) {
         populateWithTestData(taskManager);
@@ -792,23 +810,45 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll(".export-sub-menu").forEach((m) => {
                 if (m !== menu) m.classList.remove("open");
             });
+            document.querySelectorAll(".import-sub-menu").forEach((m) => {
+                m.classList.remove("open");
+            });
+            menu.classList.toggle("open");
+        });
+    });
+
+    document.querySelectorAll(".import-sub-btn").forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const menu = btn.nextElementSibling;
+            document.querySelectorAll(".import-sub-menu").forEach((m) => {
+                if (m !== menu) m.classList.remove("open");
+            });
+            document.querySelectorAll(".export-sub-menu").forEach((m) => {
+                m.classList.remove("open");
+            });
             menu.classList.toggle("open");
         });
     });
 
     document.addEventListener("click", () => {
         document.querySelectorAll(".export-sub-menu").forEach((m) => m.classList.remove("open"));
+        document.querySelectorAll(".import-sub-menu").forEach((m) => m.classList.remove("open"));
     });
 
-    //Init - add click listeners
+    //Add click listeners in managing block
     window.addEventListener("resize", () => updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable));
     dom.taskTable.addEventListener("click", handleTableClick);
     dom.managingBlock.forEach((block) => {
         block.addEventListener("click", handleManagingClick);
-        const fileInput = block.querySelector('input[type="file"]');
-        fileInput.addEventListener("change", handleImportFile);
-        fileInput.removeEventListener("click", handleManagingClick);
+        const fileInputs = block.querySelectorAll('input[type="file"]');
+        fileInputs.forEach((fileInput) => {
+            fileInput.addEventListener("change", handleImportFile);
+            fileInput.removeEventListener("click", handleManagingClick);
+        });
     });
+
+    //Add click listeners in modals
     dom.modal.modalWindow.addEventListener("click", handleModalClick);
     dom.modal.historyModalWindow.addEventListener("click", handleHistoryModalClick);
     dom.modal.filterModalWindow.addEventListener("click", handleFilterModalClick);
@@ -939,12 +979,6 @@ document.addEventListener("DOMContentLoaded", () => {
     //************************************************************************************** */
 
     document.addEventListener("click", (e) => {
-        if (!e.target.closest(".import-container")) {
-            document.querySelector(".import-menu").classList.remove("open");
-        }
-    });
-
-    document.addEventListener("click", (e) => {
         if (!e.target.closest(".all-container")) {
             document.querySelector(".all-menu").classList.remove("open");
         }
@@ -955,12 +989,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelector(".selected-menu").classList.remove("open");
         }
     });
-
-    // document.addEventListener("click", (e) => {
-    //     if (!e.target.closest(".export-container")) {
-    //         document.querySelector(".export-menu").classList.remove("open");
-    //     }
-    // });
 });
 
 //document.getElementById("saveDataBtn").addEventListener("click", () => );
