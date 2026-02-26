@@ -1,15 +1,8 @@
 import { Task } from "./Task.js";
 import { TaskManager } from "./TaskManager.js";
 import * as helper from "./helper.js";
-import { populateWithTestData } from "./testing.js";
-import {
-    TEST_MODE_ON,
-    LOCALSTORAGE_KEY,
-    SCREEN_SIZES,
-    EMPTY_GROUP,
-    PRIORITY_LOWEST,
-    visabilityFlags
-} from "./config.js";
+import { Testing } from "./Testing.js";
+import { LOCALSTORAGE_KEY, SCREEN_SIZES, EMPTY_GROUP, PRIORITY_LOWEST, visabilityFlags, LOG_ON } from "./config.js";
 
 const taskManager = new TaskManager();
 let sortOrder = true;
@@ -49,7 +42,6 @@ const dom = {
     rows: document.querySelectorAll("tbody tr"),
     managingBlock: document.querySelectorAll("div.managing"),
     taskTable: document.getElementById("task-table"),
-    picture: document.getElementById("openIntroModalButton"),
     groupsList: document.getElementById("groups"),
     headerWidth: document.getElementById("full-table-header-width"),
     hideOnNarrow: document.querySelectorAll(".hide-on-narrow-screen"),
@@ -93,6 +85,15 @@ const dom = {
         latestByD: document.getElementById("latest-dead"),
         closestByD: document.getElementById("closest-dead"),
         mostlyChanged: document.getElementById("mostly-changed")
+    },
+
+    test: {
+        mainTable: document.getElementById("test-data-main-table"),
+        mainTableHis: document.getElementById("test-data-main-table-his"),
+        localSt: document.getElementById("test-data-locstor-table"),
+        localStHis: document.getElementById("test-data-locstor-table-his"),
+        startDate: document.getElementById("test-data-start"),
+        endDate: document.getElementById("test-data-finish")
     }
 };
 
@@ -407,9 +408,42 @@ function handleStatisticModalClick(e) {
 }
 
 function handleIntroModalClick(e) {
-    if (e.target.matches("#introSubmitBtn") || e.target.matches("#introCloseBtn")) {
+    if (e.target.matches("#introSubmitBtn")) {
+        e.preventDefault();
+        const testModule = new Testing(
+            dom.test.mainTable.value ? Number(dom.test.mainTable.value) : null,
+            dom.test.mainTableHis.value ? Number(dom.test.mainTableHis.value) : null,
+            dom.test.localSt.value ? Number(dom.test.localSt.value) : null,
+            dom.test.localStHis.value ? Number(dom.test.localStHis.value) : null,
+            dom.test.startDate.value ? dom.test.startDate.value : null,
+            dom.test.endDate.value ? dom.test.endDate.value : null
+        );
+
+        if (testModule.mainTableTaskCount !== 0 || testModule.localStorageTasksCount !== 0) {
+            testModule.populateWithTestData(taskManager);
+            updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+            enableBtnsForNoTasksTable();
+        } else {
+            if (LOG_ON) console.warn("No test data generated");
+        }
         closeIntroModal();
+        clearTestConfiguration();
+        e.stopPropagation();
+    } else if (e.target.matches("#introCloseBtn")) {
+        e.preventDefault();
+        closeIntroModal();
+        clearTestConfiguration();
+        e.stopPropagation();
     }
+}
+
+function clearTestConfiguration() {
+    dom.test.mainTable.value = "";
+    dom.test.mainTableHis.value = "";
+    dom.test.localSt.value = "";
+    dom.test.localStHis.value = "";
+    dom.test.startDate.value = "";
+    dom.test.endDate.value = "";
 }
 
 function prepareStatisticModal(selectedOnly = false) {
@@ -474,9 +508,9 @@ function formatFilter(preformatedFilter) {
             const date = new Date(dateStr + ":00Z");
             return `new Date('${date.toISOString()}').getTime()`;
         });
-    if (TEST_MODE_ON) {
-        console.warn("preformatedFilter = " + preformatedFilter);
-        console.warn("afterFormat = " + afterFormat);
+    if (LOG_ON) {
+        console.warn("filter before format = " + preformatedFilter);
+        console.warn("filter after format = " + afterFormat);
     }
 
     return afterFormat;
@@ -622,7 +656,7 @@ function buildHeader(columnsToShow) {
         const th_main = document.createElement("th");
         th_main.setAttribute("colspan", `${columnsToShow.length}`);
         th_main.setAttribute("id", `full-table-header-width`);
-        
+
         const button = document.createElement("button");
         button.setAttribute("id", "openIntroModalButton");
 
@@ -640,8 +674,10 @@ function buildHeader(columnsToShow) {
     columnsToShow.forEach((col) => {
         const th = document.createElement("th");
         th.textContent = col.colHeader;
-        const sorting = helper.mapColumnName2Dataset(col.colHeader);
-        if (sorting) th.dataset.colSorting = sorting;
+        if (!visabilityFlags.isHistoryTable) {
+            const sorting = helper.mapColumnName2Dataset(col.colHeader);
+            if (sorting) th.dataset.colSorting = sorting;
+        }
         headerRow_headers.appendChild(th);
     });
 
@@ -737,6 +773,7 @@ function closeIntroModal() {
     dom.modal.introModalWindow.classList.add("hidden");
 }
 function openIntroModal() {
+    console.trace("openIntroModal called");
     dom.modal.introModalWindow.classList.remove("hidden");
 }
 
@@ -828,11 +865,6 @@ function enableBtnsForNoTasksTable() {
  *
  */
 document.addEventListener("DOMContentLoaded", () => {
-    if (TEST_MODE_ON) {
-        populateWithTestData(taskManager);
-        enableBtnsForNoTasksTable();
-    }
-
     document.querySelectorAll(".export-sub-btn").forEach((btn) => {
         btn.addEventListener("click", (e) => {
             e.stopPropagation();
@@ -902,7 +934,6 @@ document.addEventListener("DOMContentLoaded", () => {
     openIntroModal();
 
     //filter builder functionality
-    const modal = document.getElementById("filterModalOverlay");
     const applyFilterBtn = document.getElementById("filterSubmitBtn");
     const finalFilterTextarea = document.getElementById("finalFilter");
     const dragBtns = document.querySelectorAll(".drag-btn");

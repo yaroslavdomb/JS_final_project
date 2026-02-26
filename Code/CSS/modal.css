@@ -31,7 +31,7 @@
     position: relative;
     width: var(--my-modal-width);
     background-color: rgb(128, 193, 227);
-    color:rgb(44, 143, 94);    
+    color:rgb(0, 0, 0);    
     padding: 2.5rem 0.5rem 1rem 1rem;
     border-radius: 0.5rem;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
@@ -53,6 +53,7 @@
     max-width: 95%;
     max-height: 90vh;
     overflow: auto;
+    color:rgb(44, 143, 94);   
     background-color: azure;
 }
 
