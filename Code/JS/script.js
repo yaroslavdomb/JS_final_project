@@ -175,8 +175,43 @@ const managingActions = {
         openModal();
     },
 
+    ".all": () => {
+        toggleMenu(".all-menu", ".all");
+    },
+
+    ".all-hide": () => {
+        taskManager.hideTasks();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        closeAllMenu();
+    },
+
+    ".all-rem": () => {
+        taskManager.removeTasks();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        closeAllMenu();
+    },
+
+    ".all-show": () => {
+        taskManager.showAll();
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
+        closeAllMenu();
+    },
+
+    ".all-sel": () => {
+        taskManager.toggleAllSelected(selectedAll);
+        selectedAll = !selectedAll;
+        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
+        closeAllMenu();
+    },
+
+    ".all-stat": () => {
+        prepareStatisticModal(false);
+        openStatisticModal();
+        closeAllMenu();
+    },
+
     ".import-sub-btn": () => {
-        document.querySelector(".import-sub-menu").classList.toggle("open");
+        toggleMenu(".import-sub-menu", ".import-sub-btn");
     },
 
     ".import-loc-add": () => {
@@ -184,7 +219,7 @@ const managingActions = {
         taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         document.querySelector(".import-sub-menu").classList.toggle("open");
-        document.querySelector(".all-menu").classList.toggle("open");
+        closeAllMenu();
     },
 
     ".import-loc-rep": () => {
@@ -193,99 +228,64 @@ const managingActions = {
         taskManager.hydrateAndAppendTasks(tasksInLocalStorage);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
         document.querySelector(".import-sub-menu").classList.toggle("open");
-        document.querySelector(".all-menu").classList.toggle("open");
+        closeAllMenu();
     },
 
-    ".all": () => {
-        document.querySelector(".all-menu").classList.toggle("open");
-    },
-
-    ".all-hide": () => {
-        taskManager.hideTasks();
-        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
-        document.querySelector(".all-menu").classList.toggle("open");
-    },
-
-    ".all-rem": () => {
-        taskManager.removeTasks();
-        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
-        document.querySelector(".all-menu").classList.toggle("open");
-    },
-
-    ".all-show": () => {
-        taskManager.showAll();
-        updateDataOnScreen(taskManager.getAllTasksForDisplay(), dom.taskTable);
-        document.querySelector(".all-menu").classList.toggle("open");
-    },
-
-    ".all-sel": () => {
-        taskManager.toggleAllSelected(selectedAll);
-        selectedAll = !selectedAll;
-        updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
-        document.querySelector(".all-menu").classList.toggle("open");
-    },
-
-    ".all-stat": () => {
-        prepareStatisticModal(false);
-        openStatisticModal();
-        document.querySelector(".all-menu").classList.toggle("open");
+    ".export-sub-btn": () => {
+        toggleMenu(".export-sub-menu", ".export-sub-btn");
     },
 
     ".export-all-file": () => {
         taskManager.saveInFile();
         document.querySelector(".export-sub-menu").classList.toggle("open");
-        document.querySelector(".all-menu").classList.toggle("open");
+        closeAllMenu();
     },
 
     ".export-all-add": () => {
         const localStorageDta = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || [];
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks().concat(localStorageDta)));
         document.querySelector(".export-sub-menu").classList.toggle("open");
-        document.querySelector(".all-menu").classList.toggle("open");
+        closeAllMenu();
     },
 
     ".export-all-rep": () => {
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(taskManager.getAllTasks()));
         document.querySelector(".export-sub-menu").classList.toggle("open");
-        document.querySelector(".all-menu").classList.toggle("open");
+        closeAllMenu();
     },
 
     ".selected": () => {
-        document.querySelector(".selected-menu").classList.toggle("open");
+        toggleMenu(".selected-menu", ".selected");
     },
 
     ".selected-hide": () => {
         taskManager.hideTasks(true);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
-        document.querySelector(".selected-menu").classList.toggle("open");
+        closeSelectedMenu();
     },
 
     ".selected-rem": () => {
         taskManager.removeTasks(true);
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
-        document.querySelector(".selected-menu").classList.toggle("open");
+        closeSelectedMenu();
     },
 
     ".selected-show": () => {
         taskManager.showSelected();
         updateDataOnScreen(taskManager.getAllTasksForDisplay(true), dom.taskTable);
-        document.querySelector(".selected-menu").classList.toggle("open");
+        closeSelectedMenu();
     },
 
     ".selected-stat": () => {
         prepareStatisticModal(true);
         openStatisticModal();
-        document.querySelector(".selected-menu").classList.toggle("open");
-    },
-
-    ".export-sub-btn": () => {
-        document.querySelector(".export-sub-menu").classList.toggle("open");
+        closeSelectedMenu();
     },
 
     ".export-sel-file": () => {
         taskManager.saveInFile(true);
         document.querySelector(".export-sub-menu").classList.toggle("open");
-        document.querySelector(".selected-menu").classList.toggle("open");
+        closeSelectedMenu();
     },
 
     ".export-sel-add": () => {
@@ -293,14 +293,14 @@ const managingActions = {
         const localStorageData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY)) || [];
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(selectedTasks.concat(localStorageData)));
         document.querySelector(".export-sub-menu").classList.toggle("open");
-        document.querySelector(".selected-menu").classList.toggle("open");
+        closeSelectedMenu();
     },
 
     ".export-sel-rep": () => {
         const selectedTasks = taskManager.getAllTasks(true);
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(selectedTasks));
         document.querySelector(".export-sub-menu").classList.toggle("open");
-        document.querySelector(".selected-menu").classList.toggle("open");
+        closeSelectedMenu();
     }
 };
 
@@ -440,6 +440,25 @@ function handleIntroModalClick(e) {
         e.stopPropagation();
     }
 }
+
+function closeAllMenu() {
+    document.querySelector(".all-menu").classList.remove("open");
+    document.querySelector(".all").setAttribute("aria-expanded", "false");
+}
+
+function closeSelectedMenu() {
+    document.querySelector(".selected-menu").classList.remove("open");
+    document.querySelector(".selected").setAttribute("aria-expanded", "false");
+}
+
+
+function toggleMenu(menuSelector, triggerSelector) {
+    const menu = document.querySelector(menuSelector);
+    const isOpen = menu.classList.toggle("open");
+    const trigger = document.querySelector(triggerSelector);
+    if (trigger) trigger.setAttribute("aria-expanded", isOpen ? "true" : "false");
+}
+
 
 function clearTestConfiguration() {
     dom.test.mainTable.value = "";
@@ -848,6 +867,7 @@ function disableBtnsForNoTasksTable() {
     if (taskManager.isEmpty()) {
         dom.deactivated.forEach((el) => {
             el.classList.remove("btn-is-active");
+            el.setAttribute("aria-disabled", "true");
         });
     }
 }
@@ -865,6 +885,7 @@ function enableBtnsForNoTasksTable() {
     if (!taskManager.isEmpty()) {
         dom.deactivated.forEach((el) => {
             el.classList.add("btn-is-active");
+            el.setAttribute("aria-disabled", "false");
         });
     }
 }

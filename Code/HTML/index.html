@@ -346,92 +346,48 @@
                         <details>
                             <summary>Available functionality</summary>
                             <div class="preformated">
-1) BASIC FUNCTIONALITY for single task: 
-
-    - ADD - button "Add new task" in managing panel
-    - DELETE - button "--" in Actions column of the table (available after task creation) 
-    - HIDE - button "-" in Actions column of the table (available after task creation) 
-    - EDIT - button "+" in Actions column of the table (available after task creation) 
-    
-2) EXPORT button functionality: 
-
-    On click new buttons appears to allow 
-    - Export to localstorage && REPLACE the tasks currently located in the localstorage 
-    - Export to localstorage && ADD to the tasks currently located in the localstorage 
-    - Export to local disk 
-    
-3) IMPORT button functionality: 
-
-On click new buttons appears to allow 
-    - Import from localstorage && REPLACE current tasks in the table 
-    - Import from localstorage && ADD to current tasks in the table 
-    - Import from local disk && REPLACE the current tasks in the table 
-    - Import from local disk && ADD to the current tasks in the table 
-
-4) FILTERING by the following fields: 
-    
-    - id 
-    - select 
-    - status 
-    - group 
-    - priority 
-    - details 
-    - deadline 
-    - creation date 
-    - update date 
-    
-    __WARNING: Available only if tasks exists (on screen/in TaskManager) !!! 
-    
-5) SORTING once clicking on appropriate table header, ASC and DESC 
-    
-    - by id 
-    - by task execution status 
-    - by priority 
-    - by group name 
-    - by deadlines 
-    - by creation date 
-    - by update date 
-    
-6) HISTORY of each task: 
-    When clicking the "..." button in the "Actions" column of the appropriate row, a new History modal window should open, showing all changes related to the task. 
-    
-7) STATISTICS of the tasks: 
-    Statistics will be counted according to the menu — for ALL or for SELECTED tasks. When the "Statistics" button in the appropriate menu is clicked, a new modal will open. The following options will be available for the retrospective:
-        
-    Total tasks = number of tasks 
-    Done = number of tasks with status "done" 
-    Priority-0 = number of tasks with priority 0 
-    Priority-1 = number of tasks with priority 1 
-    ...
-    Priority-10 = number of tasks with priority 10 
-    Groups = count of groups 
-    Latest deadline = @id of task with (date of latest deadline) 
-    Closest deadline = @id of task with (date of closest deadline) 
-    Mostly changed = @id of task with longest history (number of changes) 
-    
-    __WARNING: Available only if tasks exists (on screen/in TaskManager) !!!
-
-8) INTRO modal 
-    
-    - explanation about application functionality
-    - option to generate test data
+                                1) BASIC FUNCTIONALITY for single task: - ADD - button "Add new task" in managing panel
+                                - DELETE - button "--" in Actions column of the table (available after task creation) -
+                                HIDE - button "-" in Actions column of the table (available after task creation) - EDIT
+                                - button "+" in Actions column of the table (available after task creation) 2) EXPORT
+                                button functionality: On click new buttons appears to allow - Export to localstorage &&
+                                REPLACE the tasks currently located in the localstorage - Export to localstorage && ADD
+                                to the tasks currently located in the localstorage - Export to local disk 3) IMPORT
+                                button functionality: On click new buttons appears to allow - Import from localstorage
+                                && REPLACE current tasks in the table - Import from localstorage && ADD to current tasks
+                                in the table - Import from local disk && REPLACE the current tasks in the table - Import
+                                from local disk && ADD to the current tasks in the table 4) FILTERING by the following
+                                fields: - id - select - status - group - priority - details - deadline - creation date -
+                                update date __WARNING: Available only if tasks exists (on screen/in TaskManager) !!! 5)
+                                SORTING once clicking on appropriate table header, ASC and DESC - by id - by task
+                                execution status - by priority - by group name - by deadlines - by creation date - by
+                                update date 6) HISTORY of each task: When clicking the "..." button in the "Actions"
+                                column of the appropriate row, a new History modal window should open, showing all
+                                changes related to the task. 7) STATISTICS of the tasks: Statistics will be counted
+                                according to the menu — for ALL or for SELECTED tasks. When the "Statistics" button in
+                                the appropriate menu is clicked, a new modal will open. The following options will be
+                                available for the retrospective: Total tasks = number of tasks Done = number of tasks
+                                with status "done" Priority-0 = number of tasks with priority 0 Priority-1 = number of
+                                tasks with priority 1 ... Priority-10 = number of tasks with priority 10 Groups = count
+                                of groups Latest deadline = @id of task with (date of latest deadline) Closest deadline
+                                = @id of task with (date of closest deadline) Mostly changed = @id of task with longest
+                                history (number of changes) __WARNING: Available only if tasks exists (on screen/in
+                                TaskManager) !!! 8) INTRO modal - explanation about application functionality - option
+                                to generate test data
                             </div>
                         </details>
                         <details>
                             <summary class="warning">Test mode configuration</summary>
                             <div class="preformated">
                                 You can provide the desired sizes of the auto-generated data below. This will allow you
-                                to immediately enjoy all the available functionality. The data will be randomly
+                                to immediately enjoy all the available unctionality. The data will be randomly
                                 generated.
 
                                 <div class="warning">!!! Please note</div>
-                                The localStorage size is restricted to ~5MB (depend on browser & OS), so no more than
-                                100 tasks, each with a history of 100 changes, can be saved in localStorage.
+The localStorage size is restricted to ~5MB (depend on browser & OS), so no more than 100 tasks, each with a history of 100 changes, can be saved in localStorage.
 
                                 <div class="warning">!!! Please note</div>
-                                The number of auto-generated History tasks is UP to your number and NOT EQUAL TO.You
-                                always can do some changes manually and reach the needed number of changes in task
-                                history.
+The number of auto-generated History tasks is UP to your number and NOT EQUAL TO.You always can do some changes manually and reach the needed number of changes in task history.
 
                                 <div class="warning">TEST CONFIGURATION:</div>
                                 <div class="form-group">
@@ -476,122 +432,159 @@ On click new buttons appears to allow
         </div>
 
         <main>
-        <div class="managing" role="toolbar" aria-label="Task management actions">
-            <button class="filter hide-if-no-tasks">Filter</button>
-            <button class="add">Add new task</button>
+            <div class="managing" role="toolbar" aria-label="Task management actions">
+                <button class="filter hide-if-no-tasks" aria-disabled="true">Filter</button>
+                <button class="add">Add new task</button>
 
-            <div class="all-container">
-                <button class="all" aria-haspopup="true" aria-expanded="false" aria-controls="all-menu-list">All tasks &#9660;</button>
-                <div class="all-menu" id="all-menu-list" role="menu">
-                    <button class="all-hide menu-item">Hide (from screen)</button>
-                    <button class="all-rem menu-item">Remove (totally)</button>
-                    <button class="all-show menu-item">Show (it and only it)</button>
-                    <button class="all-sel menu-item">Un/Select</button>
-                    <div class="export-sub-container">
-                        <button class="export-sub-btn menu-item">&#9664; Export to ...</button>
-                        <div class="export-sub-menu">
-                            <button class="export-all-file menu-item">External file</button>
-                            <button class="export-all-add menu-item">Localstorage (&amp;add)</button>
-                            <button class="export-all-rep menu-item">Localstorage (&amp;replace)</button>
-                        </div>
-                    </div>
-                    <div class="import-sub-container">
-                        <button class="import-sub-btn menu-item">&#9664; Import from ...</button>
-                        <div class="import-sub-menu">
-                            <input type="file" id="file-import-1" class="import-input-add" />
-                            <label for="file-import-1" class="menu-item lbl-file-import-add"
-                                >External file (&amp;add)</label
+                <div class="all-container">
+                    <button class="all" aria-haspopup="true" aria-expanded="false" aria-controls="all-menu-list">
+                        All tasks &#9660;
+                    </button>
+                    <div class="all-menu" id="all-menu-list" role="menu">
+                        <button class="all-hide hide-if-no-tasks menu-item" role="menuitem">Hide (from screen)</button>
+                        <button class="all-rem hide-if-no-tasks menu-item" role="menuitem">Remove (totally)</button>
+                        <button class="all-show menu-item" role="menuitem">Show (it and only it)</button>
+                        <button class="all-sel hide-if-no-tasks menu-item" role="menuitem">Un/Select</button>
+                        <div class="export-sub-container">
+                            <button
+                                class="export-sub-btn menu-item"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                role="menuitem"
                             >
-                            <input type="file" id="file-import-rep-2" class="import-input-rep" />
-                            <label for="file-import-rep-2" class="lbl-file-import-rep menu-item"
-                                >External file (&amp;replace)</label
-                            >
-                            <button class="import-loc-add menu-item">Localstorage (&amp;add)</button>
-                            <button class="import-loc-rep menu-item">Localstorage (&amp;replace)</button>
+                                &#9664; Export to ...
+                            </button>
+                            <div class="export-sub-menu" role="menu">
+                                <button class="export-all-file hide-if-no-tasks menu-item" role="menuitem">
+                                    External file
+                                </button>
+                                <button class="export-all-add hide-if-no-tasks menu-item" role="menuitem">
+                                    Localstorage (&amp;add)
+                                </button>
+                                <button class="export-all-rep hide-if-no-tasks menu-item" role="menuitem">
+                                    Localstorage (&amp;replace)
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <button class="all-stat hide-if-no-tasks menu-item">Statistic</button>
-                </div>
-            </div>
-
-            <div class="selected-container">
-                <button class="selected">Selected tasks &#9660;</button>
-                <div class="selected-menu">
-                    <button class="selected-hide menu-item">Hide (from screen)</button>
-                    <button class="selected-rem menu-item">Remove (totally)</button>
-                    <button class="selected-show menu-item">Show (it and only it)</button>
-                    <div class="export-sub-container">
-                        <button class="export-sub-btn menu-item">&#9664; Export ...</button>
-                        <div class="export-sub-menu">
-                            <button class="export-sel-file menu-item">Export to file</button>
-                            <button class="export-sel-add menu-item">Add to localstorage</button>
-                            <button class="export-sel-rep menu-item">Replace localstorage</button>
+                        <div class="import-sub-container">
+                            <button class="import-sub-btn menu-item" aria-haspopup="true" aria-expanded="false">
+                                &#9664; Import from ...
+                            </button>
+                            <div class="import-sub-menu">
+                                <input type="file" id="file-import-1" class="import-input-add" />
+                                <label for="file-import-1" class="menu-item lbl-file-import-add"
+                                    >External file (&amp;add)</label
+                                >
+                                <input type="file" id="file-import-rep-2" class="import-input-rep" />
+                                <label for="file-import-rep-2" class="lbl-file-import-rep menu-item"
+                                    >External file (&amp;replace)</label
+                                >
+                                <button class="import-loc-add menu-item">Localstorage (&amp;add)</button>
+                                <button class="import-loc-rep menu-item">Localstorage (&amp;replace)</button>
+                            </div>
                         </div>
+                        <button class="all-stat hide-if-no-tasks menu-item">Statistic</button>
                     </div>
-                    <button class="selected-stat hide-if-no-tasks menu-item">Statistic</button>
                 </div>
-            </div>
-        </div>
 
-        <table id="task-table">
-            <caption class="visually-hidden">
-                Tasks list
-            </caption>
-            <thead>
-                <tr class="full-table-header">
-                    <th colspan="9" id="full-table-header-width">
-                        <button id="openIntroModalButton" aria-label="Open intro modal">
-                            <img src="../Data/I_in_circle.png" alt="" />
+                <div class="selected-container">
+                    <button
+                        class="selected"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        aria-controls="selected-menu-list"
+                    >
+                        Selected tasks &#9660;
+                    </button>
+                    <div class="selected-menu" id="selected-menu-list" role="menu">
+                        <button class="selected-hide hide-if-no-tasks menu-item" role="menuitem">
+                            Hide (from screen)
                         </button>
-                        Things to do
-                    </th>
-                </tr>
-                <tr class="column-header">
-                    <th data-col-sorting="select" role="button" tabindex="0" aria-label="Sort by Selection">select</th>
-                    <th data-col-sorting="number" role="button" tabindex="1" aria-label="Sort by id">ID</th>
-                    <th data-col-sorting="done" role="button" tabindex="2" aria-label="Sort by Done">Done</th>
-                    <th data-col-sorting="group" role="button" tabindex="3" aria-label="Sort by Group">Group</th>
-                    <th data-col-sorting="priority" role="button" tabindex="4" aria-label="Sort by priority">
-                        Priority
-                    </th>
-                    <th data-col-sorting="details" role="button" tabindex="5" aria-label="Sort by details">
-                        Task details
-                    </th>
-                    <th data-col-sorting="deadline" role="button" tabindex="6" aria-label="Sort by deadline">
-                        Deadline
-                    </th>
-                    <th data-col-sorting="created" role="button" tabindex="7" aria-label="Sort by creation time">
-                        Created at
-                    </th>
-                    <th data-col-sorting="updated" role="button" tabindex="8" aria-label="Sort by updating time">
-                        Updated at
-                    </th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="table-body">
-                <tr>
-                    <td>
-                        <input type="checkbox" data-task-checked="selection" />
-                    </td>
-                    <td class="task-id">1</td>
-                    <td>
-                        <input type="checkbox" data-task-checked="status" />
-                    </td>
-                    <td>Home</td>
-                    <td>1</td>
-                    <td>Create first task and put it into the DB</td>
-                    <td>9/Feb/2019 10:56 (Isr TZ)</td>
-                    <td>9/Mar/2026 10:56 (Isr TZ)</td>
-                    <td>22/Jun/2028 22:12 (Isr TZ)</td>
-                    <td>
-                        <button class="activity editRow" aria-label="Edit task">+</button>
-                        <button class="activity removeRow" aria-label="Remove task">-</button>
-                        <button class="activity showTaskHistory" aria-label="Show task history">...</button>
-                    </td>
-                </tr>
-            </tbody>
-            </main>
-        </table>
+                        <button class="selected-rem hide-if-no-tasks menu-item" role="menuitem">
+                            Remove (totally)
+                        </button>
+                        <button class="selected-show menu-item" role="menuitem">Show (it and only it)</button>
+                        <div class="export-sub-container">
+                            <button
+                                class="export-sub-btn menu-item"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                                role="menuitem"
+                            >
+                                &#9664; Export to ...
+                            </button>
+                            <div class="export-sub-menu" role="menu">
+                                <button class="export-sel-file menu-item" role="menuitem">Export to file</button>
+                                <button class="export-sel-add menu-item" role="menuitem">Add to localstorage</button>
+                                <button class="export-sel-rep menu-item" role="menuitem">Replace localstorage</button>
+                            </div>
+                        </div>
+                        <button class="selected-stat hide-if-no-tasks menu-item" role="menuitem">Statistic</button>
+                    </div>
+                </div>
+            </div>
+
+            <table id="task-table">
+                <caption class="visually-hidden">
+                    Tasks list
+                </caption>
+                <thead>
+                    <tr class="full-table-header">
+                        <th colspan="9" id="full-table-header-width">
+                            <button id="openIntroModalButton" aria-label="Open intro modal">
+                                <img src="../Data/I_in_circle.png" alt="" />
+                            </button>
+                            Things to do
+                        </th>
+                    </tr>
+                    <tr class="column-header">
+                        <th data-col-sorting="select" role="button" tabindex="0" aria-label="Sort by Selection">
+                            select
+                        </th>
+                        <th data-col-sorting="number" role="button" tabindex="0" aria-label="Sort by id">ID</th>
+                        <th data-col-sorting="done" role="button" tabindex="0" aria-label="Sort by Done">Done</th>
+                        <th data-col-sorting="group" role="button" tabindex="0" aria-label="Sort by Group">Group</th>
+                        <th data-col-sorting="priority" role="button" tabindex="0" aria-label="Sort by priority">
+                            Priority
+                        </th>
+                        <th data-col-sorting="details" role="button" tabindex="0" aria-label="Sort by details">
+                            Task details
+                        </th>
+                        <th data-col-sorting="deadline" role="button" tabindex="0" aria-label="Sort by deadline">
+                            Deadline
+                        </th>
+                        <th data-col-sorting="created" role="button" tabindex="0" aria-label="Sort by creation time">
+                            Created at
+                        </th>
+                        <th data-col-sorting="updated" role="button" tabindex="0" aria-label="Sort by updating time">
+                            Updated at
+                        </th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr>
+                        <td>
+                            <input type="checkbox" data-task-checked="selection" aria-label="Select task" />
+                        </td>
+                        <td class="task-id">1</td>
+                        <td>
+                            <input type="checkbox" data-task-checked="status" aria-label="Mark as done" />
+                        </td>
+                        <td>Home</td>
+                        <td>1</td>
+                        <td>Create first task and put it into the DB</td>
+                        <td>9/Feb/2019 10:56 (Isr TZ)</td>
+                        <td>9/Mar/2026 10:56 (Isr TZ)</td>
+                        <td>22/Jun/2028 22:12 (Isr TZ)</td>
+                        <td>
+                            <button class="activity editRow" aria-label="Edit task">+</button>
+                            <button class="activity removeRow" aria-label="Remove task">-</button>
+                            <button class="activity showTaskHistory" aria-label="Show task history">...</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
     </body>
 </html>
