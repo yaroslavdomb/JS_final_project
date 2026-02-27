@@ -8,10 +8,10 @@ Implementation:
 
     1) BASIC FUNCTIONALITY for single task: 
 
-    - ADD - button "Add new task" in managing panel
-    - DELETE - button "--" in Actions column of the table (available after task creation) 
-    - HIDE - button "-" in Actions column of the table (available after task creation) 
-    - EDIT - button "+" in Actions column of the table (available after task creation) 
+        - ADD - button "Add new task" in managing panel
+        - DELETE - button "--" in Actions column of the table (available after task creation) 
+        - HIDE - button "-" in Actions column of the table (available after task creation) 
+        - EDIT - button "+" in Actions column of the table (available after task creation) 
     
     2) EXPORT button functionality: 
 
@@ -22,7 +22,7 @@ Implementation:
         
     3) IMPORT button functionality: 
 
-    On click new buttons appears to allow 
+        On click new buttons appears to allow 
         - Import from localstorage && REPLACE current tasks in the table 
         - Import from localstorage && ADD to current tasks in the table 
         - Import from local disk && REPLACE the current tasks in the table 

@@ -346,42 +346,91 @@
                         <details>
                             <summary>Available functionality</summary>
                             <div class="preformated">
-                                1) BASIC FUNCTIONALITY for single task: - ADD - button "Add new task" in managing panel
-                                - DELETE - button "--" in Actions column of the table (available after task creation) -
-                                HIDE - button "-" in Actions column of the table (available after task creation) - EDIT
-                                - button "+" in Actions column of the table (available after task creation) 2) EXPORT
-                                button functionality: On click new buttons appears to allow - Export to localstorage &&
-                                REPLACE the tasks currently located in the localstorage - Export to localstorage && ADD
-                                to the tasks currently located in the localstorage - Export to local disk 3) IMPORT
-                                button functionality: On click new buttons appears to allow - Import from localstorage
-                                && REPLACE current tasks in the table - Import from localstorage && ADD to current tasks
-                                in the table - Import from local disk && REPLACE the current tasks in the table - Import
-                                from local disk && ADD to the current tasks in the table 4) FILTERING by the following
-                                fields: - id - select - status - group - priority - details - deadline - creation date -
-                                update date __WARNING: Available only if tasks exists (on screen/in TaskManager) !!! 5)
-                                SORTING once clicking on appropriate table header, ASC and DESC - by id - by task
-                                execution status - by priority - by group name - by deadlines - by creation date - by
-                                update date 6) HISTORY of each task: When clicking the "..." button in the "Actions"
-                                column of the appropriate row, a new History modal window should open, showing all
-                                changes related to the task. 7) STATISTICS of the tasks: Statistics will be counted
-                                according to the menu — for ALL or for SELECTED tasks. When the "Statistics" button in
-                                the appropriate menu is clicked, a new modal will open. The following options will be
-                                available for the retrospective: Total tasks = number of tasks Done = number of tasks
-                                with status "done" Priority-0 = number of tasks with priority 0 Priority-1 = number of
-                                tasks with priority 1 ... Priority-10 = number of tasks with priority 10 Groups = count
-                                of groups Latest deadline = @id of task with (date of latest deadline) Closest deadline
-                                = @id of task with (date of closest deadline) Mostly changed = @id of task with longest
-                                history (number of changes) __WARNING: Available only if tasks exists (on screen/in
-                                TaskManager) !!! 8) INTRO modal - explanation about application functionality - option
-                                to generate test data
+1) <span class="warning">BASIC FUNCTIONALITY</span> for single task: 
+
+    - ADD - button "Add new task" in managing panel
+    - DELETE - button "--" in Actions column of the table (available after task creation) 
+    - HIDE - button "-" in Actions column of the table (available after task creation) 
+    - EDIT - button "+" in Actions column of the table (available after task creation) 
+
+2) <span class="warning">EXPORT</span> button functionality: 
+
+    On click new buttons appears to allow 
+    - Export to localstorage && REPLACE the tasks currently located in the localstorage 
+    - Export to localstorage && ADD to the tasks currently located in the localstorage 
+    - Export to local disk 
+    
+3) <span class="warning">IMPORT</span> button functionality: 
+
+    On click new buttons appears to allow 
+    - Import from localstorage && REPLACE current tasks in the table 
+    - Import from localstorage && ADD to current tasks in the table 
+    - Import from local disk && REPLACE the current tasks in the table 
+    - Import from local disk && ADD to the current tasks in the table 
+
+4) <span class="warning">FILTERING</span> by the following fields: 
+    
+    - id 
+    - select 
+    - status 
+    - group 
+    - priority 
+    - details 
+    - deadline 
+    - creation date 
+    - update date 
+    
+    <span class="warning">Available only if tasks exists (on screen/in TaskManager) !!! </span>
+    
+5) <span class="warning">SORTING</span>
+
+    Once clicking on appropriate table header, ASC and DESC sorting will be available by the following fields:
+    
+    - id 
+    - task execution status (aka Done) 
+    - priority 
+    - group name 
+    - deadlines 
+    - creation date 
+    - update date 
+    
+6) <span class="warning">HISTORY</span> of each task: 
+
+    When clicking the "..." button in the "Actions" column of the appropriate row, a new History modal window should open, showing all changes related to the task. 
+    
+7) <span class="warning">STATISTICS</span> of the tasks: 
+
+    Statistics will be counted according to the menu 
+    - for ALL tasks or 
+    - for SELECTED tasks. 
+    When the "Statistics" button in the appropriate menu is clicked, a new modal will open. The following options will be available for the retrospective:
+        
+    Total tasks = number of tasks 
+    Done = number of tasks with status "done" 
+    Priority-0 = number of tasks with priority 0 
+    Priority-1 = number of tasks with priority 1 
+    ...
+    Priority-10 = number of tasks with priority 10 
+    Groups = count of groups 
+    Latest deadline = @id of task with (date of latest deadline) 
+    Closest deadline = @id of task with (date of closest deadline) 
+    Mostly changed = @id of task with longest history (number of changes) 
+    
+    <span class="warning">Available only if tasks exists (on screen/in TaskManager) !!!</span>
+
+8) <span class="warning">INTRO</span> modal 
+    - explanation about application functionality
+    - option to generate test data
+
+8) A11Y
+
+9) RESPONSIVITY               
                             </div>
                         </details>
                         <details>
                             <summary class="warning">Test mode configuration</summary>
                             <div class="preformated">
-                                You can provide the desired sizes of the auto-generated data below. This will allow you
-                                to immediately enjoy all the available unctionality. The data will be randomly
-                                generated.
+You can provide the desired sizes of the auto-generated data below. This will allow you to immediately enjoy all the available unctionality. The data will be randomly generated.
 
                                 <div class="warning">!!! Please note</div>
 The localStorage size is restricted to ~5MB (depend on browser & OS), so no more than 100 tasks, each with a history of 100 changes, can be saved in localStorage.
