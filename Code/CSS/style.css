@@ -67,7 +67,7 @@ tr th[data-col-sorting] {
 }
 
 tr th:hover[data-col-sorting] {
-    background-color: rgb(5, 192, 145);
+    background-color: rgb(167, 246, 130);
 }
 
 .import-input-rep,

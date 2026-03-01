@@ -709,7 +709,10 @@ function buildHeader(columnsToShow) {
         th.textContent = col.colHeader;
         if (!visabilityFlags.isHistoryTable) {
             const sorting = helper.mapColumnName2Dataset(col.colHeader);
-            if (sorting) th.dataset.colSorting = sorting;
+            if (sorting) {
+                th.dataset.colSorting = sorting;
+                th.setAttribute("title",`Sorting table by ${sorting} in ASC/DESC`);
+            }
         }
         headerRow_headers.appendChild(th);
     });
