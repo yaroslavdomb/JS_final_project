@@ -51,6 +51,11 @@ thead .column-header {
     justify-content: center;
 }
 
+.activity:hover {
+    cursor: pointer;
+    background-color: rgb(206, 159, 249);
+}
+
 td button.activity {
     padding: 0;
     margin: 0.1rem;

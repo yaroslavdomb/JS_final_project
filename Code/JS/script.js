@@ -737,25 +737,29 @@ function buildRowFromTask(task, columnsToShow, existingRow = null) {
         if (col.name === "actions") {
             const editBtn = document.createElement("button");
             editBtn.className = "activity editRow";
-            editBtn.setAttribute("aria-label", "Edit task");
+            editBtn.setAttribute("title", "Edit the task");
+            editBtn.setAttribute("aria-label", "Edit the task");
             editBtn.textContent = "+";
             cell.appendChild(editBtn);
 
             const hideBtn = document.createElement("button");
             hideBtn.className = "activity hideRow";
-            hideBtn.setAttribute("aria-label", "Hide task");
+            hideBtn.setAttribute("title", "Hide the task from display");
+            hideBtn.setAttribute("aria-label", "Hide the task from display");
             hideBtn.textContent = "-";
             cell.appendChild(hideBtn);
 
             const removeBtn = document.createElement("button");
             removeBtn.className = "activity removeRow";
-            removeBtn.setAttribute("aria-label", "Remove task");
+            removeBtn.setAttribute("title", "Remove totally the task");
+            removeBtn.setAttribute("aria-label", "Remove totally the task");
             removeBtn.textContent = "x";
             cell.appendChild(removeBtn);
 
             const showBtn = document.createElement("button");
             showBtn.className = "activity showTaskHistory";
-            editBtn.setAttribute("aria-label", "Show task history");
+            showBtn.setAttribute("title", "Show task changes history");
+            showBtn.setAttribute("aria-label", "Show task changes history");
             showBtn.textContent = "...";
             cell.appendChild(showBtn);
         } else if (col.name === "isDone" || col.name === "select") {
