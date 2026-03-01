@@ -103,6 +103,8 @@ function handleTableClick(e) {
         handlePictureClick();
     } else if (e.target.matches("button.editRow")) {
         handleEditTask(e);
+    } else if (e.target.matches("button.hideRow")) {
+        handleHideTask(e);
     } else if (e.target.matches("button.removeRow")) {
         handleRemoveTask(e);
     } else if (e.target.matches("button.showTaskHistory")) {
@@ -155,6 +157,14 @@ function handleEditTask(event) {
     getHTMLEl(event);
     prepareModal(true);
     openModal();
+}
+
+// Click on edit button in the table row
+function handleHideTask(event) {
+    getHTMLEl(event);
+    taskManager.hideTaskById(htmlRow.id);
+    disableBtnsForNoTasksTable();
+    htmlRow.rowEl.parentNode.removeChild(htmlRow.rowEl);
 }
 
 // Click on remove button in the table row
@@ -731,10 +741,16 @@ function buildRowFromTask(task, columnsToShow, existingRow = null) {
             editBtn.textContent = "+";
             cell.appendChild(editBtn);
 
+            const hideBtn = document.createElement("button");
+            hideBtn.className = "activity hideRow";
+            hideBtn.setAttribute("aria-label", "Hide task");
+            hideBtn.textContent = "-";
+            cell.appendChild(hideBtn);
+
             const removeBtn = document.createElement("button");
             removeBtn.className = "activity removeRow";
-            editBtn.setAttribute("aria-label", "Remove task");
-            removeBtn.textContent = "-";
+            removeBtn.setAttribute("aria-label", "Remove task");
+            removeBtn.textContent = "x";
             cell.appendChild(removeBtn);
 
             const showBtn = document.createElement("button");
